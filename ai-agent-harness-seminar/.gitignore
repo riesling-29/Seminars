@@ -1,8 +1,8 @@
 node_modules/
 dist/
+_pages/
 .slidev/
 *.log
 .env
 .env.*
 !.env.example
-

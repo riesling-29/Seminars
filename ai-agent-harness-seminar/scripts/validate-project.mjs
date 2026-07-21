@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(scriptDirectory, '..')
+const repositoryRoot = path.resolve(projectRoot, '..')
 
 const requiredFiles = [
   'AGENTS.md',
@@ -13,6 +14,7 @@ const requiredFiles = [
   'package-lock.json',
   'slides.md',
   'style.css',
+  'public/favicon.svg',
   'components/AgentLoopDiagram.vue',
   'layouts/section.vue',
   'docs/SEMINAR_CONTEXT.md',
@@ -29,9 +31,18 @@ const requiredFiles = [
   'demos/edge-build-agent/README.md',
   'speaker-notes/README.md',
   'speaker-notes/REHEARSAL_CHECKLIST.md',
+  'scripts/pages-config.mjs',
+  'scripts/build-pages.mjs',
+  'scripts/preview-pages.mjs',
 ]
 
-const ignoredDirectories = new Set(['node_modules', 'dist', '.slidev'])
+const requiredRepositoryFiles = [
+  '.gitignore',
+  '.github/pages/index.html',
+  '.github/workflows/deploy-seminars-pages.yml',
+]
+
+const ignoredDirectories = new Set(['node_modules', 'dist', '_pages', '.slidev'])
 const textExtensions = new Set(['.md', '.mjs', '.js', '.ts', '.vue', '.json', '.yaml', '.yml', '.txt'])
 const failures = []
 const markers = []
@@ -75,6 +86,19 @@ for (const relativePath of requiredFiles) {
   }
 }
 
+for (const relativePath of requiredRepositoryFiles) {
+  const absolutePath = path.join(repositoryRoot, relativePath)
+  if (!(await exists(absolutePath))) {
+    failures.push('필수 저장소 파일 없음: ' + relativePath)
+    continue
+  }
+
+  const content = await readFile(absolutePath, 'utf8')
+  if (content.trim().length === 0) {
+    failures.push('빈 필수 저장소 파일: ' + relativePath)
+  }
+}
+
 await walk(projectRoot, async (entry) => {
   const normalizedPath = entry.relativePath.split(path.sep).join('/')
 
@@ -99,10 +123,18 @@ await walk(projectRoot, async (entry) => {
 const packagePath = path.join(projectRoot, 'package.json')
 if (await exists(packagePath)) {
   const packageJson = JSON.parse(await readFile(packagePath, 'utf8'))
-  for (const scriptName of ['dev', 'build', 'validate']) {
+  for (const scriptName of ['dev', 'build', 'build:pages', 'preview:pages', 'validate']) {
     if (!packageJson.scripts?.[scriptName]) {
       failures.push('package.json script 없음: ' + scriptName)
     }
+  }
+}
+
+const repositoryGitignorePath = path.join(repositoryRoot, '.gitignore')
+if (await exists(repositoryGitignorePath)) {
+  const repositoryGitignore = await readFile(repositoryGitignorePath, 'utf8')
+  if (!repositoryGitignore.split(/\r?\n/).includes('_pages/')) {
+    failures.push('저장소 .gitignore에 _pages/ 규칙 없음')
   }
 }
 
@@ -118,5 +150,6 @@ if (failures.length > 0) {
   failures.forEach((failure) => console.error('- ' + failure))
   process.exitCode = 1
 } else {
-  console.log('프로젝트 검증 성공: 필수 파일 ' + requiredFiles.length + '개, 중첩 .git 없음')
+  const requiredCount = requiredFiles.length + requiredRepositoryFiles.length
+  console.log('프로젝트 검증 성공: 필수 파일 ' + requiredCount + '개, 중첩 .git 없음')
 }

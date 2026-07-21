@@ -6,6 +6,9 @@ info: |
   합성 데이터와 검증 가능한 작업 경계를 중심으로 한다.
 author: Chanta Research Group
 colorSchema: light
+favicon: /favicon.svg
+fonts:
+  provider: none
 transition: slide-left
 drawings:
   persist: false

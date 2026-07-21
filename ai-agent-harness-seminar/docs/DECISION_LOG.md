@@ -60,13 +60,13 @@
 ## D-006
 
 - **Date:** 2026-07-21
-- **Decision:** GitHub Pages 배포를 예정하되 이번 단계에서는 구성하지 않는다.
-- **Status:** Proposed
-- **Rationale or evidence:** 사용자 요청의 잠정 가정이며 공개 범위와 base path가 미확정
+- **Decision:** 공식 GitHub Pages Actions로 Root Landing Page와 세미나 하위 경로를 배포하도록 구성하되 실제 공개는 별도 승인 전까지 수행하지 않는다.
+- **Status:** Accepted for prototype
+- **Rationale or evidence:** 사용자 요청과 실제 Git remote의 repository name, GitHub 공식 Custom Workflow 문서. Base Path는 /<repository-name>/ai-agent-harness-seminar/로 동적 계산한다.
 - **Alternatives considered:** 로컬 전용, 사내 정적 호스팅, PDF 배포
-- **Consequences:** 기본 정적 빌드만 검증하고 배포 Workflow는 만들지 않는다.
-- **Reversal conditions:** Private Pages 정책 불가, 공개 금지, 다른 호스팅 지정
-- **Review date:** 공개 범위 승인 후
+- **Consequences:** 일반 dist/와 별도 _pages/ staging을 사용하고, Pages Source 활성화와 공개 범위 확인이 사용자 작업으로 남는다.
+- **Reversal conditions:** Private Pages 정책 불가, 공개 금지, 다른 호스팅 지정, 원격 기본 브랜치 변경, Node 24 LTS 종료, 사용 중인 공식 Pages Action Major의 지원 종료
+- **Review date:** 첫 실제 배포 직전과 2026-10-21 중 빠른 시점
 
 ## D-007
 

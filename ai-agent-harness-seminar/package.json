@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "slidev",
     "build": "slidev build",
+    "build:pages": "node scripts/build-pages.mjs",
+    "preview:pages": "node scripts/preview-pages.mjs",
     "validate": "node scripts/validate-project.mjs",
     "test": "npm run validate && npm run build"
   },
