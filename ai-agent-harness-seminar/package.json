@@ -1,0 +1,21 @@
+{
+  "name": "ai-agent-harness-seminar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Slidev foundation for the AI Agents and Agent Harnesses engineering seminar",
+  "type": "module",
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "validate": "node scripts/validate-project.mjs",
+    "test": "npm run validate && npm run build"
+  },
+  "devDependencies": {
+    "@slidev/cli": "52.18.0",
+    "@slidev/theme-default": "0.25.0"
+  },
+  "engines": {
+    "node": ">=20.12.0"
+  },
+  "packageManager": "npm@11.16.0"
+}
