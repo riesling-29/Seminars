@@ -1,0 +1,28 @@
+.slidev-layout.tech-system {
+  --ts-bg: #07111f;
+  --ts-bg-raised: #0b1928;
+  --ts-bg-soft: #102234;
+  --ts-ink: #f5f7fa;
+  --ts-ink-soft: #c5d0dc;
+  --ts-ink-muted: #8797a8;
+  --ts-line: rgba(181, 205, 224, 0.2);
+  --ts-line-strong: rgba(181, 205, 224, 0.42);
+  --ts-cyan: #44d7e8;
+  --ts-cyan-soft: rgba(68, 215, 232, 0.12);
+  --ts-amber: #f4b85a;
+  --ts-amber-soft: rgba(244, 184, 90, 0.13);
+  --ts-green: #67d69a;
+  --ts-green-soft: rgba(103, 214, 154, 0.12);
+  --ts-red: #f07178;
+  --ts-red-soft: rgba(240, 113, 120, 0.12);
+  --ts-radius-sm: 0.4rem;
+  --ts-radius-md: 0.7rem;
+  --ts-space-1: 0.35rem;
+  --ts-space-2: 0.65rem;
+  --ts-space-3: 1rem;
+  --ts-space-4: 1.5rem;
+  --ts-space-5: 2.25rem;
+  --ts-title-size: 2rem;
+  --ts-body-size: 1rem;
+  --ts-label-size: 0.67rem;
+}
