@@ -122,3 +122,36 @@
 - **Consequences:** 알려진 경고가 남으며 공개 배포 또는 외부 콘텐츠 처리 전에 재평가해야 한다.
 - **Reversal conditions:** 수정된 공식 릴리스가 제공됨, 보안 정책이 경고 0건을 요구함, 외부 입력 콘텐츠를 렌더링하게 됨, 영향 분석에서 현재 사용 경로가 취약함이 확인됨
 - **Review date:** 본편 제작 전 또는 다음 Slidev 보안 릴리스 시
+
+## D-012
+
+- **Date:** 2026-07-23
+- **Decision:** 기존 8장 Prototype을 삭제하지 않고 재사용·재배치하여, Self-Attention 복습부터 Agent Harness까지 이어지는 20장 이론 경로로 통합한다.
+- **Status:** Accepted for prototype
+- **Rationale or evidence:** 사용자 요청의 21개 논리 항목은 일부를 한 장에 통합할 수 있으나 Self-Attention→조건부 Token 분포→행동→Agent Loop→Harness→Validator의 인과적 연결은 생략할 수 없다. Vaswani et al. (2017) §3.2.1·§3.2.3·§3.4, Brown et al. (2020) §2.1·§5, Anthropic의 2024·2025·2026 Agent/Harness 문서를 2026-07-23 확인했다.
+- **Alternatives considered:** 기존 8장 유지, 16장 압축, 18장 압축, 요청 항목별 21장, 28장 Storyboard 전체 구현, Do Nothing
+- **Consequences:** 실제 데모와 Handout 실습은 현재 덱 밖에 남는다. 각 슬라이드는 한 메시지를 유지하고 상세 근거는 Speaker Note로 이동한다.
+- **Reversal conditions:** 리허설에서 60분 이내 전달이 불가능함, 앞선 세미나의 실제 범위가 현재 복습 가정과 다름, 프로젝터에서 Diagram·KaTeX 가독성이 실패함, 원출처의 관련 정의가 변경됨
+- **Review date:** 첫 전체 리허설 직전 또는 원출처 변경 시
+
+## D-013
+
+- **Date:** 2026-07-23
+- **Decision:** 20장 이론 경로 뒤에 일반 청중용 합성 적용 사례 4장과 첫 요청 Template 1장을 추가해 총 25장으로 구성한다.
+- **Status:** Accepted for prototype
+- **Rationale or evidence:** 사용자는 설치 직후 어떤 작업을 시킬 수 있는지 사례별로 이해하고 자신의 업무를 연상할 수 있는 구간을 요청했다. 파일 정리, 자료 조사, 표 변환, 생활 계획은 각각 Local File, Evidence, Deterministic Validator, Human Approval 경계를 보여준다.
+- **Alternatives considered:** 기존 20장 유지, 사례를 한 장에 압축, 실제 제품 시연 추가, Handout만 제공, Do Nothing
+- **Consequences:** 발표 시간이 늘어나며 사례는 실제 기능·효과 보장이 아닌 Tool·Permission 의존 합성 시나리오로 표시한다. 기존 20번의 비사용 판단 뒤에 배치해 Agent 만능론으로 읽히지 않게 한다.
+- **Reversal conditions:** 75분 리허설에서 시간 초과, 일반 청중이 사례를 제품 기능 보장으로 오해함, 시각 검토에서 반복 Flow가 과밀함, 실제 발표 대상이 전문 개발자만으로 확정됨
+- **Review date:** 첫 전체 리허설 직전
+
+## D-014
+
+- **Date:** 2026-07-23
+- **Decision:** 적용 사례 앞에 “코드를 모두 읽기 어려워질수록 Audit 가능한 창구를 먼저 만든다”는 발표자 실무 원칙을 1장 추가한다.
+- **Status:** Accepted for prototype
+- **Rationale or evidence:** Agent가 생성하는 변경량이 늘어날 때 사람이 통제권을 유지하려면 Scope·Intent·Evidence·Authority를 한곳에서 확인할 수 있어야 한다는 사용자 경험을 반영한다. Transcript·Outcome·Validator와 Append-oriented Trace는 이 창구를 구성하는 보조 근거다.
+- **Alternatives considered:** 사례 슬라이드의 Note에만 포함, 마지막 요청 Template에 통합, 별도 Handout으로 이동, Do Nothing
+- **Consequences:** 총 26장이 되며 22–26번 사례는 “무엇을 시킬 수 있는가”와 함께 “어떻게 감사할 것인가”를 설명해야 한다. 이 원칙은 코드 리뷰의 대체물이 아니라 검토 범위와 근거를 조직하는 장치로 표현한다.
+- **Reversal conditions:** 변경량이 작아 전수 리뷰가 충분함, Audit 신호가 중대한 결함을 반복적으로 놓침, 안전·규제·핵심 로직에서 전문 전수 리뷰가 요구됨, 리허설에서 사례와 연결되지 않음
+- **Review date:** 첫 실제 Pilot과 전체 리허설 직전

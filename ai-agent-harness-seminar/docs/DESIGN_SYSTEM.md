@@ -2,11 +2,11 @@
 
 ## 상태와 범위
 
-**확인된 사실:** 현재 Slidev 덱은 `default` Theme을 사용하며 8장이다. 기존 스타일은 `style.css`, `layouts/section.vue`, `components/AgentLoopDiagram.vue`에 분산되어 있었다.
+**확인된 사실:** 현재 Slidev 덱은 `default` Theme을 사용하며 26장이다. 공통 스타일은 `style.css`, `styles/components.css`, 전용 Layout과 Vue Component로 분리되어 있다.
 
-**설계 결정:** 이번 작업은 전체 덱 완성이 아니라 1·2·3·4·5·7·8번 슬라이드에 적용하는 시각적 Prototype이다. 6번은 기존 Light 표현을 유지해 적용 전후를 비교하는 기준으로 남긴다.
+**설계 결정:** 28장 확장 Storyboard 중 모델 기초→행동→Harness를 연결하는 20장 이론 경로, 1장 Audit 원칙과 일반 청중이 자신의 첫 작업을 고르는 5장 적용 사례를 구현한다. 기존 8장 Prototype의 Visual Language를 유지하고, 중복 슬라이드는 삭제하지 않고 새 논리 순서에 통합한다.
 
-**범위 제한:** Headmatter의 `colorSchema: light`는 유지한다. Dark Theme은 `.slidev-layout.tech-system`을 가진 Prototype 전용 Layout 내부에만 적용하며 Slidev Presenter UI와 미적용 슬라이드를 전역 변경하지 않는다.
+**범위 제한:** Headmatter의 `colorSchema: light`는 유지한다. Dark Theme은 `.slidev-layout.tech-system`을 가진 전용 Layout 내부에만 적용하며 Slidev Presenter UI를 전역 변경하지 않는다. 21번은 발표자의 경험에서 도출한 잠정 원칙이고, 22–26번은 합성 시나리오이며 실제 업무 데이터, 실제 예약·결제와 제품별 기능 보장을 포함하지 않는다.
 
 ## 시각 방향
 
@@ -46,15 +46,13 @@ Technical Systems Editorial은 기술 시스템의 경계, 흐름, 상태와 근
 
 ## Layout
 
-| Layout | 용도 | Prototype 적용 |
+| Layout | 용도 | 현재 적용 |
 | --- | --- | --- |
 | `cover-tech` | Cover | 1번 |
-| `section-tech` | 맥락 전환과 Section Divider | 2번 |
-| `split-compare` | 4개 실행 형태 비교 | 3번 |
-| `process-flow` | Agent Loop | 4번 |
-| `concept` | Harness 개념 구조 | 5번 |
-| `demo` | 합성 입력과 중단 동작 예고 | 7번 |
-| `evidence` | 근거 경로와 다음 단계 | 8번 |
+| `split-compare` | 두 경계, 실행 형태와 요청 Template 비교 | 8·10·16·18·26번 |
+| `process-flow` | 모델 경로, Token Chain, Tool 흐름, Agent Loop와 적용 사례 | 2·6·9·11·12·22–25번 |
+| `concept` | Attention, Probability, Harness 경계, 구성요소와 Audit 원칙 | 3·4·5·7·13·14·15·17·20·21번 |
+| `evidence` | Trace와 디버깅 근거 | 19번 |
 
 ## Component
 
@@ -66,16 +64,22 @@ Technical Systems Editorial은 기술 시스템의 경계, 흐름, 상태와 근
 | `EvidenceTag` | Artifact, 용어, 근거 대상을 작은 Tag로 표시 |
 | `SourceFooter` | 내용보다 낮은 위계로 출처와 상태 표시 |
 | `TakeawayBox` | 슬라이드의 한 메시지를 하단에 고정된 구조로 요약 |
+| `AttentionHeatmap` | Self-Attention의 문맥 의존 가중치를 Heatmap으로 표현 |
+| `CausalMaskDiagram` | 미래 토큰 접근이 차단되는 삼각 Mask를 표현 |
+| `TokenProbabilityBars` | 다음 Token 분포와 진실 확률의 차이를 표현 |
+| `TokenChain` | Autoregressive 조건부 선택의 연쇄를 표현 |
+| `CodexSlidevFlow` | 현재 Codex·Slidev 작업의 실행 경로를 표현 |
+| `HarnessBoundaryDiagram` | Agent Loop와 Harness 통제 경계를 분리해 표현 |
 
 ## 적용 및 철회 조건
 
-이 Prototype 판단은 **2026-07-22 현재 8장 샘플 덱**에 유효하다. 1280×720 이상 브라우저와 실제 프로젝터에서 다음 중 하나가 확인되면 관련 Layout 또는 Token을 수정하거나 철회한다.
+이 설계 판단은 **2026-07-23 현재 26장 덱**에 유효하다. 1280×720 이상 브라우저와 실제 프로젝터에서 다음 중 하나가 확인되면 관련 Layout 또는 Token을 수정하거나 철회한다.
 
 - Navy 배경에서 본문·Source 대비가 충분하지 않음
 - 제목이 두 줄을 넘거나 Card 본문이 잘림
 - Flow Node 레이블이나 Edge가 겹침
 - Cyan과 Green 또는 Amber의 상태 구분이 프로젝터에서 사라짐
-- Presenter UI 또는 미적용 6번 슬라이드에 Prototype CSS가 누출됨
+- Presenter UI에 덱 전용 CSS가 누출됨
 - 발표 장소 조도와 촬영 조건에서 Light Theme이 더 읽기 쉬움
 
 프로젝터 해상도·조도·관람 거리는 현재 **알 수 없음**이다. Build 성공은 Pixel 수준의 시각 품질을 증명하지 않으며 브라우저와 실제 발표 환경 확인이 필요하다.

@@ -23,7 +23,7 @@ Python, C/C++, 데이터 분석, 계측, 시뮬레이션 또는 실험에는 익
 
 ## 구조
 
-- slides.md: 디자인과 구현 가능성을 확인하는 8장 샘플
+- slides.md: 모델 기초→행동→Harness→Audit 원칙→생활·업무 적용을 연결하는 26장 덱
 - docs/: Canonical Context, Storyboard, 근거 정책, 디자인, 데모, 의사결정 기록
 - components/, layouts/: 최소 Slidev 공통 요소
 - demos/: 구현 전 데모 경계와 안전 규칙
@@ -34,7 +34,7 @@ Python, C/C++, 데이터 분석, 계측, 시뮬레이션 또는 실험에는 익
 
 ## 현재 구현 상태
 
-초기 기반 단계다. 운영·기획 문서, Handout 초안, 8장 샘플 슬라이드와 GitHub Pages 배포 Workflow를 포함한다. 전체 슬라이드, 실제 진동/빌드 데모, 실제 Pages 게시, MCP, Multi-Agent는 구현하지 않았다.
+본편 제작 단계다. 운영·기획 문서, Handout 초안, 20장 이론 슬라이드와 1장 Audit 원칙, 5장 적용 사례, GitHub Pages 배포 Workflow를 포함한다. 28장 확장 Storyboard 전체, 실제 진동/빌드 데모, 실제 Pages 게시와 Multi-Agent 예시는 구현하지 않았다. Slidev MCP는 제작·검토 경로에 사용했지만 프로젝트 자체 기능으로 포함한 것은 아니다.
 
 ## 로컬 설치
 
