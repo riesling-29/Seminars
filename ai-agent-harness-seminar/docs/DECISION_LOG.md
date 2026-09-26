@@ -155,3 +155,15 @@
 - **Consequences:** 총 26장이 되며 22–26번 사례는 “무엇을 시킬 수 있는가”와 함께 “어떻게 감사할 것인가”를 설명해야 한다. 이 원칙은 코드 리뷰의 대체물이 아니라 검토 범위와 근거를 조직하는 장치로 표현한다.
 - **Reversal conditions:** 변경량이 작아 전수 리뷰가 충분함, Audit 신호가 중대한 결함을 반복적으로 놓침, 안전·규제·핵심 로직에서 전문 전수 리뷰가 요구됨, 리허설에서 사례와 연결되지 않음
 - **Review date:** 첫 실제 Pilot과 전체 리허설 직전
+
+
+## D-015
+
+- **Date:** 2026-09-26
+- **Decision:** 사용자의 새 지시에 따라 Slidev 본편을 30장으로 재구성하고, 합성 버그 수정 Trace를 실행 가능한 예제로 추가한다.
+- **Status:** Accepted for prototype
+- **Rationale or evidence:** 2026-07-21 Canonical Context의 ‘전체 발표자료·Commit·Push 비범위’ 및 메인 진동 데모 계획과 이번 사용자의 웹 슬라이드 제작 요청이 충돌한다. 현재 요청을 우선 적용한다. Attention·KV Cache를 배운 청중에게 모델 내부 복습을 한 장으로 줄이고 WEF 구조, 켄자쿠 비유, 도구 API, 제품·사용 사례를 넣는다.
+- **Alternatives considered:** 기존 26장 유지, 별도 저장소, 진동 데모 전체 구현, Do Nothing
+- **Consequences:** 발표 시간은 70–75분 잠정이며 Q&A는 별도다. 진동 메인 데모는 설계 문서에 남고, 이번 덱은 재현 가능한 합성 unittest Trace를 사용한다. GitHub Pages 활성화 및 공개 범위는 저장소 설정에 달려 있다.
+- **Reversal conditions:** 발표 일정·보안 정책·공개 범위나 리허설 결과가 바뀜
+- **Review date:** 첫 전체 리허설과 실제 공개 전

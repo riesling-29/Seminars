@@ -1,0 +1,14 @@
+/* 발표용 API 및 재현 기록. 기존 기술 편집 디자인의 색과 간격을 따릅니다. */
+.slidev-layout.tech-system .ts-code-block {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  margin: 0.65rem 0 0;
+  border: 1px solid var(--ts-line-strong);
+  border-radius: var(--ts-radius-sm);
+  background: rgba(3, 11, 20, 0.84);
+  color: var(--ts-cyan);
+  padding: 0.8rem;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.66rem;
+  line-height: 1.42;
+}

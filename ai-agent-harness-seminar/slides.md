@@ -5,7 +5,7 @@ title: "모델에서 시스템으로: AI Agent와 Agent Harness"
 info: |-
   회사 내부 엔지니어를 위한 AI Agent와 Harness 세미나.
   LLM의 다음 Token 예측에서 모델 밖의 실행 시스템까지 독립적으로 설명한다.
-author: Chanta Research Group
+author: riesling29
 colorSchema: light
 favicon: /favicon.svg
 fonts:
@@ -25,8 +25,8 @@ mdc: true
 </p>
 
 <div class="ts-cover-badges">
-  <StatusBadge tone="cyan">본편 26장</StatusBadge>
-  <StatusBadge tone="amber">75분 잠정 구성</StatusBadge>
+  <StatusBadge tone="cyan">본편 30장</StatusBadge>
+  <StatusBadge tone="amber">약 70–75분 · 질의응답 별도</StatusBadge>
   <StatusBadge>생산성 수치 주장 없음</StatusBadge>
 </div>
 
@@ -34,210 +34,88 @@ mdc: true
 - 핵심 문장: 오늘은 모델 내부의 다음 Token 예측이 어떻게 외부 행동을 수행하는 Agent 시스템으로 확장되는지 설명한다.
 - 연결 문장: 먼저 모델 내부의 표현 계산과 다음 Token 예측을 정의한 뒤, 모델 밖의 실행 계층으로 경계를 넓힌다.
 - 오해 경고: Agent가 LLM보다 본질적으로 더 똑똑한 별도 모델이라는 뜻이 아니다.
-- 설명: 이 발표는 Self-Attention이나 LLM 배경지식이 없어도 이해할 수 있도록 필요한 모델 경로부터 설명한다. 모델은 문맥을 바탕으로 출력을 생성하고, Agent 시스템은 그 밖에서 Tool, State, Permission, Validator, Trace를 연결한다. 특정 제품의 우월성이나 생산성 향상은 이 발표의 주장이 아니다.
+- 설명: 이 발표는 앞선 Attention과 KV Cache 강의를 들은 청중을 위해 모델 경로는 한 장만 복습한다. 모델은 문맥을 바탕으로 출력을 생성하고, Agent 시스템은 그 밖에서 Tool, State, Permission, Validator, Trace를 연결한다. 특정 제품의 우월성이나 생산성 향상은 이 발표의 주장이 아니다.
 - 출처/근거: docs/SEMINAR_CONTEXT.md의 ‘중심 명제’를 사용하되, 독립 발표가 가능하도록 도입 설명을 확장했다. 확인 2026-07-23.
 -->
 
----
-layout: process-flow
-title: Self-Attention이 문맥을 만들고, 출력층이 다음 Token의 확률분포를 예측한다
----
 
-<div class="ts-title-row">
-  <h1>Self-Attention이 문맥을 만들고, 출력층이 다음 Token의 확률분포를 예측한다</h1>
-  <span class="ts-slide-index">MODEL PATH · 02</span>
+---
+layout: concept
+title: "앞선 시간에서 오늘로: KV Cache는 도구가 아닙니다"
+---
+<div class="ts-title-row"><h1>앞선 시간에서 오늘로: KV Cache는 도구가 아닙니다</h1><span class="ts-slide-index">02</span></div>
+<div class="ts-card-grid cols-3">
+<ConceptCard label="Attention" title="현재 맥락을 계산">입력 토큰 사이의 관계로 표현을 갱신합니다.</ConceptCard>
+<ConceptCard label="KV Cache" title="생성 계산을 재사용">이미 처리한 토큰의 Key·Value를 재사용합니다.</ConceptCard>
+<ConceptCard label="Harness" title="다음 입력을 구성" accent="cyan">파일·도구 결과·대화 중 무엇을 모델에 보여줄지 정합니다.</ConceptCard>
 </div>
+<TakeawayBox>KV Cache는 추론 계산의 재사용이고, 작업 기억은 시스템이 관리하는 맥락과 상태입니다.</TakeawayBox>
+<SourceFooter source="Hugging Face · Cache explanation" status="확인 2026-09-26" />
+<!--
+- 이미 배운 Attention과 KV Cache를 약 2분만 복습합니다.
+- KV Cache가 파일을 열거나 세션 밖의 정보를 영구히 저장하지 않습니다. 다음 호출의 입력 맥락은 별도 시스템이 구성합니다.
+- 원출처: Hugging Face, Cache explanation, https://huggingface.co/docs/transformers/main/cache_explanation/ . 확인 2026-09-26.
+-->
 
+---
+layout: concept
+title: AI 에이전트의 범위는 하나로 고정되지 않았습니다
+---
+<div class="ts-title-row"><h1>AI 에이전트의 범위는 하나로 고정되지 않았습니다</h1><span class="ts-slide-index">03</span></div>
+<div class="ts-card-grid cols-2">
+<ConceptCard label="Xi Kang" title="의사결정 지원">일반인이 활용할 수 있는 예측·판단 지원까지 넓게 봅니다.</ConceptCard>
+<ConceptCard label="Liu Jiren" title="감지하고 행동">환경을 감지하고 자율적으로 판단·행동하는 점을 강조합니다.</ConceptCard>
+<ConceptCard label="Nancy Xu" title="행위 능력">LLM에 행위 능력을 더해 디지털 동반자·직원처럼 봅니다.</ConceptCard>
+<ConceptCard label="Darko Matovski" title="감독의 경계">업무별 자율성의 범위와 사람의 감독 지점을 묻습니다.</ConceptCard>
+</div>
+<TakeawayBox>이 발표는 ‘관찰→선택→도구 실행→결과 재관찰’을 반복하는 시스템을 작업 정의로 사용합니다.</TakeawayBox>
+<SourceFooter source="WEF · 2024 Dalian panel" status="확인 2026-09-26" />
+<!--
+- 2024년 6월 중국 다롄의 WEF Annual Meeting of the New Champions 패널 ‘What Can AI Assistants Do?’를 정리한 기사입니다.
+- 서로 다른 강조점을 한 가지 공식 정의처럼 제시하지 않습니다. 3분 내외로 폭을 설명한 후 이 발표의 작업 정의를 선언합니다.
+- 출처: WEF, What is an AI agent and what will they do? Experts explain, https://www.weforum.org/stories/2024/07/what-is-an-ai-agent-experts-explain/ . 확인 2026-09-26.
+-->
+
+---
+layout: concept
+title: 에이전트는 환경과 오가는 하나의 시스템입니다
+---
+<div class="ts-title-row"><h1>에이전트는 환경과 오가는 하나의 시스템입니다</h1><span class="ts-slide-index">04</span></div>
 <div class="ts-agent-loop">
-  <div class="ts-agent-boundary-label">MODEL-INTERNAL PATH</div>
-  <div class="ts-agent-flow">
-    <FlowNode step="01" title="Token" />
-    <div class="ts-flow-arrow">→</div>
-    <FlowNode step="02" title="Self-Attention" tone="cyan" />
-    <div class="ts-flow-arrow">→</div>
-    <FlowNode step="03" title="Contextual hₜ" tone="cyan" />
-    <div class="ts-flow-arrow">→</div>
-    <FlowNode step="04" title="Logits · Softmax" />
-    <div class="ts-flow-arrow">→</div>
-    <FlowNode step="05" title="Next Token 분포" />
-  </div>
+<div class="ts-agent-boundary-label">AI AGENT · WEF 2024 Figure 1 재구성</div>
+<div class="ts-card-grid cols-3">
+<ConceptCard label="01 · Sensors" title="감지">환경·사용자 입력을 관찰</ConceptCard>
+<ConceptCard label="02 · Control centre" title="판단" accent="cyan">목표와 관찰을 바탕으로 다음 행동 선택</ConceptCard>
+<ConceptCard label="03 · Effectors" title="행동">허용된 인터페이스로 환경에 작용</ConceptCard>
 </div>
-
-<TakeawayBox>Self-Attention은 문맥적 표현을 계산한다. 출력층은 다음 Token 후보의 확률분포를 만들고, Decoding이 하나를 선택한다.</TakeawayBox>
-
-<SourceFooter source="Vaswani et al. 2017 §3 · Brown et al. 2020 §2.1" status="FOUNDATION" />
-
+</div>
+<div class="ts-contrast-grid mt-5"><div class="ts-contrast-panel"><h3>환경 · 경계 바깥</h3><p>파일, 웹, 코드, 사용자, 다른 시스템</p></div><div class="ts-contrast-panel"><h3>다시 관찰</h3><p>행동 결과가 다음 판단의 입력으로 돌아옵니다.</p></div></div>
+<TakeawayBox>WEF의 세 기능은 에이전트의 구성요소이며, Agent 자체는 이 셋과 반복 경계를 아우릅니다.</TakeawayBox>
+<SourceFooter source="WEF · Navigating the AI Frontier (2024), Fig. 1" status="확인 2026-09-26" />
 <!--
-- 핵심 문장: Self-Attention은 문맥적 표현을 만들고, 출력층은 그 표현으로부터 다음 Token 후보의 조건부 확률분포를 계산한다.
-- 연결 문장: 이 모델 내부 경로를 기준점으로 삼아, 다음 슬라이드부터 각 연산의 역할과 한계를 분리한다.
-- 오해 경고: Self-Attention 자체가 다음 Token을 출력하거나 확률을 계산하는 것은 아니다. 또한 Softmax 분포와 실제 Token 선택은 구분해야 한다.
-- 설명: 입력 Token은 Transformer 층을 지나 문맥적 hidden representation hₜ로 갱신된다. 출력층의 선형 변환은 vocabulary 크기의 Logit을 만들고, Softmax가 이를 다음 Token 후보의 조건부 확률분포로 정규화한다. 이후 argmax, sampling 같은 Decoding 규칙이 실제 다음 Token 하나를 선택한다. 따라서 이후 Agent와 Harness를 이해하는 데 필요한 모델 경로를 이 발표 안에서 완결해 정의한다.
-- 출처/근거: Vaswani et al., ‘Attention Is All You Need’, 2017, §3 Model Architecture, §3.4 Embeddings and Softmax, https://arxiv.org/abs/1706.03762. Brown et al., ‘Language Models are Few-Shot Learners’, 2020, §2.1 Model and Architectures, https://arxiv.org/abs/2005.14165. 확인 2026-07-23.
+- WEF 2024 보고서 Figure 1 p.7의 Sensors, Control centre, Effectors와 Environment 경계를 테마에 맞춘 자체 도형으로 재구성했습니다. WEF 원본 그림을 복제하지 않았습니다.
+- 이 그림은 개념적 모델입니다. LLM 하나가 세 기능을 모두 직접 실행한다는 뜻은 아닙니다.
+- 출처: WEF, Navigating the AI Frontier, 2024, p.7, https://reports.weforum.org/docs/WEF_Navigating_the_AI_Frontier_2024.pdf . 확인 2026-09-26.
 -->
 
 ---
 layout: concept
-title: Self-Attention은 각 Token의 문맥적 표현을 다시 계산한다
+title: 켄자쿠로 구분해 보는 LLM·하네스·에이전트
 ---
-
-<div class="ts-title-row">
-  <h1>Self-Attention은 각 Token의 문맥적 표현을 다시 계산한다</h1>
-  <span class="ts-slide-index">REPRESENTATION · 03</span>
-</div>
-
-$$
-\operatorname{Attention}(Q,K,V)
-= \operatorname{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}\right)V
-$$
-
-<div class="ts-contrast-grid">
-  <AttentionHeatmap />
-  <div class="ts-contrast-panel">
-    <h3>Attention의 산출물</h3>
-    <p>다른 위치의 Value를 가중 결합한 새 contextual representation</p>
-    <TakeawayBox>확률 문장이나 사실 판정이 아니다.</TakeawayBox>
-  </div>
-</div>
-
-<SourceFooter source="Vaswani et al. 2017 §3.2.1" status="PRIMARY SOURCE" />
-
+<div class="ts-title-row"><h1>켄자쿠로 구분해 보는 LLM·하네스·에이전트</h1><span class="ts-slide-index">05</span></div>
+<p class="ts-subtitle">『주술회전』의 켄자쿠는 다른 사람의 몸을 차지하는 설정이 있습니다. 이 설정을 시스템의 경계를 나눠 보는 비유로만 사용합니다.</p>
+<div class="ts-agent-loop mt-5"><div class="ts-agent-boundary-label">비유 전체 · 켄자쿠와 몸</div>
+<div class="ts-card-grid cols-3">
+<ConceptCard label="뇌 상태의 켄자쿠" title="LLM" accent="cyan">입력을 바탕으로 다음 출력을 선택하는 모델</ConceptCard>
+<ConceptCard label="사용할 수 있는 몸" title="Harness">몸이 제공하는 능력·제약 ↔ 도구·권한·실행 환경</ConceptCard>
+<ConceptCard label="몸을 얻은 켄자쿠" title="Agent" accent="amber">모델과 실행 환경이 결합해 외부에 작용하는 시스템</ConceptCard>
+</div></div>
+<TakeawayBox tone="amber">비유의 한계: 몸과 모델의 관계는 실제 소프트웨어 구조와 같지 않으며, 에이전트의 능력은 모델·도구·권한 설계가 함께 결정합니다.</TakeawayBox>
+<SourceFooter source="켄자쿠 설정 · 작품 공식 캐릭터 소개" status="확인 2026-09-26" />
 <!--
-- 핵심 문장: Self-Attention은 Token 사이의 관계를 이용해 각 위치의 representation을 갱신한다.
-- 연결 문장: 앞 슬라이드의 전체 경로에서 Self-Attention 단계만 확대한다.
-- 오해 경고: Attention weight가 사실의 중요도, 설명의 타당성, 인과성을 보장하지 않는다.
-- 설명: Query와 Key의 호환도를 계산해 Softmax weight를 만들고, 그 weight로 Value를 가중 합한다. 오른쪽 Heatmap은 구조를 보여주기 위한 합성 예시이며 실제 모델의 Head를 측정한 값이 아니다. 이 연산의 산출물은 다음 층으로 전달되는 문맥적 표현이고, 아직 vocabulary에 대한 다음 Token 분포가 아니다.
-- 출처/근거: Vaswani et al., ‘Attention Is All You Need’, 2017, §3.2 Attention, §3.2.1 Scaled Dot-Product Attention, Equation (1), https://arxiv.org/abs/1706.03762. 확인 2026-07-23.
--->
-
----
-layout: concept
-title: Causal Mask는 미래 Token의 정보를 차단한다
----
-
-<div class="ts-title-row">
-  <h1>Causal Mask는 미래 Token의 정보를 차단한다</h1>
-  <span class="ts-slide-index">CAUSALITY · 04</span>
-</div>
-
-<div class="ts-contrast-grid">
-  <CausalMaskDiagram />
-  <div class="ts-contrast-panel">
-    <h3>위치 t에서 볼 수 있는 범위</h3>
-    <p><span class="ts-cyan">현재·과거:</span> x₁ … xₜ</p>
-    <p class="mt-4"><span style="color: var(--ts-red)">미래:</span> xₜ₊₁ … x_T</p>
-    <p class="mt-4 ts-muted">Softmax 전에 미래 위치의 score를 차단해 autoregressive 조건을 유지한다.</p>
-  </div>
-</div>
-
-<TakeawayBox tone="amber">다음 Token을 예측할 때 정답의 미래 Token을 미리 볼 수 없게 한다.</TakeawayBox>
-
-<SourceFooter source="Vaswani et al. 2017 §3.1 · §3.2.3" status="PRIMARY SOURCE" />
-
-<!--
-- 핵심 문장: Decoder의 Causal Mask는 위치 t의 계산이 미래 출력에 의존하지 못하게 한다.
-- 연결 문장: 문맥을 재구성하되, 생성 시점에 허용되는 문맥의 범위에는 방향성이 있다.
-- 오해 경고: Causal Mask라는 이름이 현실 세계의 인과관계를 학습하거나 증명한다는 뜻은 아니다.
-- 설명: Decoder self-attention에서는 t 이후 위치의 attention score를 Softmax 전에 음의 무한대로 보내 연결을 차단한다. 그 결과 위치 t의 예측은 알려진 이전 Token에만 조건화된다. 도식의 삼각형은 접근 가능 범위를 보여주는 구조도이며, Attention weight의 실제 값이나 인과적 영향력을 나타내지 않는다.
-- 출처/근거: Vaswani et al., ‘Attention Is All You Need’, 2017, §3.1 Encoder and Decoder Stacks, §3.2.3 Applications of Attention in our Model, https://arxiv.org/abs/1706.03762. 확인 2026-07-23.
--->
-
----
-layout: concept
-title: 출력층이 다음 Token의 조건부 확률분포를 계산한다
----
-
-<div class="ts-title-row">
-  <h1>출력층이 다음 Token의 조건부 확률분포를 계산한다</h1>
-  <span class="ts-slide-index">NEXT TOKEN · 05</span>
-</div>
-
-$$
-p(x_t \mid x_{\lt t}, c)
-= \left[\operatorname{softmax}(W h_t + b)\right]_{x_t}
-$$
-
-<div class="ts-contrast-grid">
-  <TokenProbabilityBars />
-  <div class="ts-contrast-panel">
-    <h3>출력층의 역할</h3>
-    <p>hₜ → Logit → Softmax → vocabulary 위의 조건부 분포</p>
-    <TakeawayBox>Self-Attention의 산출물과 다음 Token 분포를 구분한다.</TakeawayBox>
-  </div>
-</div>
-
-<SourceFooter source="Vaswani et al. 2017 §3.4 · Brown et al. 2020 §2.1" status="MODEL OUTPUT" />
-
-<!--
-- 핵심 문장: 다음 Token 분포는 Self-Attention 뒤의 출력층에서 계산된다.
-- 연결 문장: Causal Mask가 허용한 과거 문맥으로 hₜ를 만들었으니, 이제 vocabulary 위의 선택 분포로 바꾼다.
-- 오해 경고: 화면의 bar는 형태 설명을 위한 합성 분포이며 실제 모델 수치가 아니다.
-- 설명: 선형 변환 W hₜ+b는 vocabulary 각 항목의 Logit을 만든다. Softmax는 이를 합이 1인 분포로 바꾸고, 디코딩 규칙이 그중 다음 Token을 선택한다. 식의 왼쪽은 특정 Token xₜ가 선택될 조건부 확률이며, 전체 Softmax vector에서 해당 Token 성분을 읽은 것이다.
-- 출처/근거: Vaswani et al., ‘Attention Is All You Need’, 2017, §3.4 Embeddings and Softmax. Brown et al., ‘Language Models are Few-Shot Learners’, 2020, §2.1 Model and Architectures. https://arxiv.org/abs/1706.03762, https://arxiv.org/abs/2005.14165. 확인 2026-07-23.
--->
-
----
-layout: process-flow
-title: 하나의 응답은 조건부 Token 선택의 연쇄다
----
-
-<div class="ts-title-row">
-  <h1>하나의 응답은 조건부 Token 선택의 연쇄다</h1>
-  <span class="ts-slide-index">AUTOREGRESSIVE · 06</span>
-</div>
-
-<TokenChain />
-
-$$
-P(x_{1:T} \mid c)
-= \prod_{t=1}^{T} P(x_t \mid x_{\lt t}, c)
-$$
-
-<TakeawayBox>새 Token이 Context에 다시 들어가고, 같은 다음 Token 계산이 반복된다.</TakeawayBox>
-
-<SourceFooter source="Vaswani et al. 2017 §3 · Brown et al. 2020 §2.1" status="AUTOREGRESSIVE" />
-
-<!--
-- 핵심 문장: 응답 전체는 한 번에 꺼내는 문장이 아니라 다음 Token 선택을 반복한 결과다.
-- 연결 문장: 앞 슬라이드의 한 단계 조건부 분포를 시간축으로 펼친다.
-- 오해 경고: 곱으로 표현된 sequence likelihood가 문장 전체의 사실성이나 작업 성공 확률을 뜻하지 않는다.
-- 설명: 첫 Token을 고르면 그 Token이 다시 Context에 포함된다. 다음 단계는 c와 x₁을 조건으로 x₂를 고르고, 이 과정을 종료 Token 또는 길이 한도까지 반복한다. 수식은 autoregressive factorization을 나타낸다. 디코딩 방식에 따라 높은 확률 Token만 고르지 않을 수도 있지만 조건부 생성 구조는 유지된다.
-- 출처/근거: Vaswani et al., ‘Attention Is All You Need’, 2017, §3 Model Architecture의 autoregressive decoder 설명. Brown et al., ‘Language Models are Few-Shot Learners’, 2020, §2.1 Model and Architectures. 확인 2026-07-23.
--->
-
----
-layout: concept
-title: 높은 Token 확률은 높은 진실 확률이 아니다
----
-
-<div class="ts-title-row">
-  <h1>높은 Token 확률은 높은 진실 확률이 아니다</h1>
-  <span class="ts-slide-index">SEMANTIC LIMIT · 07</span>
-</div>
-
-$$
-P(\text{next token}\mid\text{context})
-\neq P(\text{statement is true})
-$$
-
-<div class="ts-contrast-grid">
-  <div class="ts-contrast-panel">
-    <h3><span class="ts-cyan">모델이 계산하는 것</span></h3>
-    <p>주어진 Context에서 다음에 올 Token의 조건부 분포</p>
-  </div>
-  <div class="ts-contrast-panel" style="border-color: rgba(240,113,120,.5)">
-    <h3><span style="color: var(--ts-red)">별도 검증이 필요한 것</span></h3>
-    <p>문장의 사실성, 파일 변경 여부, 테스트 통과, 외부 환경의 실제 상태</p>
-  </div>
-</div>
-
-<SourceFooter source="Brown et al. 2020 §5 · Anthropic 2026 ‘Outcome’" status="INFERENCE + PRIMARY SOURCES" />
-
-<!--
-- 핵심 문장: 언어적으로 자연스러운 다음 Token과 외부 세계에서 참인 주장은 서로 다른 판정 대상이다.
-- 연결 문장: autoregressive likelihood를 문장의 진실 확률로 오해하지 않도록 경계를 세운다.
-- 오해 경고: Softmax 수치가 높다고 답변의 사실성, 안전성, 작업 완료 가능성이 높다고 해석하지 않는다.
-- 설명: 모델은 주어진 Context에서 이어질 Token 분포를 계산한다. 문장 전체가 외부 사실과 일치하는지는 데이터베이스, 파일, 센서, 테스트 같은 별도 근거를 확인해야 한다. 이 부등식은 두 확률이 수학적으로 동일한 random variable이 아니라는 개념적 구분이며, 두 값 사이의 상관을 정량적으로 부정하는 실험 결과는 아니다.
-- 출처/근거: Brown et al., ‘Language Models are Few-Shot Learners’, 2020, §5 Limitations. Anthropic, ‘Demystifying evals for AI agents’, 2026, ‘The structure of an evaluation’의 outcome 정의, https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents. 확인 2026-07-23.
+- 켄자쿠의 설정은 개념을 구분하기 위한 짧은 예시로만 사용합니다. 이후 문단이나 사례로 주술 설정을 확장하지 않습니다.
+- 독자가 캐릭터를 모를 수 있으므로 ‘뇌를 옮겨 다른 몸의 능력을 쓰는 인물’이라는 전제를 먼저 설명합니다. 저작권 확인이 없는 원본 캐릭터 이미지는 삽입하지 않고 자체 도형을 사용합니다.
+- 원설정 확인: https://jujutsukaisen.jp/character/ . 2026-09-26.
 -->
 
 ---
@@ -247,7 +125,7 @@ title: 텍스트 생성과 작업 수행은 다른 문제다
 
 <div class="ts-title-row">
   <h1>텍스트 생성과 작업 수행은 다른 문제다</h1>
-  <span class="ts-slide-index">MODEL → WORLD · 08</span>
+  <span class="ts-slide-index">06</span>
 </div>
 
 <div class="ts-contrast-grid">
@@ -275,6 +153,7 @@ title: 텍스트 생성과 작업 수행은 다른 문제다
 - 출처/근거: Brown et al., ‘Language Models are Few-Shot Learners’, 2020, §5 Limitations. Anthropic, ‘Demystifying evals for AI agents’, 2026, ‘The structure of an evaluation’의 outcome 정의. 확인 2026-07-23.
 -->
 
+
 ---
 layout: process-flow
 title: Tool Use는 구조화된 출력을 외부 행동과 연결한다
@@ -282,7 +161,7 @@ title: Tool Use는 구조화된 출력을 외부 행동과 연결한다
 
 <div class="ts-title-row">
   <h1>Tool Use는 구조화된 출력을 외부 행동과 연결한다</h1>
-  <span class="ts-slide-index">TOOL BOUNDARY · 09</span>
+  <span class="ts-slide-index">07</span>
 </div>
 
 <div class="ts-agent-loop">
@@ -317,6 +196,31 @@ title: Tool Use는 구조화된 출력을 외부 행동과 연결한다
 - 출처/근거: Anthropic, ‘Building Effective Agents’, 2024, ‘Building block: The augmented LLM’, https://www.anthropic.com/engineering/building-effective-agents. Jiacheng Liu et al., ‘Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems’, arXiv:2604.14228v1, 2026, §3.1 ‘Design Questions and Running Example’, p.6. PDF 확인 2026-07-23. 후자는 Claude Code v2.1.88 공개 코드의 역분석 Snapshot이며 Anthropic 공식 아키텍처 문서로 취급하지 않는다.
 -->
 
+
+---
+layout: concept
+title: 도구 요청과 실행 결과는 호출 ID로 연결됩니다
+---
+<div class="ts-title-row"><h1>도구 요청과 실행 결과는 호출 ID로 연결됩니다</h1><span class="ts-slide-index">08</span></div>
+<div class="ts-contrast-grid"><div class="ts-contrast-panel">
+<h3>OpenAI Responses API · 개념 축약</h3>
+<pre class="ts-code-block">{"type":"function_call","call_id":"call_1",
+ "name":"run_test","arguments":"{\"suite\":\"order\"}"}
+{"type":"function_call_output","call_id":"call_1",
+ "output":"FAIL: 10000 != 9900"}</pre></div>
+<div class="ts-contrast-panel"><h3>Anthropic Messages API · 개념 축약</h3>
+<pre class="ts-code-block">{"type":"tool_use","id":"toolu_1",
+ "name":"run_test","input":{"suite":"order"}}
+{"type":"tool_result","tool_use_id":"toolu_1",
+ "content":"FAIL: 10000 != 9900"}</pre></div></div>
+<TakeawayBox>서로 다른 API의 예시입니다. Claude Code·Hermes 내부 전송을 그대로 보여주는 공통 표준은 아닙니다.</TakeawayBox>
+<SourceFooter source="OpenAI function calling · Anthropic tool use" status="확인 2026-09-26" />
+<!--
+- 각 요청은 모델이 생성하지만, 실행은 애플리케이션의 도구 구현이 담당합니다. 두 형식은 동일한 개념을 다른 API가 표현한 축약 예시이며 실제 요청 전문이 아닙니다.
+- Hermes의 정규화된 로그 표기(<tool_call>/<tool_response>)도 실제 공급자 wire format과 구분합니다.
+- 출처: OpenAI https://developers.openai.com/api/docs/guides/function-calling ; Anthropic https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview ; Hermes https://hermes-agent.nousresearch.com/docs/developer-guide/adding-providers . 확인 2026-09-26.
+-->
+
 ---
 layout: split-compare
 title: 경로를 누가 결정하는지가 실행 형태를 가른다
@@ -324,7 +228,7 @@ title: 경로를 누가 결정하는지가 실행 형태를 가른다
 
 <div class="ts-title-row">
   <h1>경로를 누가 결정하는지가 실행 형태를 가른다</h1>
-  <span class="ts-slide-index">EXECUTION MODES · 10</span>
+  <span class="ts-slide-index">09</span>
 </div>
 
 <div class="ts-card-grid">
@@ -346,6 +250,7 @@ title: 경로를 누가 결정하는지가 실행 형태를 가른다
 - 출처/근거: Anthropic, ‘Building Effective Agents’, 2024, ‘What are agents?’ 및 ‘Workflows and agents’, https://www.anthropic.com/engineering/building-effective-agents. docs/SEMINAR_CONTEXT.md, ‘용어 정의’. 확인 2026-07-23.
 -->
 
+
 ---
 layout: process-flow
 title: Agent는 결과를 다시 관찰하며 행동을 바꾼다
@@ -353,7 +258,7 @@ title: Agent는 결과를 다시 관찰하며 행동을 바꾼다
 
 <div class="ts-title-row">
   <h1>Agent는 결과를 다시 관찰하며 행동을 바꾼다</h1>
-  <span class="ts-slide-index">AGENT LOOP · 11</span>
+  <span class="ts-slide-index">10</span>
 </div>
 
 <AgentLoopDiagram />
@@ -370,28 +275,42 @@ title: Agent는 결과를 다시 관찰하며 행동을 바꾼다
 - 출처/근거: Anthropic, ‘Building Effective Agents’, 2024, ‘Agents’와 ‘Evaluator-optimizer’. docs/SEMINAR_CONTEXT.md, ‘Agent Loop’, ‘엔지니어링 폐루프 비유’. 확인 2026-07-23.
 -->
 
+
 ---
-layout: process-flow
-title: 지금 이 발표자료 수정도 Agent 작업이다
+layout: evidence
+title: 합성 버그를 실제로 실행하면 테스트가 실패합니다
 ---
-
-<div class="ts-title-row">
-  <h1>지금 이 발표자료 수정도 Agent 작업이다</h1>
-  <span class="ts-slide-index">LIVE CASE · 12</span>
-</div>
-
-<CodexSlidevFlow />
-
-<TakeawayBox>요청을 그대로 출력하지 않고, 저장소 상태와 렌더링 결과를 관찰하며 다음 행동을 바꾼다.</TakeawayBox>
-
-<SourceFooter source="현재 Codex + Slidev 작업 Trace · 합성 업무 데이터만 사용" status="LIVE SYSTEM EXAMPLE" />
-
+<div class="ts-title-row"><h1>합성 버그를 실제로 실행하면 테스트가 실패합니다</h1><span class="ts-slide-index">11</span></div>
+<div class="ts-contrast-grid"><div class="ts-contrast-panel"><h3>입력과 도구 호출</h3><pre class="ts-code-block">rg -n 'tax_rate|discount_rate' order.py
+python -m unittest -v</pre><p class="mt-3">가격 10,000 · 할인 10% · 세금 10%</p></div>
+<div class="ts-contrast-panel"><h3>관찰된 결과</h3><pre class="ts-code-block">test_discount_first ... FAIL
+test_no_discount ... ok
+AssertionError: 10000 != 9900</pre><p class="mt-3">기존 구현은 할인액에 세금을 반영하지 않았습니다.</p></div></div>
+<TakeawayBox tone="amber">실패 기록을 읽어야 다음 수정 경로가 정해집니다. 코드는 합성 예제이고 출력은 해당 예제를 실제 실행한 결과입니다.</TakeawayBox>
+<SourceFooter source="합성 재현 코드 · demos/edge-build-agent/example" status="확인 2026-09-26" />
 <!--
-- 핵심 문장: 지금 수행 중인 발표자료 편집은 모델 호출, Tool, 환경 관찰, 검증이 연결된 실제 Agent 사례다.
-- 연결 문장: 추상적인 Agent Loop를 현재 화면 뒤에서 진행되는 구체적 작업으로 바꾼다.
-- 오해 경고: Slidev MCP Tool을 한 번 호출한 사실만으로 Agent인 것이 아니라 조사·편집·렌더·검증을 결과에 따라 반복한다는 점이 핵심이다.
-- 설명: 사용자의 요청을 받은 Codex는 먼저 Git 상태, Canonical Context, 기존 Slide와 디자인 시스템을 조사했다. 이후 Slidev MCP로 Markdown을 수정하고 Hot Reload 결과를 브라우저에서 확인한다. 마지막에는 Build, 프로젝트 Validation, Git Diff와 diff check로 Outcome을 검증한다. 실제 회사 데이터나 비공개 로그는 사용하지 않는다.
-- 출처/근거: 이 세션에서 확인한 Slidev MCP deck info, repository files, 실행될 Build/Validation/Git Diff 결과. 최종 성공 여부는 작업 종료 시점의 검증 결과로 갱신한다. 확인 2026-07-23.
+- 합성 order.py와 unittest를 demos/edge-build-agent/example에 추가했습니다. 첫 명령으로 해당 줄을 찾고 두 번째 명령의 exit code 1과 실패 내용을 관찰합니다.
+- 예제의 기대값은 (10000 × 0.9) × 1.1 = 9900입니다. 이 숫자는 합성 입력이며 실제 경제적 효과가 아닙니다.
+- 도구 기록은 재현 가능하도록 예제와 README에 포함합니다.
+-->
+
+---
+layout: evidence
+title: 작은 수정 뒤 같은 테스트로 결과를 다시 판정합니다
+---
+<div class="ts-title-row"><h1>작은 수정 뒤 같은 테스트로 결과를 다시 판정합니다</h1><span class="ts-slide-index">12</span></div>
+<div class="ts-contrast-grid"><div class="ts-contrast-panel"><h3>수정 · 최소 Diff</h3><pre class="ts-code-block">discounted = price * (1 - discount_rate)
+return round(discounted * (1 + tax_rate))</pre><p class="mt-3">할인 뒤 금액에 세금을 적용합니다.</p></div>
+<div class="ts-contrast-panel"><h3>재검증 · Validator</h3><pre class="ts-code-block">python -m unittest -v
+test_discount_first ... ok
+test_no_discount ... ok
+Ran 2 tests in 0.000s · OK</pre></div></div>
+<TakeawayBox>모델의 “완료했습니다”가 아니라, 파일 변경과 독립된 테스트 결과가 이 작은 작업의 완료 근거입니다.</TakeawayBox>
+<SourceFooter source="합성 재현 코드 · unittest 결과" status="확인 2026-09-26" />
+<!--
+- 실패 단계와 수정 단계는 합성 코드에서 재현한 도구 실행입니다. 자동으로 모델이 이 선택을 했다거나 생산성 이점을 보였다고 주장하지 않습니다.
+- 이전 코드와 수정 코드를 동시에 수록해 발표자가 명령을 직접 재현할 수 있습니다.
+- 만일 테스트 실패나 Python 부재 시 이 정적 Trace를 대체 화면으로 사용합니다.
 -->
 
 ---
@@ -401,7 +320,7 @@ title: Agent는 실행 중 다음 경로를 동적으로 결정한다
 
 <div class="ts-title-row">
   <h1>Agent는 실행 중 다음 경로를 동적으로 결정한다</h1>
-  <span class="ts-slide-index">DYNAMIC CONTROL · 13</span>
+  <span class="ts-slide-index">13</span>
 </div>
 
 <div class="ts-card-grid">
@@ -423,6 +342,29 @@ title: Agent는 실행 중 다음 경로를 동적으로 결정한다
 - 출처/근거: Anthropic, ‘Building Effective Agents’, 2024, ‘What are agents?’ 및 ‘When (and when not) to use agents’, https://www.anthropic.com/engineering/building-effective-agents. docs/SEMINAR_CONTEXT.md, ‘용어 정의’. 확인 2026-07-23.
 -->
 
+
+---
+layout: concept
+title: 최근 보고서는 에이전트 안의 역할도 나눕니다
+---
+<div class="ts-title-row"><h1>최근 보고서는 에이전트 안의 역할도 나눕니다</h1><span class="ts-slide-index">14</span></div>
+<div class="ts-agent-loop"><div class="ts-agent-boundary-label">AI AGENT · WEF 2025 Figure 2 재구성</div><div class="ts-card-grid cols-3">
+<ConceptCard label="Application" title="사용자 경험">목표 입력과 결과 전달</ConceptCard>
+<ConceptCard label="Orchestration" title="흐름 관리" accent="cyan">작업 단계·도구·상태 조정</ConceptCard>
+<ConceptCard label="Reasoning" title="판단">맥락을 해석하고 다음 행동 제안</ConceptCard>
+</div></div>
+<div class="ts-contrast-grid mt-5">
+<div class="ts-contrast-panel"><h3>외부 앱 · MCP</h3><p>앱과 도구의 연결 경계</p></div>
+<div class="ts-contrast-panel"><h3>다른 에이전트 · A2A</h3><p>에이전트 간 상호작용 경계</p></div>
+</div>
+<TakeawayBox>이 세 층은 에이전트 안의 개념적 역할입니다. 특정 제품의 내부 구현 도면은 아닙니다.</TakeawayBox>
+<SourceFooter source="WEF · AI Agents in Action (2025), Fig. 2" status="확인 2026-09-26" />
+<!--
+- WEF 2025 보고서 Figure 2 p.8의 Agent 내부 Application, Orchestration, Reasoning과 외부 앱/다른 Agent의 MCP/A2A 연결을 현재 디자인의 카드로 다시 그렸습니다.
+- MCP와 A2A는 연결을 설명하는 도식 요소로만 언급하고 실제 모든 제품이 이를 사용한다는 뜻이 아닙니다.
+- 출처: WEF, AI Agents in Action: Foundations for Evaluation and Governance, 2025, Figure 2 p.8, https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf . 확인 2026-09-26.
+-->
+
 ---
 layout: concept
 title: Harness는 Agent Loop의 실행 경계를 관리한다
@@ -430,7 +372,7 @@ title: Harness는 Agent Loop의 실행 경계를 관리한다
 
 <div class="ts-title-row">
   <h1>Harness는 Agent Loop의 실행 경계를 관리한다</h1>
-  <span class="ts-slide-index">SYSTEM BOUNDARY · 14</span>
+  <span class="ts-slide-index">15</span>
 </div>
 
 <HarnessBoundaryDiagram />
@@ -447,6 +389,7 @@ title: Harness는 Agent Loop의 실행 경계를 관리한다
 - 출처/근거: Anthropic, ‘Demystifying evals for AI agents’, 2026, ‘The structure of an evaluation’의 agent harness 정의. Anthropic, ‘Effective Harnesses for Long-Running Agents’, 2025, ‘The long-running agent problem’. Jiacheng Liu et al., ‘Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems’, arXiv:2604.14228v1, 2026, Figure 5와 §6, pp.16–18. PDF 확인 2026-07-23. Liu et al.은 Claude Code v2.1.88의 역분석 Snapshot이므로 세 통제 지점은 설계 관점으로 사용하고 세부 구현을 보편화하지 않는다.
 -->
 
+
 ---
 layout: concept
 title: Context, Tool, State, Artifact는 서로 다른 수명주기를 가진다
@@ -454,7 +397,7 @@ title: Context, Tool, State, Artifact는 서로 다른 수명주기를 가진다
 
 <div class="ts-title-row">
   <h1>Context, Tool, State, Artifact는 서로 다른 수명주기를 가진다</h1>
-  <span class="ts-slide-index">EXECUTION ELEMENTS · 15</span>
+  <span class="ts-slide-index">16</span>
 </div>
 
 <div class="ts-card-grid">
@@ -476,6 +419,7 @@ title: Context, Tool, State, Artifact는 서로 다른 수명주기를 가진다
 - 출처/근거: Anthropic, ‘Effective Harnesses for Long-Running Agents’, 2025, ‘The long-running agent problem’과 environment management. Jiacheng Liu et al., ‘Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems’, arXiv:2604.14228v1, 2026, §7 ‘Context Construction and Memory’, pp.18–20; §9 ‘Session Persistence and Recovery’, pp.23–24. PDF 확인 2026-07-23. 구현 세부는 v2.1.88 Snapshot에만 유효하다.
 -->
 
+
 ---
 layout: split-compare
 title: 같은 모델도 Harness에 따라 다른 Agent가 된다
@@ -483,7 +427,7 @@ title: 같은 모델도 Harness에 따라 다른 Agent가 된다
 
 <div class="ts-title-row">
   <h1>같은 모델도 Harness에 따라 다른 Agent가 된다</h1>
-  <span class="ts-slide-index">HARNESS EFFECT · 16</span>
+  <span class="ts-slide-index">17</span>
 </div>
 
 <div class="ts-contrast-grid">
@@ -515,6 +459,7 @@ title: 같은 모델도 Harness에 따라 다른 Agent가 된다
 - 출처/근거: Anthropic, ‘Demystifying evals for AI agents’, 2026, agent harness 정의. Anthropic, ‘Effective Harnesses for Long-Running Agents’, 2025. Jiacheng Liu et al., ‘Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems’, arXiv:2604.14228v1, 2026, Figure 5와 §6, pp.16–18. PDF 확인 2026-07-23. 세부 구현은 v2.1.88 Snapshot이고 비교축만 일반 설계 관점으로 사용한다.
 -->
 
+
 ---
 layout: concept
 title: 할 수 있음과 해도 됨은 다른 경계다
@@ -522,7 +467,7 @@ title: 할 수 있음과 해도 됨은 다른 경계다
 
 <div class="ts-title-row">
   <h1>할 수 있음과 해도 됨은 다른 경계다</h1>
-  <span class="ts-slide-index">CONTROL ELEMENTS · 17</span>
+  <span class="ts-slide-index">18</span>
 </div>
 
 <div class="ts-control-grid">
@@ -556,6 +501,7 @@ title: 할 수 있음과 해도 됨은 다른 경계다
 - 출처/근거: Claude Code Docs, ‘Configure permissions’, https://code.claude.com/docs/en/permissions; ‘Sandboxing’, https://code.claude.com/docs/en/sandboxing. Jiacheng Liu et al., ‘Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems’, arXiv:2604.14228v1, 2026, §5.4 ‘Shell Sandboxing’, p.15. PDF 확인 2026-07-23. 공식 문서를 우선 근거로 사용하고 Liu et al.은 v2.1.88 구현 Snapshot을 보조 근거로 사용한다.
 -->
 
+
 ---
 layout: split-compare
 title: 완료는 마지막 문장이 아니라 Outcome이 증명한다
@@ -563,7 +509,7 @@ title: 완료는 마지막 문장이 아니라 Outcome이 증명한다
 
 <div class="ts-title-row">
   <h1>완료는 마지막 문장이 아니라 Outcome이 증명한다</h1>
-  <span class="ts-slide-index">VALIDATOR · 18</span>
+  <span class="ts-slide-index">19</span>
 </div>
 
 <div class="ts-outcome-grid">
@@ -596,6 +542,7 @@ title: 완료는 마지막 문장이 아니라 Outcome이 증명한다
 - 출처/근거: Anthropic, ‘Demystifying evals for AI agents’, 2026, ‘The structure of an evaluation’의 task, grader, transcript, outcome 정의, https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents. Jiacheng Liu et al., ‘Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems’, arXiv:2604.14228v1, 2026, §4.5 ‘Stop Conditions’, p.12. PDF 확인 2026-07-23. Stop Condition 목록은 v2.1.88 Snapshot이고, Stop과 Done의 구분은 이 세미나의 시스템 설계 주장이다.
 -->
 
+
 ---
 layout: evidence
 title: Trace는 실패 원인을 시간순으로 재구성한다
@@ -603,7 +550,7 @@ title: Trace는 실패 원인을 시간순으로 재구성한다
 
 <div class="ts-title-row">
   <h1>Trace는 실패 원인을 시간순으로 재구성한다</h1>
-  <span class="ts-slide-index">TRACE · 19</span>
+  <span class="ts-slide-index">20</span>
 </div>
 
 <div class="ts-trace-timeline">
@@ -630,6 +577,43 @@ title: Trace는 실패 원인을 시간순으로 재구성한다
 - 출처/근거: Anthropic, ‘Demystifying evals for AI agents’, 2026, ‘The structure of an evaluation’과 ‘Check the transcripts’, https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents. docs/SEMINAR_CONTEXT.md, ‘Trace’, ‘보안 제약’. 확인 2026-07-23.
 -->
 
+
+---
+layout: concept
+title: 코딩 에이전트는 같은 작업도 다른 접점으로 만납니다
+---
+<div class="ts-title-row"><h1>코딩 에이전트는 같은 작업도 다른 접점으로 만납니다</h1><span class="ts-slide-index">21</span></div>
+<div class="ts-card-grid cols-3">
+<ConceptCard label="Anthropic" title="Claude Code" accent="cyan">코드베이스를 읽고 파일·명령 도구로 작업하는 코딩 에이전트</ConceptCard>
+<ConceptCard label="OpenAI" title="Codex" accent="cyan">저장소 작업을 수행하고 변경·검증 결과를 제시하는 코딩 에이전트</ConceptCard>
+<ConceptCard label="OpenCode" title="OpenCode">오픈 소스 코딩 에이전트</ConceptCard>
+</div>
+<div class="ts-contrast-grid mt-5"><div class="ts-contrast-panel"><h3>Pi</h3><p>확장·조합이 쉬운 작은 코딩 하네스</p></div><div class="ts-contrast-panel"><h3>Oh my pi</h3><p>Pi 계열에서 확장된 별도 코딩 에이전트 프로젝트</p></div></div>
+<TakeawayBox>제품명보다 작업 위치·허용 도구·권한·검증 방식이 실제 사용 경험을 좌우합니다.</TakeawayBox>
+<SourceFooter source="Claude Code · Codex · OpenCode · Pi · Oh my pi" status="확인 2026-09-26" />
+<!--
+- 이름을 한 제품의 단순 대체재처럼 줄 세우지 않습니다. 기능과 배포 방식은 빠르게 바뀌므로 발표 직전 공식 문서를 다시 확인합니다.
+- 출처: https://code.claude.com/docs/en/features-overview ; https://developers.openai.com/codex ; https://opencode.ai/docs ; https://pi.dev/ ; https://github.com/can1357/oh-my-pi . 확인 2026-09-26.
+-->
+
+---
+layout: concept
+title: Hermes와 OpenClaw는 사용 환경의 폭을 보여줍니다
+---
+<div class="ts-title-row"><h1>Hermes와 OpenClaw는 사용 환경의 폭을 보여줍니다</h1><span class="ts-slide-index">22</span></div>
+<div class="ts-contrast-grid"><div class="ts-contrast-panel">
+<h3>Hermes Agent</h3><p>모델 공급자를 연결해 도구를 사용하는 에이전트입니다. 로컬 모델 연결 시에도 도구 권한과 외부 통신은 별도로 설계해야 합니다.</p>
+<div class="ts-evidence-strip"><EvidenceTag>모델 연결</EvidenceTag><EvidenceTag>도구</EvidenceTag><EvidenceTag>실행 기록</EvidenceTag></div></div>
+<div class="ts-contrast-panel"><h3>OpenClaw</h3><p>메시지 채널과 Gateway를 중심으로 에이전트·도구·세션을 연결합니다. 채널 접근 권한과 작업 권한을 함께 봅니다.</p>
+<div class="ts-evidence-strip"><EvidenceTag>채널</EvidenceTag><EvidenceTag>Gateway</EvidenceTag><EvidenceTag>승인</EvidenceTag></div></div></div>
+<TakeawayBox>‘로컬’은 모델 실행 위치를 뜻할 수 있지만, 사용한 도구·검색·연결 서비스까지 모두 로컬이라는 뜻은 아닙니다.</TakeawayBox>
+<SourceFooter source="Hermes Agent · OpenClaw 공식 문서" status="확인 2026-09-26" />
+<!--
+- Hermes는 사용자가 진행한 Local LLM 사례와 연결합니다. 실제 공급자·도구 설정마다 데이터 경로가 달라지며 ‘항상 로컬 전용’이라고 말하지 않습니다.
+- OpenClaw 역시 Gateway와 채널 연결이라는 사용 맥락을 중심으로 소개합니다.
+- 출처: https://hermes-agent.nousresearch.com/docs/integrations/providers ; https://docs.openclaw.ai/concepts/features ; https://docs.openclaw.ai/gateway/protocol . 확인 2026-09-26.
+-->
+
 ---
 layout: concept
 title: 유연성이 필요 없으면 Agent를 쓰지 않는다
@@ -637,7 +621,7 @@ title: 유연성이 필요 없으면 Agent를 쓰지 않는다
 
 <div class="ts-title-row">
   <h1>유연성이 필요 없으면 Agent를 쓰지 않는다</h1>
-  <span class="ts-slide-index">DECISION · 20</span>
+  <span class="ts-slide-index">23</span>
 </div>
 
 <div class="ts-contrast-grid">
@@ -680,6 +664,7 @@ title: 유연성이 필요 없으면 Agent를 쓰지 않는다
 - 출처/근거: Anthropic, ‘Building Effective Agents’, 2024, ‘When (and when not) to use agents’, https://www.anthropic.com/engineering/building-effective-agents. docs/SEMINAR_CONTEXT.md, ‘세미나 이후 사용 전환 전략’, ‘성공 기준’. 확인 2026-07-23.
 -->
 
+
 ---
 layout: concept
 title: 코드를 다 읽기 어려워질수록 Audit 가능한 창구를 먼저 만든다
@@ -687,7 +672,7 @@ title: 코드를 다 읽기 어려워질수록 Audit 가능한 창구를 먼저 
 
 <div class="ts-title-row">
   <h1>코드를 다 읽기 어려워질수록 Audit 가능한 창구를 먼저 만든다</h1>
-  <span class="ts-slide-index">PRACTITIONER INSIGHT · 21</span>
+  <span class="ts-slide-index">24</span>
 </div>
 
 <div class="ts-card-grid">
@@ -709,6 +694,23 @@ title: 코드를 다 읽기 어려워질수록 Audit 가능한 창구를 먼저 
 - 출처/근거: Chanta Minero 선생님의 Agent Coding 실무 관찰에서 도출한 잠정 설계 원칙이며 정량적으로 검증된 보편 법칙은 아니다. Anthropic, ‘Demystifying evals for AI agents’, 2026의 Transcript·Outcome·Grader 구분과 Jiacheng Liu et al., ‘Dive into Claude Code’, 2026, §9의 Append-oriented Transcript를 보조 근거로 사용한다. 변경이 작아 전수 리뷰가 충분하거나 Audit 신호가 중대한 결함을 반복적으로 놓치면 이 원칙의 적용 범위를 축소한다. 첫 실제 Pilot과 전체 리허설에서 재검토한다.
 -->
 
+
+---
+layout: concept
+title: 이 블로그 글은 두 경로로 작성·게시됐습니다
+---
+<div class="ts-title-row"><h1>이 블로그 글은 두 경로로 작성·게시됐습니다</h1><span class="ts-slide-index">25</span></div>
+<div class="ts-contrast-grid">
+<div class="ts-contrast-panel"><h3>경로 A · 로컬 모델 + Hermes</h3><p>글 초안 → 로컬 LLM → Hermes의 도구 실행 → 파일 검토·수정</p><div class="ts-evidence-strip"><EvidenceTag>모델 설정</EvidenceTag><EvidenceTag>파일 권한</EvidenceTag><EvidenceTag>검토</EvidenceTag></div></div>
+<div class="ts-contrast-panel"><h3>경로 B · GPT + GitHub + Vercel</h3><p>요청 → GitHub 연결 권한 → 저장소 수정·커밋 → Vercel 빌드 → 웹에서 확인</p><div class="ts-evidence-strip"><EvidenceTag>연결 범위</EvidenceTag><EvidenceTag>main 변경</EvidenceTag><EvidenceTag>배포 확인</EvidenceTag></div></div></div>
+<TakeawayBox>두 경로에서 모델·도구·저장소·배포 플랫폼의 역할을 구분해야 변경의 주체와 검증 지점을 알 수 있습니다.</TakeawayBox>
+<SourceFooter source="블로그 · AI 에이전트와 하네스" status="확인 2026-09-26" />
+<!--
+- 블로그 ‘AI 에이전트와 하네스: 처음부터 설명하기’에 소개한 실제 작성 경로를 발표용으로 압축했습니다. 개별 도구의 내부 명령/권한 설정은 사용자 환경에 따라 다릅니다.
+- GitHub 연결 사용자는 앱 인증, 저장소 범위와 쓰기 권한을 확인하고 대상 브랜치 수정·배포 결과를 점검합니다. 로그인 정보나 토큰을 슬라이드에 넣지 않습니다.
+- 출처: https://blog29.vercel.app/blog/ai-agent-harness ; GitHub/Vercel 연결은 이 발표의 사례. 확인 2026-09-26.
+-->
+
 ---
 layout: process-flow
 title: 파일 정리는 삭제보다 정리안과 미리보기부터 맡긴다
@@ -716,7 +718,7 @@ title: 파일 정리는 삭제보다 정리안과 미리보기부터 맡긴다
 
 <div class="ts-title-row">
   <h1>파일 정리는 삭제보다 정리안과 미리보기부터 맡긴다</h1>
-  <span class="ts-slide-index">EVERYDAY CASE · 22</span>
+  <span class="ts-slide-index">26</span>
 </div>
 
 <div class="ts-agent-loop">
@@ -751,6 +753,7 @@ title: 파일 정리는 삭제보다 정리안과 미리보기부터 맡긴다
 - 출처/근거: 사용자 요청을 바탕으로 구성한 합성 시나리오. Anthropic, ‘Building Effective Agents’, 2024, ‘When (and when not) to use agents’의 명확한 성공 기준과 피드백 구조를 적용했다. 특정 제품의 기능·효과를 보장하는 사례가 아니며 2026-07-23 현재 이 세미나의 적용 예시다.
 -->
 
+
 ---
 layout: process-flow
 title: 여러 자료는 요약보다 근거가 남는 비교표로 맡긴다
@@ -758,7 +761,7 @@ title: 여러 자료는 요약보다 근거가 남는 비교표로 맡긴다
 
 <div class="ts-title-row">
   <h1>여러 자료는 요약보다 근거가 남는 비교표로 맡긴다</h1>
-  <span class="ts-slide-index">EVERYDAY CASE · 23</span>
+  <span class="ts-slide-index">27</span>
 </div>
 
 <div class="ts-agent-loop">
@@ -793,6 +796,7 @@ title: 여러 자료는 요약보다 근거가 남는 비교표로 맡긴다
 - 출처/근거: 이번 세션의 ‘Dive into Claude Code.pdf’ 조사→근거 선별→Slidev 반영 과정을 일반화한 합성 시나리오. 검증되지 않은 생산성 수치는 사용하지 않는다. 적용 판단은 자료 형식과 사용 가능한 PDF·문서 Tool에 따라 달라지며 2026-07-23 기준이다.
 -->
 
+
 ---
 layout: process-flow
 title: 반복되는 표 작업은 원본을 보존한 복사본으로 맡긴다
@@ -800,7 +804,7 @@ title: 반복되는 표 작업은 원본을 보존한 복사본으로 맡긴다
 
 <div class="ts-title-row">
   <h1>반복되는 표 작업은 원본을 보존한 복사본으로 맡긴다</h1>
-  <span class="ts-slide-index">EVERYDAY CASE · 24</span>
+  <span class="ts-slide-index">28</span>
 </div>
 
 <div class="ts-agent-loop">
@@ -835,6 +839,7 @@ title: 반복되는 표 작업은 원본을 보존한 복사본으로 맡긴다
 - 출처/근거: 합성 CSV·XLSX를 가정한 적용 시나리오이며 실제 업무 데이터와 성과 수치를 사용하지 않는다. docs/SEMINAR_CONTEXT.md의 결정론적 Validator와 Script·Workflow 대안 원칙을 적용했다. 유효성은 데이터 형식과 Validator 정의가 유지되는 동안에만 성립한다.
 -->
 
+
 ---
 layout: process-flow
 title: 검색과 계획은 맡기되 예약·결제는 사람이 승인한다
@@ -842,7 +847,7 @@ title: 검색과 계획은 맡기되 예약·결제는 사람이 승인한다
 
 <div class="ts-title-row">
   <h1>검색과 계획은 맡기되 예약·결제는 사람이 승인한다</h1>
-  <span class="ts-slide-index">EVERYDAY CASE · 25</span>
+  <span class="ts-slide-index">29</span>
 </div>
 
 <div class="ts-agent-loop">
@@ -877,6 +882,7 @@ title: 검색과 계획은 맡기되 예약·결제는 사람이 승인한다
 - 출처/근거: 일반 생활 계획을 가정한 합성 시나리오. 가격·일정·규정은 시점에 따라 변하므로 실제 사용 시 현재 원출처 확인이 필요하다. Agent가 더 좋은 선택을 보장한다는 주장은 하지 않으며, 유효기간은 사용자가 최종 확인하는 시점까지다.
 -->
 
+
 ---
 layout: split-compare
 title: 첫 Agent 요청에는 범위·금지·검증·중단 조건을 함께 쓴다
@@ -884,7 +890,7 @@ title: 첫 Agent 요청에는 범위·금지·검증·중단 조건을 함께 �
 
 <div class="ts-title-row">
   <h1>첫 Agent 요청에는 범위·금지·검증·중단 조건을 함께 쓴다</h1>
-  <span class="ts-slide-index">STARTER CONTRACT · 26</span>
+  <span class="ts-slide-index">30</span>
 </div>
 
 <div class="ts-contrast-grid">
@@ -915,3 +921,4 @@ title: 첫 Agent 요청에는 범위·금지·검증·중단 조건을 함께 �
 - 설명: 목적과 입력 범위를 먼저 쓰고, 허용 행동과 금지 행동을 분리한다. 산출물의 파일명과 형식을 정하고, 행 수·출처·Build 같은 Validator를 지정한다. 필수 정보가 없거나 범위 밖 행동이 필요할 때는 질문하거나 멈추도록 한다. 첫 적용은 작은 복사본, 되돌릴 수 있는 변경, 관찰 가능한 Trace와 독립 Validator가 있는 작업이 적합하다.
 - 출처/근거: docs/SEMINAR_CONTEXT.md의 ‘Agent Task Contract’, ‘안전 원칙’과 본 덱 14–20번의 Harness 요소를 청중용 Template으로 재구성했다. 합성 Template이며 특정 Agent 제품이 모든 항목을 기술적으로 강제한다고 주장하지 않는다. 실제 강제 가능 범위는 사용 중인 Tool과 Permission 설정을 확인해야 한다.
 -->
+

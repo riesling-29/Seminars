@@ -2,7 +2,7 @@
 
 ## 상태와 범위
 
-**확인된 사실:** 현재 Slidev 덱은 `default` Theme을 사용하며 26장이다. 공통 스타일은 `style.css`, `styles/components.css`, 전용 Layout과 Vue Component로 분리되어 있다.
+**확인된 사실:** 2026-09-26 웹 슬라이드 30장 초안은 `default` Theme과 기존 Technical Systems Editorial 디자인을 유지한다. 아래 원래 26장 설명은 2026-07-23 설계 이력이다. 공통 스타일은 `style.css`, `styles/components.css`, 전용 Layout과 Vue Component로 분리되어 있다.
 
 **설계 결정:** 28장 확장 Storyboard 중 모델 기초→행동→Harness를 연결하는 20장 이론 경로, 1장 Audit 원칙과 일반 청중이 자신의 첫 작업을 고르는 5장 적용 사례를 구현한다. 기존 8장 Prototype의 Visual Language를 유지하고, 중복 슬라이드는 삭제하지 않고 새 논리 순서에 통합한다.
 
