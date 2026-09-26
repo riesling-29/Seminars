@@ -27,7 +27,9 @@ defineProps<{ kind: 'overview' | 'core' | 'sequence' | 'layers' | 'writing' }>()
     <rect x="219" y="118" width="149" height="94" rx="3" class="box" /><text x="293" y="151" text-anchor="middle" class="title">센서</text><text x="293" y="183" text-anchor="middle" class="body">입력과 결과 수집</text>
     <rect x="425" y="118" width="222" height="94" rx="3" class="tint" /><text x="536" y="151" text-anchor="middle" class="title">제어센터</text><text x="536" y="183" text-anchor="middle" class="body">모델 · 계획 · 기억 · 도구</text>
     <rect x="704" y="118" width="122" height="94" rx="3" class="box" /><text x="765" y="151" text-anchor="middle" class="title">이펙터</text><text x="765" y="183" text-anchor="middle" class="body">행동 전달</text>
-    <path d="M139 157H219M368 166H425M647 166H704" class="edge" marker-end="url(#core-arrow)" />
+    <path d="M139 157H219" class="edge" marker-end="url(#core-arrow)" />
+    <path d="M368 166H425" class="edge" marker-end="url(#core-arrow)" />
+    <path d="M647 166H704" class="edge" marker-end="url(#core-arrow)" />
     <text x="178" y="144" text-anchor="middle" class="label">관측</text>
     <path d="M765 212V281H76V245" class="edge" marker-end="url(#core-arrow)" />
     <text x="435" y="307" text-anchor="middle" class="body">행동이 환경을 바꾸고, 그 결과를 다시 관측합니다.</text>
@@ -50,7 +52,8 @@ defineProps<{ kind: 'overview' | 'core' | 'sequence' | 'layers' | 'writing' }>()
     <rect x="42" y="59" width="512" height="62" rx="3" class="box" /><text x="62" y="84" class="title">응용</text><text x="62" y="108" class="label">사용자의 목표를 받고 결과를 보여 줍니다.</text>
     <rect x="42" y="144" width="512" height="62" rx="3" class="tint" /><text x="62" y="170" class="title">오케스트레이션</text><text x="62" y="194" class="label">계획 · 메모리 · 도구 · 작업 흐름을 조정합니다.</text>
     <rect x="42" y="230" width="512" height="60" rx="3" class="box" /><text x="62" y="255" class="title">추론</text><text x="62" y="279" class="label">LLM 등의 모델이 다음 출력을 만듭니다.</text>
-    <path d="M300 121V143M300 206V230" class="edge" marker-start="url(#layer-arrow)" marker-end="url(#layer-arrow)" />
+    <path d="M300 121V143" class="edge" marker-start="url(#layer-arrow)" marker-end="url(#layer-arrow)" />
+    <path d="M300 206V230" class="edge" marker-start="url(#layer-arrow)" marker-end="url(#layer-arrow)" />
     <rect x="700" y="68" width="157" height="66" rx="3" class="box" /><text x="778" y="97" text-anchor="middle" class="title">외부 앱·도구</text><text x="778" y="122" text-anchor="middle" class="label">자료와 기능 제공</text>
     <path d="M585 101H700" class="edge" marker-start="url(#layer-arrow)" marker-end="url(#layer-arrow)" /><text x="641" y="84" text-anchor="middle" class="body">MCP</text>
     <rect x="700" y="212" width="157" height="66" rx="3" class="box" /><text x="778" y="250" text-anchor="middle" class="title">다른 에이전트</text>
@@ -65,7 +68,9 @@ defineProps<{ kind: 'overview' | 'core' | 'sequence' | 'layers' | 'writing' }>()
     <text x="17" y="167" class="title">GPT에서 GitHub 연결</text>
     <rect x="17" y="186" width="205" height="76" class="tint" /><text x="119" y="217" text-anchor="middle" class="title">GPT / Codex</text><text x="119" y="243" text-anchor="middle" class="label">수정 요청</text>
     <rect x="281" y="186" width="196" height="76" class="box" /><text x="379" y="217" text-anchor="middle" class="title">GitHub 도구 연결</text><text x="379" y="243" text-anchor="middle" class="label">허용된 저장소 수정</text>
-    <path d="M222 224H281M477 81H531V151H577M477 224H531V151" class="edge" marker-end="url(#write-arrow)" />
+    <path d="M222 224H281" class="edge" marker-end="url(#write-arrow)" />
+    <path d="M477 81H531V151H577" class="edge" marker-end="url(#write-arrow)" />
+    <path d="M477 224H531V151" class="edge" />
     <rect x="579" y="119" width="112" height="67" class="box" /><text x="635" y="160" text-anchor="middle" class="title">GitHub</text>
     <path d="M691 151H744" class="edge" marker-end="url(#write-arrow)" />
     <rect x="745" y="119" width="112" height="67" class="tint" /><text x="801" y="147" text-anchor="middle" class="title">Vercel</text><text x="801" y="174" text-anchor="middle" class="label">빌드 · 배포</text>
