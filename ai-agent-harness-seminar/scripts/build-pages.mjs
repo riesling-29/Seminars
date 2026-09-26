@@ -57,6 +57,9 @@ if (buildResult.status !== 0) {
 
 const seminarIndexPath = path.join(seminarOutput, 'index.html')
 const seminarHtml = await readFile(seminarIndexPath, 'utf8')
+// GitHub Pages does not rewrite Slidev history routes such as /6.
+// Keep direct slide links and refreshes inside the presentation working.
+await writeFile(path.join(stagingRoot, '404.html'), seminarHtml)
 const resourceReferences = [
   ...seminarHtml.matchAll(/\b(?:src|href)="([^"]+)"/g),
 ].map((match) => match[1])
