@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parse } from '@slidev/parser'
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(scriptDirectory, '..')
@@ -14,6 +15,10 @@ const requiredFiles = [
   'package-lock.json',
   'slides.md',
   'style.css',
+  'layouts/lesson.vue',
+  'styles/lesson.css',
+  'components/AgentSystem.vue',
+  'public/fonts/OFL.txt',
   'public/favicon.svg',
   'components/AgentLoopDiagram.vue',
   'layouts/section.vue',
@@ -121,6 +126,16 @@ await walk(projectRoot, async (entry) => {
 })
 
 const packagePath = path.join(projectRoot, 'package.json')
+const slidesPath = path.join(projectRoot, 'slides.md')
+if (await exists(slidesPath)) {
+  const deck = await parse(await readFile(slidesPath, 'utf8'))
+  for (const [index, slide] of deck.slides.entries()) {
+    const visibleContent = slide.content.replace(/<!--[\s\S]*?-->/g, '').trim()
+    if (!visibleContent) failures.push('빈 슬라이드: ' + (index + 1))
+  }
+  console.log('Slidev 파서 확인: ' + deck.slides.length + '장')
+}
+
 if (await exists(packagePath)) {
   const packageJson = JSON.parse(await readFile(packagePath, 'utf8'))
   for (const scriptName of ['dev', 'build', 'build:pages', 'preview:pages', 'validate']) {

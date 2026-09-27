@@ -6,10 +6,10 @@
 
 ### AI Agent and Agent Harness Seminar
 
-- 한국어 제목: 모델에서 시스템으로: AI Agent와 Agent Harness
+- 한국어 제목: AI 에이전트와 하네스: 처음부터 설명하기
 - 경로: ai-agent-harness-seminar/
-- 상태: 초기 샘플 슬라이드와 기획 문서, GitHub Pages 배포 Workflow 구성
-- 발표자료: GitHub Pages 활성화와 Workflow 성공 후 하위 경로에서 제공
+- 상태: 블로그 원문 기반 34장 Slidev 발표자료 (2026-09-27 전면 재작성)
+- 발표자료: https://riesling-29.github.io/Seminars/ai-agent-harness-seminar/
 
 ## 로컬 실행
 

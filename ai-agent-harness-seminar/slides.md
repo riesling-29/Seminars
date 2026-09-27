@@ -2,154 +2,212 @@
 theme: default
 title: "AI 에이전트와 하네스: 처음부터 설명하기"
 author: ""
-layout: seminar-cover
-info: "Attention과 KV Cache에서 도구 호출과 에이전트 구조까지"
+layout: lesson
+class: cover
+section: "Attention과 KV Cache 개념을 배운 분들이라면"
+info: "블로그 원문을 바탕으로 LLM, 하네스, 도구 실행과 에이전트의 관계를 설명합니다."
 colorSchema: light
 favicon: /favicon.svg
 fonts:
   provider: none
 transition: none
 aspectRatio: 16/9
-canvasWidth: 980
+canvasWidth: 1280
 drawings:
   persist: false
 mdc: true
 ---
 
-<p class="eyebrow">Attention과 KV Cache 개념을 배운 분들이라면</p>
-<h1>AI 에이전트와 하네스:<br>처음부터 설명하기</h1>
-<p class="cover-deck">LLM은 다음 토큰을 만드는 모델입니다.<br>그런데 코딩 어시스턴트는 어떻게 파일을 고치고 테스트할까요?</p>
-<SeminarSource label="AI 에이전트와 하네스 세미나" page="1 / 32" />
+<h1>AI 에이전트와 하네스<br>처음부터 설명하기</h1>
+<p class="cover-intro">LLM은 다음 출력을 만드는 모델입니다.<br>그런데 어떻게 파일을 고치고 테스트까지 할 수 있을까요?</p>
+<p class="cover-topics">모델의 출력 · 도구의 실행 · 결과를 읽고 이어 가는 작업</p>
 
 <!--
-Attention·KV Cache에서 시작해 도구 호출, 실행, 에이전트 구조와 실제 사용까지 이어 갑니다.
+원문: https://blog29.vercel.app/blog/ai-agent-harness
+원본 파일: riesling-29/blog29 src/content/posts/ai-agent-harness.mdx, updated 2026-09-26.
+원문 전체를 요약하되 사용자가 제외한 켄자쿠 비유는 쓰지 않는다.
+이 발표는 LLM 기반 소프트웨어 에이전트를 다룬다. 에이전트 전체를 LLM 하나와 동일시하지 않는다.
 -->
 
 ---
-layout: seminar
-title: "LLM이 할 수 있는 일과, 혼자서는 못 하는 일"
+layout: lesson
+section: "1. LLM에서 에이전트까지"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · Attention에서 에이전트로"
 ---
 
-<h1>LLM이 할 수 있는 일과, 혼자서는 못 하는 일</h1>
-<div class="columns divided">
-<section><h2>입력 안에서 할 수 있는 일</h2><p>질문에 답하고, 글·코드를 만들고, 주어진 맥락에서 다음 단계를 고릅니다.</p><p>도구 설명이 있으면 <b>도구 이름과 인자를 담은 호출 요청</b>을 만들 수 있습니다.</p></section>
-<section><h2>도구 연결 없이 직접 하지는 못하는 일</h2><p>내 컴퓨터의 파일 열기, 터미널 명령 실행, 외부 서비스에 요청 보내기</p><p>이 행동에는 파일·명령·서비스에 연결된 프로그램이 필요합니다.</p></section>
-</div><p class="statement">모델은 요청을 만들 수 있지만, 요청을 실제 작업으로 바꾸는 것은 연결된 프로그램과 도구입니다.</p>
-<SeminarSource href="https://qwen.readthedocs.io/en/latest/framework/function_call.html" label="Qwen · Function Calling" page="2 / 32" />
-
-<!--
-여기서 ‘혼자서는 못 한다’는 표현은 모델 자체와 도구가 연결된 시스템을 구분합니다. 입력에 포함된 파일 내용에 대해 설명하거나 코드를 작성하는 것과, 파일을 직접 읽고 수정하는 것은 다른 일입니다.
--->
-
----
-layout: seminar
-title: "‘에이전트’는 어디까지를 말할까요?"
----
-
-<h1>‘에이전트’는 어디까지를 말할까요?</h1>
-<p>WEF의 2024년 토론에서 전문가들은 서로 다른 면을 강조했습니다.</p>
-<div class="perspectives">
-<section><b>예측·의사결정</b><span>사람의 선택을 돕는 기능</span></section>
-<section><b>감지·행동</b><span>환경을 읽고 스스로 반응</span></section>
-<section><b>디지털 동반자</b><span>LLM에 행동 능력을 더한 시스템</span></section>
-<section><b>자율성·감독</b><span>업무별로 사람이 개입할 경계</span></section>
+<h1>LLM은 입력을 읽고 다음 출력을 만드는 모델입니다</h1>
+<p class="lead"><b>LLM(대규모 언어 모델)</b>은 질문·문서·코드 같은 입력을 토큰으로 받아,<br>앞선 맥락을 바탕으로 다음 토큰을 이어서 생성합니다.</p>
+<div class="two ruled">
+<section>
+<h2>모델에 들어가는 것</h2>
+<p>사용자의 질문, 대화 이력,<br>프로그램이 넣어 준 파일 내용과 도구 결과</p>
+<p class="quote">“10,000원에서 10%를 할인하고<br>10% 세금을 붙이면 얼마인가요?”</p>
+</section>
+<section>
+<h2>모델이 내보내는 것</h2>
+<p>자연어 답변, 계산 과정, 코드,<br>또는 정해진 형식의 도구 호출 요청</p>
+<p class="quote">“할인 후 9,000원에 세금을 붙이면<br>9,900원입니다.”</p>
+</section>
 </div>
-<p class="note">그래서 제품 이름보다 목표·환경·행동 범위·사람의 감독을 함께 봐야 합니다.</p>
-<SeminarSource href="https://www.weforum.org/stories/technological-innovation/what-is-an-ai-agent-experts-explain/" label="WEF · 전문가들이 설명하는 AI 에이전트" page="3 / 32" />
+<p class="note">Attention은 입력 맥락을 참고하는 계산이고, KV Cache는 이미 계산한 key·value를 재사용합니다.<br>둘 다 모델이 출력을 생성하는 과정에 관한 기술입니다.</p>
 
 <!--
-WEF 기사에서 소개한 Xi Kang, Liu Jiren, Nancy Xu, Darko Matovski의 관점을 쉬운 말로 요약했습니다. 에이전트의 단일한 정의를 주장하는 페이지가 아닙니다.
+토큰은 모델이 텍스트를 처리하는 단위이며 반드시 단어나 글자 하나와 같지는 않다.
+LLM은 생성 과정에서 맥락에 따라 답변과 코드, 도구 호출용 구조를 출력할 수 있다. 숫자 예시는 이 덱에서 계속 사용할 합성 주문 계산의 목표값이다.
+KV Cache 설명: https://huggingface.co/docs/transformers/main/cache_explanation/
 -->
 
 ---
-layout: seminar
-title: "도구와 결과를 이어 주는 바깥 프로그램"
+layout: lesson
+section: "1. LLM에서 에이전트까지"
+source: "https://developers.openai.com/api/docs/guides/function-calling"
+sourceName: "OpenAI · Function calling / 블로그 원문"
 ---
 
-<h1>도구와 결과를 이어 주는 바깥 프로그램</h1>
-<SeminarDiagram kind="overview" />
-<p class="note">예: “로그인 테스트 실패 원인을 찾아줘” → 파일과 테스트를 살펴봄 → 결과를 모델에 돌려줌 → 수정 또는 설명</p>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 모델과 도구의 왕복" page="4 / 32" />
+<h1>답변을 만드는 일과 컴퓨터에서 실행하는 일</h1>
+<p class="lead">“<code>order.py</code>의 오류를 고쳐 주세요”라는 요청에는 서로 다른 일이 들어 있습니다.</p>
+<table>
+<thead><tr><th style="width:27%">하고 싶은 일</th><th style="width:35%">LLM이 생성할 수 있는 출력</th><th>실제 작업에 필요한 연결</th></tr></thead>
+<tbody>
+<tr><td>코드 이해하기</td><td>입력받은 코드의 동작과 오류 설명</td><td>코드가 입력에 없으면 파일 읽기 도구</td></tr>
+<tr><td>코드 고치기</td><td>수정할 코드나 변경 요청</td><td>저장소 파일을 바꾸는 편집 도구</td></tr>
+<tr><td>수정 확인하기</td><td>“이 테스트를 실행하자”라는 요청</td><td>명령을 실행하는 도구와 작업 환경</td></tr>
+</tbody>
+</table>
+<p class="takeaway">도구는 파일·터미널·검색 서비스 등에 실제로 접근하는 프로그램입니다.<br>모델에 연결해야 그 결과를 다음 판단에 사용할 수 있습니다.</p>
 
 <!--
-LLM이 도구 호출을 만들고, 하네스가 호출을 확인해 등록된 도구로 전달합니다. 실행 결과가 다음 입력으로 돌아오면 모델은 추가 작업이나 종료를 선택합니다. 녹색이 아닌 전체 도식 경계에 해당하는 에이전트 정의는 넓은 설명 중 하나입니다.
+입력 안에서 코드를 설명하거나 수정안을 생성하는 능력과 운영체제 파일에 실제로 접근하는 능력을 분리한다.
+공개 API의 사용자 정의 함수 예시는 모델이 호출 요청을 반환하고 애플리케이션이 실행하는 구조다. 제공자 관리 도구는 실행 주체가 제공자 인프라일 수 있다.
 -->
 
 ---
-layout: seminar
-title: "에이전트의 기본 구조: 감지·판단·행동"
+layout: lesson
+section: "1. LLM에서 에이전트까지"
+source: "https://developers.openai.com/api/docs/guides/agents-api/architecture"
+sourceName: "블로그 원문 · 하네스와 실행 환경의 구분"
 ---
 
-<h1>에이전트의 기본 구조: 감지·판단·행동</h1>
-<SeminarDiagram kind="core" />
-<p class="note">환경에서 결과를 읽고, 다음 행동을 정하고, 행동의 결과를 다시 읽는 순환입니다.</p>
-<SeminarSource href="https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/" label="WEF 2024 · Figure 1, p. 7" page="5 / 32" />
+<h1>하네스는 모델과 도구를 연결하는 운영 코드입니다</h1>
+<p class="definition"><b>하네스(Harness)</b>는 모델에 무엇을 보여 주고,<br>모델의 요청을 어떻게 실행하며, 작업을 언제 끝낼지 관리합니다.</p>
+<ol class="steps">
+<li><b>입력을 구성</b><span>사용자 요청·대화 기록·관련 파일·사용 가능한 도구 설명을 모읍니다.</span></li>
+<li><b>호출을 연결</b><span>모델이 낸 도구 이름과 인자를 확인하고, 권한에 맞는 도구로 보냅니다.</span></li>
+<li><b>결과를 반영</b><span>실행 결과를 기록한 뒤 다음 모델 입력에 넣어 다시 호출합니다.</span></li>
+<li><b>작업을 제어</b><span>최종 답변, 승인 대기, 오류, 반복·시간 제한 등에 따라 멈춥니다.</span></li>
+</ol>
 
 <!--
-WEF 2024 도식의 센서·제어센터·이펙터 구조를 바탕으로 새로 그렸습니다. 바깥 환경은 디지털일 수도 물리적일 수도 있습니다. 이번 발표에서는 뒤 장에서 이를 코딩 어시스턴트에 대응시킵니다.
+Harness는 이 발표에서 모델 호출, 맥락·상태 관리, 도구 라우팅, 승인·종료를 운영하는 코드를 뜻한다. 모든 제품이 같은 모듈 경계를 쓰는 것은 아니다.
+실행 환경은 파일과 프로세스가 실제로 존재하는 공간으로 하네스와 분리 배치될 수 있다. 아래 구조는 작업 정의이며 업계 단일 표준 정의가 아니다.
 -->
 
 ---
-layout: seminar
-title: "코딩 어시스턴트에 대입해 보면"
+layout: lesson
+section: "1. LLM에서 에이전트까지"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · LLM·하네스·실행 환경·에이전트"
 ---
 
-<h1>코딩 어시스턴트에 대입해 보면</h1>
-<table class="compact"><thead><tr><th>에이전트 구조</th><th>코딩 어시스턴트의 예</th></tr></thead><tbody>
-<tr><td>목표</td><td>“로그인 테스트가 왜 실패하는지 찾아줘”</td></tr>
-<tr><td>센서</td><td>요청, 저장소 파일, 테스트의 오류 메시지</td></tr>
-<tr><td>제어센터</td><td>LLM의 다음 단계 판단 + 하네스의 작업 상태·도구·권한 관리</td></tr>
-<tr><td>이펙터</td><td>파일 읽기·수정, 터미널에서 테스트 실행</td></tr>
-<tr><td>환경</td><td>코드 저장소, 터미널, 연결된 서비스</td></tr>
-</tbody></table>
-<p class="note">테스트 실패는 ‘감지’, 수정 방법 선택은 ‘판단’, 파일 수정·재실행은 ‘행동’입니다.</p>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 코딩 에이전트 대응표" page="6 / 32" />
+<h1>에이전트는 목표를 받아 작업을 이어 가는 전체 시스템</h1>
+<AgentSystem />
+<p class="note">이 발표의 LLM 기반 에이전트는 도구 실행 결과를 읽고 다음 작업을 선택합니다.<br>‘에이전트’의 범위와 구성 요소의 배치는 문서·제품마다 다를 수 있습니다.</p>
 
 <!--
-이 표는 WEF 구조를 코딩 작업에 대응시킨 설명입니다. 특정 제품의 내부 구현도를 나타내는 것은 아닙니다.
+LLM은 다음 요청을 생성하고, 하네스는 맥락과 정책에 맞게 연결하고, 도구는 실행 환경에 접근한다.
+실행 환경은 에이전트가 관측하고 바꾸는 대상이며 하네스와 별도 공간일 수 있다.
+WEF 2024 전문가 토론은 예측·의사결정 지원, 환경 감지와 행동, 디지털 동반자, 자율성과 감독 등 서로 다른 측면을 강조했다. 그 차이를 단일 엄격한 정의로 통합하지 않는다.
+https://www.weforum.org/stories/technological-innovation/what-is-an-ai-agent-experts-explain/
 -->
 
 ---
-layout: seminar
-title: "소프트웨어 에이전트 안의 세 층"
+layout: lesson
+section: "1. LLM에서 에이전트까지"
+source: "https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/"
+sourceName: "WEF · Navigating the AI Frontier (2024), p. 7 Figure 1"
 ---
 
-<h1>소프트웨어 에이전트 안의 세 층</h1>
-<SeminarDiagram kind="layers" />
-<p class="note">앞 장의 제어센터는 주로 오케스트레이션 층과 맞닿고, LLM은 추론 층에 놓입니다. 이 층을 포함한 점선 경계 전체가 에이전트입니다.</p>
-<SeminarSource href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" label="WEF 2025 · Figure 2, p. 8" page="7 / 32" />
+<h1>같은 구조를 감지·판단·행동으로 볼 수 있습니다</h1>
+<p class="lead">WEF의 설명은 <b>환경에서 정보를 받고, 목표를 위해 판단하고, 환경에 행동하는 것</b>에 초점을 둡니다.</p>
+<table>
+<thead><tr><th style="width:23%">WEF의 구성</th><th style="width:30%">하는 일</th><th>코딩 어시스턴트에 대입하면</th></tr></thead>
+<tbody>
+<tr><td>센서<br><span class="small muted">Sensors</span></td><td>환경의 정보를 받아들임</td><td>사용자 요청, 읽어 온 저장소 파일,<br>테스트 결과를 입력으로 받음</td></tr>
+<tr><td>제어센터<br><span class="small muted">Control centre</span></td><td>판단·계획·기억·호출 조정</td><td>LLM이 다음 작업을 제안하고,<br>하네스가 맥락·상태·도구 호출을 조정</td></tr>
+<tr><td>이펙터<br><span class="small muted">Effectors</span></td><td>환경에 행동을 전달</td><td>파일 읽기·편집, 터미널, 검색·API 도구</td></tr>
+</tbody>
+</table>
+<p class="note"><b>환경</b>은 코드 저장소·프로세스·연결된 서비스입니다. 위 대응은 개념을 설명하는 예시이며,<br>WEF 도식이 특정 코딩 제품의 내부 구현을 뜻하는 것은 아닙니다.</p>
 
 <!--
-WEF 2025의 application·orchestration·reasoning 층과 MCP·A2A 연결을 바탕으로 재구성했습니다. 여기서 하네스는 오케스트레이션과 역할이 겹치지만 두 용어가 항상 같은 범위를 가리키지는 않습니다.
+WEF 원문의 센서·제어센터·이펙터 전체가 에이전트다. 제어센터를 LLM 하나로 환원하지 않는다.
+파일 읽기 도구는 환경에 접근하는 동작을 수행하고, 그 반환 내용은 다음 감지 입력이 된다. 읽기는 외부 상태 변경이 없어도 도구 행동에 포함된다.
 -->
 
 ---
-layout: seminar
-title: "에이전트 전체와 하네스는 같은 말이 아닙니다"
+layout: lesson
+section: "1. LLM에서 에이전트까지"
+source: "https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf"
+sourceName: "WEF · AI Agents in Action (2025), p. 8 Figure 2"
 ---
 
-<h1>에이전트 전체와 하네스는 같은 말이 아닙니다</h1>
-<div class="columns three divided">
-<section><h2>LLM</h2><p>현재 입력에서 답변이나 다음 도구 요청을 만듭니다.</p></section>
-<section><h2>하네스</h2><p>맥락 구성, 모델 호출, 도구 라우팅, 상태·승인·종료를 관리합니다.</p></section>
-<section><h2>실행 환경</h2><p>파일과 명령이 실제로 작동하는 저장소·터미널·샌드박스입니다.</p></section>
+<h1>소프트웨어로 구현하면 세 층이 함께 작동합니다</h1>
+<p class="lead">WEF 2025는 에이전트 소프트웨어를 아래 세 층으로 나누어 설명합니다.</p>
+<div class="layer-stack">
+<div class="layer-row"><div><b>응용 층</b><span>Application</span></div><p>사용자가 요청하고 결과를 확인하는 부분<br><span class="muted">코딩 예: 채팅 화면·CLI·IDE에서 작업 요청과 수정 결과를 보여 줌</span></p></div>
+<div class="layer-row"><div><b>오케스트레이션 층</b><span>Orchestration</span></div><p>계획·메모리·도구·작업 흐름을 조정하는 부분<br><span class="muted">코딩 예: 맥락 구성, 도구 실행 연결, 승인, 결과 기록과 반복</span></p></div>
+<div class="layer-row"><div><b>추론 층</b><span>Reasoning</span></div><p>맥락을 받아 다음 판단과 출력을 만드는 모델<br><span class="muted">코딩 예: 오류를 읽고 “수정 후 테스트하자”는 요청을 생성하는 LLM</span></p></div>
 </div>
-<p class="statement">에이전트는 목표를 받고 이 요소들로 작업을 이어 가는 전체 시스템입니다.</p>
-<SeminarSource href="https://developers.openai.com/api/docs/guides/agents-api/architecture" label="OpenAI · 에이전트 아키텍처" page="8 / 32" />
+<p class="note">세 층을 포함한 전체가 에이전트입니다. 오케스트레이션은 하네스와 역할이 겹치지만,<br>두 용어의 범위가 항상 일치하는 것은 아닙니다.</p>
 
 <!--
-제품마다 하네스와 실행 환경을 어디까지 묶는지는 다를 수 있습니다. 세 요소를 먼저 역할로 나누면 이름 경계에 덜 헷갈립니다.
+원문의 외부 애플리케이션·다른 에이전트 연결은 뒤의 MCP 장에서 이어 설명한다. MCP는 외부 도구·자료 연결, A2A는 다른 에이전트와의 연결에 관한 경로다.
+WEF 개념의 코딩 대응이며 제품 내부 구현의 실측도가 아니다.
 -->
 
 ---
-layout: seminar
-title: "하네스는 모델에 무엇을 알려 줄까요?"
+layout: lesson
+section: "2. 주문 계산 오류를 고치는 과정"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 실제 실행 기록의 합성 Python 예제"
 ---
 
-<h1>하네스는 모델에 무엇을 알려 줄까요?</h1>
-<p>도구 설명은 모델이 <b>어떤 일을 어떤 입력으로 요청할 수 있는지</b> 알려 줍니다.</p>
-<div class="columns">
-<section><h2>제공하는 도구 명세</h2><pre class="code" v-pre>{
+<h1>실행 예제: 주문 금액이 9,900원이어야 합니다</h1>
+<p class="quote">“10,000원 상품에 10% 할인을 먼저 적용하고, 그 금액에 10% 세금을 붙이세요.<br>계산 함수의 오류를 고치고 테스트해 주세요.”</p>
+<div class="mathline">
+<div><strong>10,000원</strong><span>원래 가격</span></div><div class="arrow">→</div>
+<div><strong>9,000원</strong><span>10% 할인 후</span></div><div class="arrow">→</div>
+<div><strong>9,900원</strong><span>10% 세금 적용 후</span></div>
+</div>
+<p>현재 함수는 <em>할인 전 가격에 세금 1,000원</em>을 계산합니다.<br>그래서 할인 1,000원과 세금 1,000원이 상쇄되어 <em>10,000원</em>을 반환합니다.</p>
+<p class="takeaway">작은 Python 예제에 일부러 오류를 넣고, Codex가 실제로 수정·테스트한 기록입니다.</p>
+
+<!--
+블로그가 제공하는 합성 예제다. 세금 법규 설명이 아니라 주어진 계산 규칙을 코드가 지키는지 확인하는 교육용 과제다.
+이후 모든 run_command 예시는 python -m unittest -v로 통일한다.
+원문에서 실제로 기록한 실행은 별도 작업 폴더의 파일 확인, 실패, 패치, 재검증이다. API 메시지는 이를 설명하기 위해 축약한 별도 예시다.
+-->
+
+---
+layout: lesson
+section: "2. 주문 계산 오류를 고치는 과정"
+source: "https://developers.openai.com/api/docs/guides/function-calling"
+sourceName: "블로그 원문 / OpenAI · Function calling"
+---
+
+<h1>① 하네스가 모델에 과제와 도구 설명을 보냅니다</h1>
+<div class="two ratio">
+<section>
+<h2>모델이 알아야 할 작업 맥락</h2>
+<p><b>목표</b><br>할인 후 세금을 계산하도록 고치고 검증</p>
+<p><b>현재 자료</b><br>사용자 요청, 읽어 온 코드와 테스트 내용,<br>이전 도구 실행 결과</p>
+<p><b>사용 가능한 도구</b><br>파일 읽기, 파일 수정, 명령 실행<br><span class="small muted">이름·용도·필수 인자를 설명에 포함</span></p>
+<p class="note">도구 설명은 사용법입니다.<br>실제 실행 권한은 하네스와<br>실행 환경의 정책으로 제한합니다.</p>
+</section>
+<section>
+<p class="code-label">명령 실행 도구의 설명 예시 · 하네스 → 모델</p>
+<pre>{
   "name": "run_command",
   "description": "작업 폴더에서 명령 실행",
   "parameters": {
@@ -159,432 +217,724 @@ title: "하네스는 모델에 무엇을 알려 줄까요?"
     },
     "required": ["command"]
   }
-}</pre></section>
-<section><h2>호출 전에 하네스가 관리</h2><p>현재 목표와 대화·작업 상태</p><p>등록된 도구와 입력 형식</p><p>허용된 폴더·명령과 승인 규칙</p></section>
+}</pre>
+<p class="code-note">모델은 이 설명을 보고 도구 이름과<br>입력 형식에 맞는 호출을 만듭니다.</p>
+</section>
 </div>
-<p class="note">도구 목록을 알려 주는 것과 실제 실행을 허용하는 것은 별도입니다.</p>
-<SeminarSource href="https://qwen.readthedocs.io/en/latest/framework/function_call.html" label="Qwen · 도구 설명과 입력 형식" page="9 / 32" />
 
 <!--
-도구 명세는 단순화한 설명용 예입니다. 실제 API는 JSON Schema 등 정해진 입력 형식을 사용합니다.
+오른쪽은 이해를 위한 도구 명세 축약이며 특정 API의 전체 요청 봉투가 아니다. 사용자 정의 이름 run_command는 모델에 등록한 도구와 정확히 일치해야 한다.
+작업 맥락에 저장소 전체가 저절로 들어가는 것이 아니다. 읽기 도구가 반환하거나 프로그램이 선택해 넣은 내용이 모델 입력이 된다.
 -->
 
 ---
-layout: seminar
-title: "모델은 구조화된 호출을 돌려줍니다"
+layout: lesson
+section: "2. 주문 계산 오류를 고치는 과정"
+source: "https://qwen.readthedocs.io/en/latest/framework/function_call.html"
+sourceName: "Qwen · Function Calling / 블로그 원문"
 ---
 
-<h1>모델은 구조화된 호출을 돌려줍니다</h1>
-<div class="columns">
-<section><h2>하네스가 전달한 도구</h2><p><code>run_command</code><br>작업 폴더에서 명령 실행</p><p>입력: 실행할 명령 문자열</p></section>
-<section><h2>모델이 반환한 호출 요청</h2><pre class="code" v-pre>&lt;tool_call&gt;
-{"name":"run_command",
- "arguments":{"command":"pytest tests/test_login.py -q"}}
-&lt;/tool_call&gt;</pre></section>
+<h1>② LLM은 실행할 도구와 인자를 출력합니다</h1>
+<p class="lead">관련 코드와 테스트를 읽은 모델이 먼저 현재 상태를 확인하기로 했다고 합시다.</p>
+<p class="code-label">모델 → 하네스 · 구조화된 도구 호출 요청</p>
+<pre>{
+  "name": "run_command",
+  "arguments": { "command": "python -m unittest -v" }
+}</pre>
+<div class="two ruled">
+<section><h2>run_command</h2><p>하네스가 제공한 도구의 이름입니다.<br>어떤 프로그램으로 요청을 보낼지 식별합니다.</p></section>
+<section><h2>command</h2><p>도구에 넘길 명령 인자입니다.<br>여기서는 Python 테스트 실행 명령입니다.</p></section>
 </div>
-<p class="statement">이 출력은 “이 도구를 이 인자로 실행해 달라”는 요청입니다. 아직 테스트를 실행한 결과가 아닙니다.</p>
-<SeminarSource href="https://qwen.readthedocs.io/en/latest/getting_started/concepts.html" label="Qwen3 · Hermes-style tool calling" page="10 / 32" />
+<p class="takeaway">이 시점에 생긴 것은 호출 요청입니다. 터미널 실행 결과는 아직 없습니다.</p>
 
 <!--
-Qwen3의 공식 문서는 tool calling에 Hermes-style 형식을 권하고 예시로 tool_call XML 태그 안에 이름과 인자 객체를 둡니다. 도구 요청을 담은 assistant 메시지에는 다른 내용이 함께 올 수도 있습니다.
+모델의 출력이 JSON 또는 API의 구조화 필드로 표현될 수 있다는 개념 예시다. 도구 이름과 인자만 출력했다고 셸 프로세스가 자동으로 시작되는 것은 아니다.
+후속 하네스의 검증·권한 적용과 도구 구현의 실제 프로세스 시작이 필요하다.
 -->
 
 ---
-layout: seminar
-title: "Qwen3 예시: 요청과 결과는 이렇게 왕복합니다"
+layout: lesson
+section: "2. 주문 계산 오류를 고치는 과정"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 테스트 실패 기록"
 ---
 
-<h1>Qwen3 예시: 요청과 결과는 이렇게 왕복합니다</h1>
-<div class="columns">
-<section><h2>① 모델 → 하네스</h2><pre class="code" v-pre>&lt;|im_start|&gt;assistant
-&lt;tool_call&gt;
-{"name":"run_command",
- "arguments":{"command":"pytest tests/test_login.py -q"}}
-&lt;/tool_call&gt;&lt;|im_end|&gt;</pre><p>모델이 도구와 인자를 제안합니다.</p></section>
-<section><h2>② 실행기 → 하네스 → 모델</h2><pre class="code" v-pre>&lt;|im_start|&gt;user
+<h1>③ 하네스가 요청을 확인하고 도구가 실행합니다</h1>
+<div class="two">
+<section>
+<h2>실행에 이르는 과정</h2>
+<ol>
+<li><b>하네스</b>가 도구 이름·인자 형식을 확인합니다.</li>
+<li>작업 폴더에서 이 명령을 실행할 수 있는지 <b>정책을 적용</b>합니다.</li>
+<li><b>실행 도구</b>가 테스트 프로세스를 시작하고 결과를 수집합니다.</li>
+</ol>
+<p class="small muted">실행 환경: 예제 코드가 있는 작업 폴더와<br>Python이 실행되는 프로세스 공간</p>
+</section>
+<section>
+<p class="code-label">실행 도구 → 하네스 · 테스트 결과</p>
+<pre class="result-fail">test_discount_first ... FAIL
+AssertionError: 10000 != 9900
+Ran 2 tests
+FAILED (failures=1)
+exit_code: 1</pre>
+<p class="code-note"><em>실제 계산값 10,000원</em>과<br><b>테스트의 예상값 9,900원</b>이 다릅니다.</p>
+</section>
+</div>
+<p class="takeaway">하네스가 실패 결과를 다음 입력에 넣어야 LLM이 이 오류를 보고 판단할 수 있습니다.</p>
+
+<!--
+출력은 원문 예제와 저장소의 재현 코드를 실행해 핵심 결과를 정리했다. 2026-09-27 broken_order.py에서 test_discount_first 실패(exit 1), order.py에서 2개 테스트 통과(exit 0)를 재확인했다. exit_code는 프로세스 상태다. 출력 스트림(stdout/stderr)과 종료 코드를 도구 구현이 수집할 수 있다.
+하네스가 실제 시스템에서 어떤 검사까지 하는지는 구성에 달려 있다. 이 예시는 해당 작업 폴더의 테스트 실행을 허용하는 설정이다.
+-->
+
+---
+layout: lesson
+section: "2. 주문 계산 오류를 고치는 과정"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 파일 수정과 재검증"
+---
+
+<h1>④ LLM이 실패를 읽고 수정·재검증을 요청합니다</h1>
+<div class="two">
+<section>
+<h2>오류 분석과 수정 요청</h2>
+<p>실패를 읽은 모델이 할인된 금액에<br>세금을 적용하도록 변경을 요청합니다.</p>
+<p class="code-label">파일 편집 도구가 적용하는 수정 코드</p>
+<pre class="code-small">discounted_price = (
+    price * (1 - discount_rate)
+)
+return round(
+    discounted_price * (1 + tax_rate)
+)</pre>
+<p class="small">모델이 수정 내용을 만들고,<br>편집 도구가 <code>order.py</code>를 바꿉니다.</p>
+</section>
+<section>
+<h2>같은 테스트 다시 실행</h2>
+<p>모델이 <code>python -m unittest -v</code>를<br>요청하고 실행 도구가 다시 수행합니다.</p>
+<p class="code-label">실행 도구가 반환한 재검증 결과</p>
+<pre class="result-pass">Ran 2 tests in ...
+OK
+exit_code: 0</pre>
+<p class="small">하네스가 통과 결과를 모델에 전달하면,<br>모델이 변경 내용과 검증 범위를 보고합니다.</p>
+</section>
+</div>
+
+<!--
+원문 수정은 두 줄 discounted_price = price * (1 - discount_rate), return round(discounted_price * (1 + tax_rate))다. 이 화면에서는 가독성을 위해 같은 식을 줄바꿈했다.
+두 테스트 통과는 그 테스트 범위의 결과다. 모든 입력에 대한 정확성이나 운영 배포 준비를 증명하지 않는다.
+-->
+
+---
+layout: lesson
+section: "2. 주문 계산 오류를 고치는 과정"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 실제 실행 기록"
+---
+
+<h1>요청과 실행 결과가 쌓여 작업이 이어집니다</h1>
+<table class="medium">
+<thead><tr><th style="width:20%">순서</th><th style="width:39%">모델이 요청한 작업</th><th>도구가 반환한 관측 결과</th></tr></thead>
+<tbody>
+<tr><td>1. 파일 확인</td><td>계산 함수와 테스트 파일 읽기</td><td>계산식과 예상값 9,900원 확인</td></tr>
+<tr><td>2. 테스트</td><td>현재 코드의 테스트 실행</td><td>10,000 ≠ 9,900, 실패, 종료 코드 1</td></tr>
+<tr><td>3. 수정</td><td>할인 후 금액에 세금을 계산하도록 편집</td><td>파일 변경 완료</td></tr>
+<tr><td>4. 재검증</td><td>같은 테스트 다시 실행</td><td>2개 테스트 통과, 종료 코드 0</td></tr>
+</tbody>
+</table>
+<p class="takeaway">작업이 끝나면 모델이 변경 이유와 검증 범위를 보고하고,<br>하네스가 사용자에게 전달합니다. 사용자는 실제 변경과 테스트 범위를 검토합니다.</p>
+
+<!--
+1~4는 블로그 실행 기록의 순서다. 표 아래 문장은 작업 결과를 사용자에게 설명하는 후속 단계를 말한다.
+이 기록은 실제 도구 작업의 발췌이며 특정 제품 내부 모델 API 메시지의 전체 복제본이 아니다.
+원문 파일 확인 명령은 rg -n 'def total_with_discount|return|test_discount_before_tax|assertEqual' order.py test_order.py다.
+-->
+
+---
+layout: lesson
+section: "3. 모델과 하네스가 주고받는 형식"
+source: "https://qwen.readthedocs.io/en/latest/getting_started/concepts.html"
+sourceName: "Qwen3 Key Concepts · Hermes-style tool calling"
+---
+
+<h1>Qwen3에서는 호출과 결과를 태그로 표시할 수 있습니다</h1>
+<p class="lead"><b>Qwen3</b>는 LLM 계열입니다. <b>Hermes-style</b>은 대화와 도구 정보를<br>모델이 읽는 텍스트로 배치하는 규칙입니다.</p>
+<div class="two">
+<section>
+<p class="code-label">모델 출력 · 모델 → 하네스</p>
+<pre class="code-small">&lt;tool_call&gt;
+{
+  "name": "run_command",
+  "arguments": {
+    "command":
+      "python -m unittest -v"
+  }
+}
+&lt;/tool_call&gt;</pre>
+<p class="code-note">하네스는 이 호출 요청을 받아<br>등록된 도구로 연결합니다.</p>
+</section>
+<section>
+<p class="code-label">다음 모델 입력 · 하네스 → 모델</p>
+<pre class="code-small">&lt;tool_response&gt;
+AssertionError: 10000 != 9900
+exit_code: 1
+&lt;/tool_response&gt;</pre>
+<p class="code-note">도구가 반환한 실제 결과를 넣습니다.<br>모델은 이를 읽고 다음 출력을 만듭니다.</p>
+<p class="note">화면은 템플릿의 핵심 부분만 발췌한 예시입니다.<br>바깥쪽 API 메시지 형식은 제공자마다 다릅니다.</p>
+</section>
+</div>
+
+<!--
+Qwen3 공식 문서는 Hermes-style tool calling을 사용한다고 설명한다. Qwen3-8B 공식 tokenizer_config.json의 chat_template도 tools 목록, assistant의 tool_call, tool 결과의 tool_response 표현을 확인할 수 있다.
+https://huggingface.co/Qwen/Qwen3-8B/blob/main/tokenizer_config.json
+Hermes-style은 템플릿 양식의 이름이다. Hermes Agent라는 에이전트 애플리케이션과 같은 개념이 아니다.
+공식 확인일 2026-09-27. 모든 제품이 쓰는 단일 wire format 또는 국제 표준이라고 말하지 않는다.
+-->
+
+---
+layout: lesson
+section: "3. 모델과 하네스가 주고받는 형식"
+source: "https://developers.openai.com/api/docs/guides/function-calling"
+sourceName: "OpenAI · Function calling, 사용자 정의 함수의 왕복"
+---
+
+<h1>OpenAI API에서는 하네스가 모델 API를 호출합니다</h1>
+<p class="lead">API는 프로그램끼리 요청과 응답을 주고받는 인터페이스입니다.<br>아래는 <b>사용자 정의 명령 실행 도구</b>를 연결한 경우입니다.</p>
+<table class="medium">
+<thead><tr><th style="width:11%">순서</th><th style="width:36%">누가 누구에게</th><th>주고받는 내용</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>하네스 → OpenAI API</td><td>사용자 목표·대화·도구 명세를 보내 모델 호출</td></tr>
+<tr><td>2</td><td>OpenAI API → 하네스</td><td>모델이 생성한 <code>function_call</code> 반환</td></tr>
+<tr><td>3</td><td>하네스 ↔ 실행 도구</td><td>권한 확인 후 명령 실행 요청, 실제 결과 수집</td></tr>
+<tr><td>4</td><td>하네스 → OpenAI API</td><td>이전 맥락과 <code>function_call_output</code>을 보내 재호출</td></tr>
+<tr><td>5</td><td>OpenAI API → 하네스</td><td>모델의 후속 도구 요청 또는 최종 답변 반환</td></tr>
+</tbody>
+</table>
+<p class="note"><code>function_call</code>은 모델 API의 응답 안에 들어 있는 도구 요청입니다.<br>3번 단계의 테스트 프로세스는 연결된 실행 도구가 시작합니다.</p>
+
+<!--
+사용자 정의 함수 client-side 실행 예시다. OpenAI 서버 측에서 제공하는 도구와 실행 주체를 혼동하지 않는다.
+Responses API의 반복 호출에서는 이전 모델 응답과 필요한 이력을 유지하거나 previous_response_id 등으로 상태를 연결한다. 추론 항목 등 문서상 필요한 후속 입력도 보존해야 한다. 이 슬라이드는 전체 SDK 코드가 아니라 발신자와 수신자 중심의 흐름이다.
+-->
+
+---
+layout: lesson
+section: "3. 모델과 하네스가 주고받는 형식"
+source: "https://developers.openai.com/api/docs/guides/function-calling"
+sourceName: "OpenAI Responses API · function_call / function_call_output"
+---
+
+<h1>call_id가 도구 요청과 실행 결과를 연결합니다</h1>
+<div class="two">
+<section>
+<p class="code-label">② OpenAI API → 하네스 · 응답 항목</p>
+<pre class="code-small">{
+  "type": "function_call",
+  "call_id": "call_test_1",
+  "name": "run_command",
+  "arguments":
+    "{\"command\":\"python -m unittest -v\"}"
+}</pre>
+<p class="code-note"><code>name</code>은 등록한 도구 이름입니다.<br><code>arguments</code>는 <b>JSON 문자열</b>입니다.<br>하네스가 해석한 뒤 실행 도구에 전달합니다.</p>
+</section>
+<section>
+<p class="code-label">④ 하네스 → OpenAI API · 후속 입력 항목</p>
+<pre class="code-small">{
+  "type": "function_call_output",
+  "call_id": "call_test_1",
+  "output":
+    "AssertionError: 10000 != 9900"
+}</pre>
+<p class="code-note"><code>call_id</code>를 동일하게 써서<br>어떤 호출의 결과인지 연결합니다.<br><code>output</code>에는 도구가 반환한 결과를 넣습니다.</p>
+</section>
+</div>
+<p class="note">공개 API 형식에 맞춘 설명용 예시이며 핵심 필드만 표시했습니다.<br>하네스는 기존 대화와 모델 응답도 이어서 전달합니다.</p>
+
+<!--
+API 응답의 function_call 항목에는 id, status 등 추가 필드가 있을 수 있다. 이 화면은 핵심 필드만 보여 준다.
+arguments를 JSON 객체처럼 잘못 그리지 않는다. output에는 도구 결과를 문자열 형태로 전달하는 간단한 예시를 사용했다.
+source confirmed 2026-09-27.
+-->
+
+---
+layout: lesson
+section: "3. 모델과 하네스가 주고받는 형식"
+source: "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"
+sourceName: "Claude Messages API · client tool의 tool_use / tool_result"
+---
+
+<h1>Claude도 호출 ID로 결과를 연결합니다</h1>
+<p class="lead">하네스가 Claude API를 호출하고, 받은 도구 요청을 실행한 뒤 결과를 다시 보냅니다.</p>
+<div class="two">
+<section>
+<p class="code-label">Claude API → 하네스 · assistant의 블록</p>
+<pre class="code-small">{
+  "type": "tool_use",
+  "id": "toolu_test_1",
+  "name": "run_command",
+  "input": {
+    "command": "python -m unittest -v"
+  }
+}</pre>
+<p class="code-note"><code>input</code>은 <b>객체</b>입니다.<br>하네스가 이 인자로 실행 도구를 호출합니다.</p>
+</section>
+<section>
+<p class="code-label">하네스 → Claude API · 후속 user의 블록</p>
+<pre class="code-small">{
+  "type": "tool_result",
+  "tool_use_id": "toolu_test_1",
+  "content":
+    "AssertionError: 10000 != 9900"
+}</pre>
+<p class="code-note">이 <code>user</code> 메시지는 API의 메시지 역할입니다.<br>사람이 직접 입력한 문장이라는 뜻은 아닙니다.</p>
+</section>
+</div>
+<p class="note">공개 Claude API의 클라이언트 도구 예시입니다. Claude Code 내부 메시지 형식 전체를 복제한 것은 아닙니다.</p>
+
+<!--
+하네스는 assistant tool_use 메시지를 이력에 보존하고 뒤따르는 user 메시지의 content에 tool_result 블록을 포함한다. tool_use_id는 원래 id와 일치한다.
+도구 실행 자체가 실패한 경우 is_error를 사용할 수 있으나 테스트 실패 결과를 정상 실행된 도구의 출력으로 전달하는 사례와 구분한다.
+-->
+
+---
+layout: lesson
+section: "3. 모델과 하네스가 주고받는 형식"
+source: "https://hermes-agent.nousresearch.com/docs/developer-guide/trajectory-format"
+sourceName: "Hermes Agent · Trajectory Format / Qwen3 공식 문서"
+---
+
+<h1>Hermes Agent는 호출과 결과를 실행 기록에 남깁니다</h1>
+<div class="two">
+<section>
+<p class="code-label">저장된 실행 기록의 형식 · 설명용 예시</p>
+<pre class="code-small">&lt;tool_call&gt;
+{"name":"terminal","arguments":{
+  "command":"python -m unittest -v"
+}}
+&lt;/tool_call&gt;
 &lt;tool_response&gt;
-{"exit_code":1,"stderr":"1 failed"}
-&lt;/tool_response&gt;&lt;|im_end|&gt;</pre><p>하네스가 실행 결과를 다음 입력에 넣습니다.</p></section>
+{
+  "tool_call_id": "call_test_1",
+  "name": "terminal",
+  "content": "10000 != 9900; exit_code=1"
+}
+&lt;/tool_response&gt;</pre>
+</section>
+<section>
+<h2>Hermes Agent</h2>
+<p>모델·도구·기억·세션 등을 연결하는<br>에이전트 프로그램입니다. 제공자별 API에<br>맞춰 통신하고, 기록은 공통 표현으로<br>정리할 수 있습니다.</p>
+<h2>Qwen3의 Hermes-style</h2>
+<p>대화와 도구 정보를 모델이 읽는<br>텍스트로 배치하는 템플릿 양식입니다.</p>
+<p class="note"><code>terminal</code>은 Hermes의 명령 실행 도구입니다.<br>앞의 <code>run_command</code>와 같은 역할입니다.<br>태그가 비슷해도 API 통신과 저장 기록은<br>서로 다른 층입니다.</p>
+</section>
 </div>
-<p class="note">Qwen 문서의 구조를 단순화한 예입니다. 실제 실행기는 도구를 실행하고, 형식화와 전달은 템플릿·프레임워크가 맡을 수 있습니다.</p>
-<SeminarSource href="https://qwen.readthedocs.io/en/latest/getting_started/concepts.html" label="Qwen3 공식 형식 · 도구 호출과 결과" page="11 / 32" />
-
 <!--
-Qwen3는 Hermes와 유사한 tool-calling 템플릿을 사용합니다. 공식 가이드는 function/tool definitions를 제공하고, 모델 출력의 호출을 애플리케이션에서 처리한 후 결과를 대화에 되돌려 넣도록 설명합니다. arguments는 객체 형식을 권하고 도구 결과는 별도 메시지로 포함합니다. 예시의 pytest 결과는 설명용 합성 값입니다.
+Hermes Agent의 공식 현재 경로는 /docs/developer-guide/trajectory-format 이다. 원문의 /docs/agents/trajectory/와 /docs/agents/providers/ 링크는 새 문서에서 이동했을 수 있다.
+terminal은 Hermes의 도구 이름이고 앞의 run_command는 교육용 사용자 정의 이름이다. 명칭은 등록된 도구마다 다르다.
+모든 제공자가 이 태그를 그대로 wire format으로 사용한다고 주장하지 않는다.
 -->
 
 ---
-layout: seminar
-title: "요청이 실제 실행으로 바뀌는 다섯 단계"
+layout: lesson
+section: "4. 맡길 수 있는 범위와 검증"
+source: "https://www.anthropic.com/engineering/building-effective-agents"
+sourceName: "Anthropic · Building effective agents / 블로그 원문"
 ---
 
-<h1>요청이 실제 실행으로 바뀌는 다섯 단계</h1>
-<SeminarDiagram kind="sequence" />
-<p class="note">결과가 돌아오면 모델은 추가 조사·수정·종료 중 다음 행동을 고릅니다.</p>
-<SeminarSource href="https://developers.openai.com/api/docs/guides/function-calling" label="OpenAI · Function calling" page="12 / 32" />
+<h1>다음 단계를 누가 정하는지가 다릅니다</h1>
+<table>
+<thead><tr><th style="width:21%">작업 방식</th><th style="width:32%">다음 단계의 결정</th><th>테스트 오류를 고치는 예</th></tr></thead>
+<tbody>
+<tr><td>도구를 쓰는 채팅</td><td>사람이 매 단계 지시</td><td>“파일 읽어 줘” → “이제 테스트해 줘”<br>→ “그 줄을 고쳐 줘”</td></tr>
+<tr><td>워크플로</td><td>코드가 정한 순서와 분기</td><td>항상 파일 검사 → 테스트 → 정해진<br>실패 처리 → 결과 보고</td></tr>
+<tr><td>에이전트</td><td>모델이 결과에 따라<br>경로와 도구를 선택</td><td>실패 원인에 따라 다른 파일을 읽거나<br>수정 후 테스트를 다시 요청</td></tr>
+</tbody>
+</table>
+<p class="takeaway">에이전트에도 종료 조건과 사람의 감독이 필요합니다.<br>작업 경로를 스스로 고르는 정도는 구현과 설정에 달려 있습니다.</p>
 
 <!--
-이 슬라이드는 모델 요청과 실행을 분리합니다. 모델은 호출을 생성하고, 하네스는 형식·권한을 검사하고, 등록된 도구 구현이 실행 환경과 상호작용합니다.
+Anthropic의 구분에서 workflow는 predefined code path, agent는 모델이 동적으로 processes/tool usage를 정한다. 이 구분은 발표의 작업 정의로 사용한다.
+실제품은 고정 워크플로 일부에 에이전트 단계를 포함하는 등 혼합할 수 있다. 도구 호출 1회만으로 높은 자율성이 증명되지 않는다.
 -->
 
 ---
-layout: seminar
-title: "권한 확인과 다음 단계 선택"
+layout: lesson
+section: "4. 맡길 수 있는 범위와 검증"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 같은 모델과 서로 다른 하네스 구성"
 ---
 
-<h1>권한 확인과 다음 단계 선택</h1>
-<div class="columns divided">
-<section><h2>요청은 거절되거나 보류될 수 있습니다</h2><p>읽기만 허용된 폴더 밖이면 실행을 막습니다.</p><p>외부 발송이나 배포에는 승인을 요구할 수 있습니다.</p></section>
-<section><h2>결과가 다음 행동을 바꿉니다</h2><p><b>테스트 통과</b> → 변경을 확인하고 종료</p><p><b>테스트 실패</b> → 오류를 읽고 조사·수정·재실행</p></section>
+<h1>같은 모델도 연결된 도구에 따라 할 수 있는 일이 달라집니다</h1>
+<div class="two ruled">
+<section>
+<h2>파일 읽기만 허용한 구성</h2>
+<p>모델이 코드를 읽고 오류 후보와<br>수정안을 설명할 수 있습니다.</p>
+<p>하지만 실제 파일 수정과 테스트는<br>다른 사람이나 프로그램이 맡아야 합니다.</p>
+<p class="quote">결과: “이 계산식을 이렇게<br>바꿔 보세요.”</p>
+</section>
+<section>
+<h2>파일 편집·테스트까지 허용한 구성</h2>
+<p>모델의 편집 요청을 도구가 적용하고,<br>테스트 결과를 다음 판단에 반영합니다.</p>
+<p>허용된 범위 안에서 수정과 재검증을<br>이어 가도록 구성할 수 있습니다.</p>
+<p class="quote">결과: “식을 고쳤고,<br>이 테스트 2개를 통과했습니다.”</p>
+</section>
 </div>
-<p class="statement">고정 순서로 실행하는 것은 워크플로, 결과에 따라 모델이 경로를 선택하는 것은 에이전트 방식에 가깝습니다.</p>
-<SeminarSource href="https://www.anthropic.com/engineering/building-effective-agents" label="Anthropic · 워크플로와 에이전트" page="13 / 32" />
+<p class="note">두 구성의 성과 차이를 전부 하네스 때문이라고 단정할 수는 없습니다.<br>비교하려면 모델·과제·데이터·도구 설명·권한·사람의 개입 조건도 함께 맞춰야 합니다.</p>
 
 <!--
-워크플로와 에이전트는 완전히 배타적인 종류라기보다 설계 방식의 차이로 보는 것이 안전합니다. 에이전트도 승인과 종료 조건에 묶일 수 있습니다.
+위 예시는 기능 연결의 차이를 설명한다. 성능·생산성의 수치나 제품 우위를 주장하지 않는다.
+https://www.anthropic.com/engineering/building-effective-agents/
 -->
 
 ---
-layout: seminar
-title: "예제로 볼 문제: 할인과 세금 계산"
+layout: lesson
+section: "4. 맡길 수 있는 범위와 검증"
+source: "https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf"
+sourceName: "WEF 2025 / 블로그 원문의 자율성·권한 설계 예시"
 ---
 
-<h1>예제로 볼 문제: 할인과 세금 계산</h1>
-<p class="lead">10,000원짜리 상품에 10% 할인을 적용하고,<br>할인된 금액에 10% 세금을 붙입니다.</p>
-<div class="formula">10,000 × (1 − 0.10) × (1 + 0.10) = <b>9,900원</b></div>
-<div class="columns"><section><h2>요구한 순서</h2><p>① 할인: 10,000 → 9,000원</p><p>② 세금: 9,000 → 9,900원</p></section><section><h2>테스트가 확인할 답</h2><p class="big-number">9,900원</p></section></div>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 실행 예제" page="14 / 32" />
+<h1>자율성과 실행 권한은 별도로 정합니다</h1>
+<p class="lead"><b>자율성</b>은 다음 단계를 스스로 고르는 정도이고,<br><b>실행 권한</b>은 파일·서비스에 실제로 할 수 있도록 허용한 범위입니다.</p>
+<table>
+<thead><tr><th style="width:23%">과제</th><th style="width:36%">스스로 정할 수 있는 것</th><th>허용할 실행 범위와 사람의 확인</th></tr></thead>
+<tbody>
+<tr><td>문서 요약</td><td>관련 문서를 찾아 읽는 순서</td><td>읽기만 허용<br>인용·해석을 사람이 검토</td></tr>
+<tr><td>코드 수정</td><td>오류 원인 조사와 수정 경로</td><td>지정 저장소의 편집·테스트 허용<br>커밋·배포 전 변경 검토</td></tr>
+<tr><td>고객 답장</td><td>근거 조사와 답장 초안 구성</td><td>초안 작성까지 허용<br>실제 발송 전 승인</td></tr>
+</tbody>
+</table>
+<p class="note">이 표는 설계 예시입니다. 특정 제품의 기본 권한 설정을 뜻하지 않습니다.</p>
 
 <!--
-이 작은 Python 예제는 설명을 위해 오류를 일부러 넣은 합성 사례입니다.
+WEF는 autonomy와 authority를 구분해 분류한다. 모델이 스스로 조사한다고 외부 발송 권한도 자동으로 얻는 것은 아니다.
+사용자가 승인한 작업 범위, 하네스의 정책, OS/컨테이너/계정 권한이 함께 실행 경계를 만든다.
 -->
 
 ---
-layout: seminar
-title: "처음 코드가 왜 틀렸을까요?"
+layout: lesson
+section: "4. 맡길 수 있는 범위와 검증"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 승인과 실행 환경의 경계"
 ---
 
-<h1>처음 코드가 왜 틀렸을까요?</h1>
-<div class="columns divided">
-<section><h2>잘못된 계산</h2><pre class="code" v-pre>세금: 10,000 × 10% = 1,000
-할인: 10,000 × 10% = 1,000
-결과: 10,000 + 1,000 − 1,000
-     = 10,000원</pre></section>
-<section><h2>기대하는 계산</h2><pre class="code" v-pre>할인 후 가격: 10,000 − 1,000 = 9,000
-세금: 9,000 × 10% = 900
-결과: 9,000 + 900 = 9,900원</pre></section>
+<h1>요청을 만들었다고 모든 작업을 실행하는 것은 아닙니다</h1>
+<p class="lead">주문 계산 과제에서 하네스는 도구 요청을 정책에 따라 처리할 수 있습니다.</p>
+<table>
+<thead><tr><th style="width:30%">모델의 요청</th><th style="width:26%">정책에 따른 처리 예</th><th>그 뒤의 상태</th></tr></thead>
+<tbody>
+<tr><td>테스트 실행</td><td><b>허용</b></td><td>실행 결과를 기록하고 모델에 반환</td></tr>
+<tr><td>범위 밖 파일 삭제</td><td><em>거절</em></td><td>거절 이유를 전달하고 실행하지 않음</td></tr>
+<tr><td>운영 서비스 배포</td><td>사람의 <b>승인 대기</b></td><td>승인 전까지 해당 작업을 멈춤</td></tr>
+</tbody>
+</table>
+<p class="takeaway">하네스는 승인·기록·중단을 관리하고,<br>실행 환경은 파일·프로세스·자격증명에 대한 실제 접근 범위를 제한합니다.</p>
+<p class="note">반복 한도, 시간·비용 한도, 오류 누적, 사용자 확인 필요도 종료 조건으로 둘 수 있습니다.</p>
+
+<!--
+각 처리는 이 예제에 맞춘 설계 선택이다. 모든 하네스가 모든 안전 제어를 기본 제공한다고 주장하지 않는다.
+모델에 지시문으로 금지를 적는 것과 실행 계정·파일 권한 등으로 제한하는 것은 서로 다른 제어 층이다.
+실행 환경 분리 근거는 원문 OpenAI agents sandboxes 문서를 참고한다.
+-->
+
+---
+layout: lesson
+section: "4. 맡길 수 있는 범위와 검증"
+source: "https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf"
+sourceName: "WEF 2025 · 다섯 특성과 두 맥락 축"
+---
+
+<h1>평가 전에 어떤 에이전트인지 조건을 적습니다</h1>
+<p class="lead">WEF는 <b>다섯 특성</b>과 <b>두 맥락</b>으로 에이전트를 분류합니다.</p>
+<table class="tight">
+<thead><tr><th style="width:24%">분류할 항목</th><th>주문 계산을 고치는 에이전트의 조건 예시</th></tr></thead>
+<tbody>
+<tr><td>기능</td><td>파일 읽기·수정, 테스트 실행</td></tr>
+<tr><td>역할</td><td>개발자의 버그 수정 보조</td></tr>
+<tr><td>예측 가능성</td><td>실패 결과에 따라 조사·수정 경로가 달라질 수 있음</td></tr>
+<tr><td>자율성</td><td>주어진 목표 안에서 다음 파일·도구·재시도를 선택</td></tr>
+<tr><td>권한</td><td>지정 저장소만 편집, 외부 전송과 운영 배포는 보류</td></tr>
+<tr><td>쓰임새</td><td>주문 계산 오류 조사와 테스트</td></tr>
+<tr><td>운영 환경</td><td>격리한 작업 폴더, 합성 코드와 테스트 데이터</td></tr>
+</tbody>
+</table>
+
+<!--
+WEF 2025 classification dimensions: functionality, role, predictability, autonomy, authority; contextual dimensions: use case, operating environment.
+오른쪽 내용은 보고서의 수치나 실측 결과가 아니라 이 덱의 합성 과제에 대응한 설계 예시다.
+-->
+
+---
+layout: lesson
+section: "4. 맡길 수 있는 범위와 검증"
+source: "https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf"
+sourceName: "WEF 2025 · 분류, 평가, 위험 평가, 거버넌스"
+---
+
+<h1>작업 결과를 평가하고 그에 맞춰 통제합니다</h1>
+<table class="medium">
+<thead><tr><th style="width:22%">단계</th><th style="width:34%">확인하는 질문</th><th>코딩 과제에 적용하면</th></tr></thead>
+<tbody>
+<tr><td>1. 분류</td><td>무엇을 어떤 환경에서 하는가?</td><td>과제·도구·자율성·권한을 명시</td></tr>
+<tr><td>2. 평가</td><td>얼마나 잘 수행하고,<br>어디서 실패하는가?</td><td>성공 여부, 소요 시간, 도구 호출 성공,<br>오류 유형과 예외 대응을 확인</td></tr>
+<tr><td>3. 위험 평가</td><td>실패·오용이 얼마나 가능하며,<br>피해는 어느 정도인가?</td><td>잘못된 계산, 범위 밖 편집,<br>외부 전송의 가능성과 영향을 분석</td></tr>
+<tr><td>4. 거버넌스</td><td>누가 감독하고 어떻게 제한할까?</td><td>접근 통제, 승인, 실행 기록,<br>모니터링과 중단 기준을 정함</td></tr>
+</tbody>
+</table>
+<p class="takeaway">모델 답변의 정답률만으로는 작업 전체를 평가하기 어렵습니다.<br>도구 사용과 실제 변경 결과까지 확인해야 합니다.</p>
+
+<!--
+원문은 task success rate/completion time/tool call success/robustness/error types/trust metrics 등을 평가 항목 예로 든다. 이 덱은 어떤 점수도 새로 산출하지 않았다.
+두 테스트 통과만으로 모든 입력의 정확성이나 운영 배포 준비를 선언하지 않는다. 평가 범위와 제한을 최종 보고에 남긴다.
+-->
+
+---
+layout: lesson
+section: "5. 실제 제품과 확장 기능"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그의 제품 개요 · 공식 자료 확인일 2026-09-23"
+---
+
+<h1>코딩 작업을 연결하는 에이전트 제품들</h1>
+<p class="lead">파일·명령·권한·작업 이력을 연결하는 코딩 에이전트의 예입니다.</p>
+<table class="tight">
+<thead><tr><th style="width:23%">제품</th><th>블로그가 정리한 주요 사용 맥락</th></tr></thead>
+<tbody>
+<tr><td><a href="https://code.claude.com/docs/en/overview" target="_blank">Claude Code</a></td><td>저장소 읽기·편집·명령 실행<br>터미널·IDE·데스크톱·웹에서 제공</td></tr>
+<tr><td><a href="https://developers.openai.com/codex/cli" target="_blank">Codex</a></td><td>파일 읽기·편집·실행<br>CLI에서는 로컬 저장소와 도구를 사용</td></tr>
+<tr><td><a href="https://opencode.ai/docs/agents/" target="_blank">OpenCode</a></td><td>모델·도구 권한을 설정하는 오픈소스 코딩 에이전트<br>작업용·계획용 에이전트를 나누어 설정 가능</td></tr>
+<tr><td><a href="https://pi.dev/docs/latest" target="_blank">Pi</a></td><td>작은 기본 구성에서 시작해 확장·스킬로 작업 방식을 만드는 터미널 하네스</td></tr>
+<tr><td><a href="https://github.com/can1357/oh-my-pi" target="_blank">Oh My Pi</a></td><td>Pi에서 갈라져 나온 별도 프로젝트<br>언어 서버(LSP)·디버거·추가 도구 통합을 강조</td></tr>
+</tbody>
+</table>
+<p class="note">기능·권한은 버전과 설정에 따라 확인합니다. 성능 순위가 아닙니다.</p>
+
+<!--
+본 표는 원문의 2026-09-23 공식 확인 시점에 고정한 개요다. 현재 최상위 제품 또는 성능 우위를 주장하지 않는다.
+제품명은 각각의 공식 자료 링크다. Hermes Agent와 OpenClaw는 다음 장에서 다른 사용 맥락을 설명한다.
+-->
+
+---
+layout: lesson
+section: "5. 실제 제품과 확장 기능"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 제품 개요 · Hermes Agent / OpenClaw 공식 문서"
+---
+
+<h1>작업을 받는 장소와 이어 가는 방식도 달라집니다</h1>
+<div class="two ruled">
+<section>
+<h2><a href="https://hermes-agent.nousresearch.com/docs/" target="_blank">Hermes Agent</a></h2>
+<p>Nous Research의 에이전트 프로젝트입니다.<br>터미널 작업과 함께 세션 간 기억,<br>스킬, 메시징 연결을 강조합니다.</p>
+<p class="quote">사용 맥락의 예<br>작업에서 정리한 절차를 다음 세션에<br>참고하며 터미널 작업을 이어 감</p>
+<p class="small muted">Hermes Agent는 언어 모델의 이름과<br>구분해야 합니다.</p>
+</section>
+<section>
+<h2><a href="https://docs.openclaw.ai/" target="_blank">OpenClaw</a></h2>
+<p>메시지 앱을 에이전트의 세션·도구·자동화와<br>연결하는 자체 호스팅 게이트웨이입니다.<br>예약 작업을 연결할 수도 있습니다.</p>
+<p class="quote">사용 맥락의 예<br>메시지 채널로 요청을 받거나,<br>예약 시각에 작업을 시작함</p>
+<p class="small muted">실제 가능한 행동은 연결된 도구와<br>권한·예약 설정에 달려 있습니다.</p>
+</section>
 </div>
-<p class="note">할인과 세금의 순서가 다르면 결과도 달라집니다. 테스트가 잘못된 계산을 찾아냅니다.</p>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 실패 원인" page="15 / 32" />
+<p class="note">사람이 지켜보지 않는 동안 실행한다면 작업 범위, 중단 조건, 결과 기록을 미리 정해야 합니다.</p>
 
 <!--
-할인 전 금액에 세금을 계산해 10,000원을 반환하는 초기 함수와 9,900원이라는 테스트 기대값의 차이를 풀어 썼습니다.
+제품 개요는 원문 2026-09-23 확인일 기준이다. 예시는 기능의 사용 맥락을 설명하며 사용자의 실제 운영 설정을 단정하지 않는다.
+https://docs.openclaw.ai/automation
 -->
 
 ---
-layout: seminar
-title: "실행 기록: 파일 확인 → 실패 → 수정 → 재검증"
+layout: lesson
+section: "5. 실제 제품과 확장 기능"
+source: "https://modelcontextprotocol.io/specification/2025-11-25/architecture"
+sourceName: "MCP 공식 사양 · Architecture / 블로그 원문"
 ---
 
-<h1>실행 기록: 파일 확인 → 실패 → 수정 → 재검증</h1>
-<RecordedTrace />
-<p class="small">실행 기록의 명령과 결과를 발췌해 재생합니다. 특정 모델 API의 원본 대화 전체는 아닙니다.</p>
-<SeminarSource href="https://github.com/riesling-29/Seminars/tree/main/ai-agent-harness-seminar/demos/edge-build-agent/example" label="합성 예제 · 재현 코드" page="16 / 32" />
+<h1>MCP는 외부 도구·자료를 연결하는 프로토콜입니다</h1>
+<p class="definition"><b>MCP(Model Context Protocol)</b>는 에이전트 앱이<br>외부 서버의 도구와 자료를 정해진 방식으로 주고받게 합니다.</p>
+<table>
+<thead><tr><th style="width:25%">연결의 구성</th><th style="width:36%">하는 일</th><th>저장소 조사에 대입하면</th></tr></thead>
+<tbody>
+<tr><td>에이전트 앱<br><span class="small muted">MCP 호스트·클라이언트</span></td><td>서버의 도구 설명을 받아<br>모델의 호출을 연결</td><td>“관련 이슈를 검색하자”는<br>요청을 서버에 전달</td></tr>
+<tr><td>MCP 서버</td><td>외부 기능·자료를 제공하고<br>요청에 맞는 결과를 반환</td><td>허용된 GitHub 이슈 검색과<br>검색 결과 제공</td></tr>
+<tr><td>외부 서비스</td><td>실제 자료와 기능이 있는 곳</td><td>저장소·이슈·문서</td></tr>
+</tbody>
+</table>
+<p class="note">MCP 자체가 모델이나 에이전트는 아닙니다. 접근 권한과 인증도 별도로 필요합니다.<br>WEF 보고서에서 A2A는 다른 에이전트와 연결하는 경로를 가리킵니다.</p>
 
 <!--
-예제 작업 폴더에서 실행한 합성 기록을 재생합니다. 요청·도구 출력·수정 및 테스트 재실행을 확인할 수 있습니다. 성공은 두 개의 작은 테스트 범위에 한정됩니다.
+MCP의 host-client-server 구조를 교육용으로 요약했다. 도구 실행은 서버 구현과 연결된 서비스의 권한에 달려 있다.
+모든 에이전트가 MCP를 필수로 사용한다는 뜻이 아니다. 직접 연결한 도구도 사용할 수 있다.
+원문의 A2A 표기는 외부 에이전트 연결 문맥에서 소개하며 프로토콜 상세를 확장하지 않는다.
 -->
 
 ---
-layout: seminar
-title: "이 예제에서 누가 무엇을 했나요?"
+layout: lesson
+section: "5. 실제 제품과 확장 기능"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · Pi Skills / Hermes Memory / KV Cache"
 ---
 
-<h1>이 예제에서 누가 무엇을 했나요?</h1>
-<table><thead><tr><th>역할</th><th>예제에서 한 일</th></tr></thead><tbody>
-<tr><td>LLM</td><td>테스트 실패를 읽고 계산식 수정·재실행 요청을 선택</td></tr>
-<tr><td>하네스</td><td>요청·도구·작업 상태를 연결하고 결과를 다시 전달</td></tr>
-<tr><td>파일·명령 도구</td><td>코드 파일 수정, 테스트 프로세스 실행</td></tr>
-<tr><td>사람</td><td>목표와 허용 범위를 정하고 변경·테스트 범위를 확인</td></tr>
-</tbody></table>
-<p class="statement">모델이 코드를 ‘직접 손으로’ 바꾼 것이 아니라, 변경 도구를 요청하고 결과를 읽었습니다.</p>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 실행 주체 구분" page="17 / 32" />
+<h1>스킬과 메모리는 작업에 참고할 정보를 제공합니다</h1>
+<table>
+<thead><tr><th style="width:21%">구성</th><th style="width:40%">역할</th><th>예시</th></tr></thead>
+<tbody>
+<tr><td>스킬<br><span class="small muted">Skill</span></td><td>특정 업무의 절차·주의점·자료를<br>묶어 모델이 참고하게 함</td><td>“파일을 수정한 뒤 이 명령으로<br>테스트하고 결과를 보고한다.”</td></tr>
+<tr><td>지속 메모리<br><span class="small muted">Memory</span></td><td>세션이 끝나도 참고할 기록을 저장하고<br>필요한 내용을 다음 입력에 포함</td><td>프로젝트의 작업 규칙,<br>사용자가 정한 선호와 지난 결정</td></tr>
+<tr><td>KV Cache</td><td>모델 생성 중 이미 계산한 key·value를<br>재사용해 반복 계산을 줄임</td><td>같은 앞부분을 처리한 계산 결과를<br>생성 과정에서 다시 사용</td></tr>
+</tbody>
+</table>
+<p class="takeaway">스킬에 절차를 적는 것만으로 실행 권한이 생기지는 않습니다.<br>실제 파일 편집·명령 실행 기능은 도구 구현과 허용된 권한이 필요합니다.</p>
 
 <!--
-기능 분담을 설명하기 위한 예제의 추상화입니다. 실제 제품에 따라 하네스 내부와 실행기의 경계는 다르게 나뉠 수 있습니다.
+스킬은 순수 텍스트 지침에 한정될 필요는 없으며 관련 자료나 스크립트를 포함할 수 있다. 읽는 절차와 실행 기능·권한의 존재를 구분한다.
+https://pi.dev/docs/latest/skills/
+https://pi.dev/docs/latest/extensions/
+https://hermes-agent.nousresearch.com/docs/user-guide/features/memory/
+지속 기록도 무한·완전한 기억을 보장하지 않으며 저장과 검색·입력 구성에 따라 달라진다.
 -->
 
 ---
-layout: seminar
-title: "공개 API의 도구 왕복: 누가 호출하고, 누가 실행하나"
+layout: lesson
+section: "6. 실제 과제에 적용하기"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 작은 과제의 시작과 결과 검토"
 ---
 
-<h1>공개 API의 도구 왕복: 누가 호출하고, 누가 실행하나</h1>
-<div class="columns">
-<section><h2>OpenAI Responses API</h2><p>① <b>모델이 반환</b>: function_call</p><pre class="code" v-pre>{"type":"function_call",
- "call_id":"call_123",
- "name":"run_command",
- "arguments":"{"command":"npm test"}"}</pre><p>② <b>앱이 실행 후 반환</b>: function_call_output + 같은 call_id</p></section>
-<section><h2>Claude Messages API</h2><p>① <b>모델이 반환</b>: tool_use</p><pre class="code" v-pre>{"type":"tool_use",
- "id":"toolu_123",
- "name":"run_command",
- "input":{"command":"npm test"}}</pre><p>② <b>앱이 실행 후 반환</b>: tool_result + tool_use_id</p></section>
+<h1>작은 과제 하나를 끝까지 맡겨 보면 구조가 보입니다</h1>
+<p class="quote">“이 저장소의 로그인 테스트가 왜 실패하는지 찾아 주세요.<br>외부 전송이나 배포는 하지 말고, 수정한 내용과 테스트 결과를 알려 주세요.”</p>
+<ol class="steps">
+<li><b>목표와 범위</b><span>어느 저장소에서 무엇을 해결할지, 허용한 행동이 무엇인지 정합니다.</span></li>
+<li><b>작업 관찰</b><span>읽은 파일, 요청한 도구, 허용·거절된 실행, 테스트 결과를 봅니다.</span></li>
+<li><b>다음 행동 확인</b><span>실패 결과를 반영해 적절한 조사·수정·재검증을 선택했는지 봅니다.</span></li>
+<li><b>결과 검토</b><span>변경된 코드와 테스트 범위를 확인한 뒤 후속 반영을 판단합니다.</span></li>
+</ol>
+<p class="note">성공·실패 기록은 모델 판단, 입력 맥락, 도구 지원 중 어디에서 문제가 생겼는지 살피는 단서입니다.</p>
+
+<!--
+블로그의 실제 과제 예시를 유지했다. 사용자에게 지금 운영 변경을 하라고 권고하는 것이 아니라 학습용 관찰 방법을 설명한다.
+도구 요청과 실제 실행의 차이를 기록에서 식별해야 한다.
+-->
+
+---
+layout: lesson
+section: "6. 실제 과제에 적용하기"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 문서 정리와 데이터 분석"
+---
+
+<h1>문서 정리와 데이터 분석에도 같은 원리가 적용됩니다</h1>
+<div class="two ruled">
+<section>
+<h2>문서 비교 과제</h2>
+<p class="quote">“이 자료들의 차이를 비교표로<br>정리하고, 근거 링크를 남겨 주세요.”</p>
+<p><b>모델</b>이 읽을 자료와 비교 기준을 고릅니다.<br><b>도구</b>가 자료를 가져옵니다.<br><b>하네스</b>가 결과를 모델에 다시 제공합니다.</p>
+<p class="small">검토할 것: 인용이 실제 원문을 뒷받침하는지,<br>자료 범위와 해석에 빠진 것이 없는지</p>
+</section>
+<section>
+<h2>데이터 분석 과제</h2>
+<p class="quote">“허용된 데이터 폴더에서 분석하고,<br>오류를 고친 뒤 결과를 설명해 주세요.”</p>
+<p><b>모델</b>이 코드와 실행 요청을 만듭니다.<br><b>도구</b>가 스크립트를 실행합니다.<br><b>하네스</b>가 출력·오류를 다음 입력에 넣습니다.</p>
+<p class="small">검토할 것: 데이터·계산 조건과 결과의 일치,<br>외부 전송 여부와 검증 범위</p>
+</section>
 </div>
-<p class="note">두 API 모두 모델이 요청하고, 애플리케이션이 실행한 뒤 결과를 연결해 돌려줍니다.</p>
-<SeminarSource href="https://developers.openai.com/api/docs/guides/function-calling" label="OpenAI Function Calling · Anthropic tool use" page="18 / 32" />
+<p class="note">외부 발송·결제·운영 배포처럼 되돌리기 어려운 행동은 과제별 승인 경계를 정합니다.</p>
 
 <!--
-예시는 각 공개 API의 구조를 간략히 보여 줍니다. 필드·응답 envelope는 API마다 다르며, Claude Code 제품의 내부 wire format을 뜻하지 않습니다.
+원문이 설명한 비코딩 활용 범위를 유지했다. 모든 제품이 문서 접근·분석 실행을 기본 지원한다고 말하지 않는다.
+도구와 자료, 권한이 연결되어 있어야 해당 작업을 수행할 수 있다.
 -->
 
 ---
-layout: seminar
-title: "API 표현은 달라도 실행 구조는 같습니다"
+layout: lesson
+section: "6. 실제 과제에 적용하기"
+source: "https://www.anthropic.com/engineering/building-effective-agents"
+sourceName: "Anthropic · Building effective agents / 블로그의 단순한 대안"
 ---
 
-<h1>API 표현은 달라도 실행 구조는 같습니다</h1>
-<table class="compact"><thead><tr><th>순서</th><th>OpenAI Responses</th><th>Claude Messages</th></tr></thead><tbody>
-<tr><td>모델 → 앱</td><td><code>function_call</code>, <code>call_id</code>, 이름, 인자</td><td><code>tool_use</code>, <code>id</code>, 이름, input</td></tr>
-<tr><td>앱 동작</td><td colspan="2">이름으로 도구 구현을 찾아 입력을 전달하고 실행</td></tr>
-<tr><td>앱 → 모델</td><td><code>function_call_output</code>, 같은 call_id</td><td><code>tool_result</code>, 원래 tool_use_id</td></tr>
-<tr><td>다음 단계</td><td colspan="2">모델이 결과를 읽고 다음 요청 또는 답변을 생성</td></tr>
-</tbody></table>
-<p class="statement">호출 요청과 실행 결과를 같은 짝으로 연결하는 것이 왕복의 핵심입니다.</p>
-<SeminarSource href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" label="Anthropic · tool_use / tool_result" page="19 / 32" />
+<h1>과제에 맞춰 가장 단순한 방식을 고릅니다</h1>
+<table class="medium">
+<thead><tr><th style="width:28%">과제의 성격</th><th style="width:20%">가능한 방식</th><th>예시</th></tr></thead>
+<tbody>
+<tr><td>답변 한 번이면 충분</td><td>채팅·모델 1회 호출</td><td>코드의 의미 설명, 문장 요약</td></tr>
+<tr><td>처리 규칙이 명확하고 일정</td><td>스크립트</td><td>정해진 형식의 파일 변환과 수치 계산</td></tr>
+<tr><td>단계·분기를 미리 정할 수 있음</td><td>워크플로</td><td>자료 읽기 → 정해진 검증 → 보고서 생성</td></tr>
+<tr><td>중간 결과에 따라 경로가 바뀜</td><td>에이전트</td><td>예상하지 못한 오류를 조사하고 수정·재검증</td></tr>
+<tr><td>변경 이익이 불분명</td><td>기존 방식 유지</td><td>현재 절차가 충분하고 전환 비용이 더 큰 경우</td></tr>
+</tbody>
+</table>
+<p class="takeaway">복잡한 반복 구조는 시간과 비용을 더 쓸 수 있습니다.<br>필요한 도구와 판단 범위가 있는지 확인한 뒤 구성합니다.</p>
 
 <!--
-상세 필드 이름은 각 공식 API 문서를 따릅니다. 모든 제품이 공유하는 하나의 표준 메시지 형식은 없습니다.
+Anthropic은 가장 단순한 해결 방식부터 시작하고 필요할 때 복잡도를 늘리라고 설명한다.
+이 표는 과제 특성에 따른 교육용 선택지다. 항상 에이전트를 도입해야 한다는 결론을 만들지 않는다.
 -->
 
 ---
-layout: seminar
-title: "에이전트·하네스·실행 환경을 역할로 구분하기"
+layout: lesson
+section: "6. 실제 과제에 적용하기"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · 이 블로그 글은 이렇게 쓰였습니다"
 ---
 
-<h1>에이전트·하네스·실행 환경을 역할로 구분하기</h1>
-<div class="columns divided">
-<section><h2>일을 이어 가는 전체</h2><p><b>에이전트</b><br>목표를 받고 읽기 → 수정 → 테스트 → 보고를 이어 가는 시스템</p></section>
-<section><h2>그 안의 운영과 실제 실행</h2><p><b>하네스</b>: 맥락·도구·상태·권한·종료를 관리</p><p><b>실행 환경</b>: 파일·명령이 실제로 작동하는 공간</p></section>
+<h1>이 블로그 글도 모델과 작업 환경을 연결해 썼습니다</h1>
+<div class="writing-stage"><b>초안과 내용 정리</b><p><b>Local LLM + Hermes</b><br>개인 컴퓨터의 모델과 에이전트 환경을 이용해 초안을 정리했습니다.</p></div>
+<div class="writing-stage"><b>저장소의 원고 수정</b><p><b>GPT / Codex + GitHub</b><br>원고와 그림을 보관한 저장소에서 파일을 수정하고, 바뀐 내용을 검토합니다.</p></div>
+<div class="writing-stage"><b>미리보기와 공개</b><p><b>GitHub + Vercel</b><br>웹 미리보기 → 게시할 버전 반영 → 블로그 배포 → 실제 페이지 확인</p></div>
+<p class="takeaway">원고 생성, 파일 편집, 저장소 반영, 웹 배포는 각각 다른 작업입니다.<br>연결과 권한이 있어야 하나의 작업 흐름으로 이어집니다.</p>
+<p class="note">Codex는 저장소 파일을 수정하고, Vercel은 게시할 버전을 빌드해 웹에 배포합니다.<br>두 앱은 같은 저장소에 각각 접근하도록 연결합니다.</p>
+
+<!--
+원문 writing-workflow.svg를 읽고 요약했다. Local LLM + Hermes는 초안·정리 경로, GPT/Codex + GitHub + Vercel은 원고 수정·공개 경로다.
+원본의 PR 경로: 수정 요청, 작업 브랜치 편집, diff 검토/PR, Vercel Preview, 미리보기 확인, main 병합, 운영 빌드, 배포 상태, 실제 블로그 확인.
+일반 ChatGPT GitHub 연결과 쓰기 가능한 Codex 연결의 권한 범위는 앱·설정마다 확인해야 하므로 이 화면에서 일반 앱 전체의 권한을 단정하지 않는다.
+-->
+
+---
+layout: lesson
+section: "정리"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "블로그 원문 · LLM·하네스·에이전트의 관계"
+---
+
+<h1>LLM의 출력이 실제 작업으로 이어지는 구조</h1>
+<div class="mini-summary">
+<b>LLM</b><p>주어진 맥락을 읽고 답변·코드·다음 도구 호출 요청을 만듭니다.</p>
+<b>하네스</b><p>입력·기록을 관리하고, 도구 연결·승인·반복·종료를 조정합니다.</p>
+<b>도구</b><p>파일 읽기·편집·명령 실행을 맡은 프로그램입니다.</p>
+<b>실행 환경</b><p>도구가 접근하는 파일·프로세스·서비스가 있는 공간입니다.</p>
+<b>에이전트</b><p>목표를 받아 위 구성요소로 작업하고, 결과에 따라 다음 단계를 정하는 전체입니다.</p>
 </div>
-<p class="note">“누가 다음 행동을 고르나? 누가 허용하나? 누가 실행하나?”를 물으면 경계가 선명해집니다.</p>
-<SeminarSource href="https://developers.openai.com/api/docs/guides/agents-api/architecture" label="OpenAI · 하네스와 실행 환경" page="20 / 32" />
+<p class="quote">주문 계산 사례에서는<br>테스트 요청 → 실제 실패 → 수정 요청 → 실제 변경 → 재검증 → 결과 보고로 이어졌습니다.</p>
+<p class="takeaway">에이전트를 이해하려면 모델 이름과 함께<br>연결된 도구, 실행 권한, 결과를 다시 판단에 넣는 구조를 보면 됩니다.</p>
 
 <!--
-에이전트는 전체 시스템, 하네스는 운영 구조를 의미하는 경우가 많습니다. 그러나 제품과 문헌에 따라 경계가 다르므로 정의를 먼저 확인해야 합니다.
+이 결론은 앞에서 보여 준 사용자 정의 도구 왕복과 합성 코드 사례의 범위에서 성립한다.
+다른 제품은 하네스와 실행기의 경계가 다를 수 있으므로 실제 구현을 볼 때 누가 요청하고, 누가 허용하며, 누가 실행하는지 확인한다.
 -->
 
 ---
-layout: seminar
-title: "같은 모델도 연결된 권한에 따라 달라집니다"
+layout: lesson
+section: "참고 자료"
+source: "https://blog29.vercel.app/blog/ai-agent-harness"
+sourceName: "전체 참고 링크와 제품 문서는 블로그 원문 및 각 장의 출처"
 ---
 
-<h1>같은 모델도 연결된 권한에 따라 달라집니다</h1>
-<div class="columns divided">
-<section><h2>저장소 읽기만 가능</h2><p>파일과 오류를 찾아 원인·수정안을 설명합니다.</p><p>실제 수정과 테스트는 사람이 합니다.</p></section>
-<section><h2>특정 저장소 수정·테스트 허용</h2><p>수정과 테스트를 실행하고 결과를 반영해 다음 단계를 선택합니다.</p><p>커밋·배포는 별도 승인으로 남길 수 있습니다.</p></section>
+<h1>원문과 핵심 자료</h1>
+<div class="refs">
+<p><a href="https://blog29.vercel.app/blog/ai-agent-harness" target="_blank">AI 에이전트와 하네스: 처음부터 설명하기</a><span>이 발표의 기준 원문 · 2026-09-26 갱신본</span></p>
+<p><a href="https://huggingface.co/docs/transformers/main/cache_explanation/" target="_blank">Hugging Face · How caching works</a><span>모델 생성과 KV Cache</span></p>
+<p><a href="https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/" target="_blank">WEF · Navigating the AI Frontier (2024)</a><span>감지·판단·행동과 에이전트 구성</span></p>
+<p><a href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" target="_blank">WEF · AI Agents in Action (2025)</a><span>소프트웨어 층, 분류·평가·거버넌스</span></p>
+<p><a href="https://developers.openai.com/api/docs/guides/function-calling" target="_blank">OpenAI · Function calling</a><span>모델 응답, 사용자 함수 실행과 결과 반환</span></p>
+<p><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">Claude · Tool use overview</a><span>tool_use와 tool_result</span></p>
+<p><a href="https://qwen.readthedocs.io/en/latest/getting_started/concepts.html" target="_blank">Qwen3 · Key Concepts</a><span>Hermes-style tool calling</span></p>
+<p><a href="https://hermes-agent.nousresearch.com/docs/developer-guide/trajectory-format" target="_blank">Hermes Agent · Trajectory Format</a><span>호출·결과의 정규화된 실행 기록</span></p>
+<p><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">Anthropic · Building effective agents</a><span>워크플로·에이전트와 단순한 대안</span></p>
+<p><a href="https://modelcontextprotocol.io/specification/2025-11-25/architecture" target="_blank">MCP · Architecture</a><span>호스트·클라이언트·서버 구조</span></p>
 </div>
-<p class="note">결과 차이를 볼 때는 모델뿐 아니라 도구 설명·자료·권한·과제·사람의 개입도 비교해야 합니다.</p>
-<SeminarSource href="https://www.anthropic.com/engineering/building-effective-agents" label="Anthropic · 도구와 에이전트 설계" page="21 / 32" />
+<p class="note">제품 개요는 원문의 2026-09-23 확인 시점에 따릅니다. API·템플릿 예시는 2026-09-27 공식 문서로 확인했습니다.<br>화면의 코드·메시지는 이해를 위한 발췌이며, 전체 제품 구현이나 모든 입력의 정확성을 보장하지 않습니다.</p>
 
 <!--
-동일 조건의 실험 결과를 주장하는 장이 아니라, 작업 경로가 권한과 도구에서 달라질 수 있음을 설명하는 사고 실험입니다.
--->
-
----
-layout: seminar
-title: "자율성과 권한은 서로 다른 축입니다"
----
-
-<h1>자율성과 권한은 서로 다른 축입니다</h1>
-<table class="compact"><thead><tr><th>과제</th><th>스스로 고르는 정도</th><th>실행 권한</th><th>사람이 확인할 점</th></tr></thead><tbody>
-<tr><td>문서 요약</td><td>여러 문서를 탐색</td><td>읽기만 허용</td><td>인용·해석 확인</td></tr>
-<tr><td>버그 수정</td><td>오류별 수정 경로 선택</td><td>특정 저장소 수정·테스트</td><td>변경·테스트 검토</td></tr>
-<tr><td>고객 답장</td><td>근거와 초안 구성</td><td>발송은 보류</td><td>외부 발송 승인</td></tr>
-</tbody></table>
-<p class="note">다음 단계를 스스로 고르는 능력이 커도, 외부로 실행할 권한은 제한할 수 있습니다.</p>
-<SeminarSource href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" label="WEF 2025 · 자율성·권한" page="22 / 32" />
-
-<!--
-표의 설정은 블로그에 제시된 설계 예시이며 특정 제품의 기본 권한을 설명하지 않습니다.
--->
-
----
-layout: seminar
-title: "평가 전에 에이전트의 과제와 환경을 분류합니다"
----
-
-<h1>평가 전에 에이전트의 과제와 환경을 분류합니다</h1>
-<div class="columns divided">
-<section><h2>에이전트 특성</h2><p><b>기능</b> 무엇을 수행하나?<br><b>역할</b> 어떤 책임을 맡나?<br><b>예측 가능성</b> 행동을 얼마나 예상할 수 있나?<br><b>자율성</b> 다음 단계를 얼마나 스스로 고르나?<br><b>권한</b> 어디까지 실행할 수 있나?</p></section>
-<section><h2>사용 맥락</h2><p><b>쓰임새</b><br>어떤 과제에 사용하나?</p><p><b>운영 환경</b><br>어떤 데이터·서비스·시스템과 연결되나?</p></section>
-</div>
-<p class="note">같은 모델이어도 과제와 연결 환경이 다르면 적절한 평가 기준이 달라집니다.</p>
-<SeminarSource href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" label="WEF 2025 · 분류 틀" page="23 / 32" />
-
-<!--
-WEF 2025가 제안하는 다섯 에이전트 특성과 두 맥락 축을 쉬운 질문으로 바꿨습니다.
--->
-
----
-layout: seminar
-title: "분류에서 평가·위험·거버넌스로"
----
-
-<h1>분류에서 평가·위험·거버넌스로</h1>
-<div class="timeline">
-<div><h3>분류</h3><p>무엇을 어떤 환경에서 하는지 정리</p></div>
-<div><h3>평가</h3><p>성공률·완료 시간·도구 호출 성공·예외 상황 확인</p></div>
-<div><h3>위험 평가</h3><p>실패·오용 가능성과 피해 범위 점검</p></div>
-<div><h3>거버넌스</h3><p>접근 통제·사람의 감독·기록·모니터링 결정</p></div>
-</div>
-<p class="note">답변 정확도뿐 아니라 실제 도구 사용과 실패 상황에서의 행동도 평가합니다.</p>
-<SeminarSource href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" label="WEF 2025 · 평가·위험 평가·거버넌스" page="24 / 32" />
-
-<!--
-슬라이드는 WEF 제안 흐름을 요약합니다. 이 발표는 어떤 실제 제품의 성능 수치도 측정하지 않습니다.
--->
-
----
-layout: seminar
-title: "코드 작업용 에이전트 예시"
----
-
-<h1>코드 작업용 에이전트 예시</h1>
-<table><thead><tr><th>제품</th><th>블로그에서 설명한 주요 맥락</th></tr></thead><tbody>
-<tr><td>Claude Code</td><td>저장소를 읽고 수정하며 명령을 실행하는 코딩 에이전트</td></tr>
-<tr><td>Codex</td><td>파일을 읽고 고치고 실행하며, CLI는 로컬 저장소와 도구를 사용</td></tr>
-<tr><td>OpenCode</td><td>모델·도구 접근을 설정하고 작업용·계획용 에이전트를 구성</td></tr>
-</tbody></table>
-<p class="note">제품별 지원 기능은 변할 수 있습니다. 이 표는 2026년 9월 23일 공식 자료를 확인한 개요이며 성능 순위가 아닙니다.</p>
-<SeminarSource href="https://code.claude.com/docs/en/overview" label="공식 문서 · Claude Code · Codex CLI · OpenCode" page="25 / 32" />
-
-<!--
-공식 문서 확인 날짜를 표기해 시간 민감성을 드러냅니다. 발표 전 기능 변화가 있다면 확인 날짜와 표 내용을 함께 갱신해야 합니다.
--->
-
----
-layout: seminar
-title: "확장과 메시징 연결을 다루는 프로젝트"
----
-
-<h1>확장과 메시징 연결을 다루는 프로젝트</h1>
-<table class="compact"><thead><tr><th>프로젝트</th><th>주요 역할</th></tr></thead><tbody>
-<tr><td>Pi</td><td>작은 터미널 하네스에 확장·스킬을 더하는 방식</td></tr>
-<tr><td>Oh My Pi</td><td>Pi와 별개로 개발되는 코딩 에이전트, LSP·디버거 통합</td></tr>
-<tr><td>Hermes Agent</td><td>터미널 에이전트, 세션 간 메모리·스킬·메시징 연결</td></tr>
-<tr><td>OpenClaw</td><td>메시지 앱을 세션·도구·자동화에 연결하는 게이트웨이</td></tr>
-</tbody></table>
-<p class="note">Hermes Agent는 에이전트 프로젝트입니다. Hermes 언어 모델과 이름을 구분하고, Pi와 Oh My Pi도 별도 프로젝트로 봅니다.</p>
-<SeminarSource href="https://hermes-agent.nousresearch.com/docs/" label="공식 프로젝트 문서 · Pi · Oh My Pi · Hermes Agent · OpenClaw" page="26 / 32" />
-
-<!--
-블로그가 2026-09-23 확인한 공식 자료 기준입니다. 로컬 모델을 연결해도 검색·외부 API·메시징 도구의 데이터 흐름은 별도로 확인해야 합니다.
--->
-
----
-layout: seminar
-title: "MCP·스킬·메모리는 서로 다른 층입니다"
----
-
-<h1>MCP·스킬·메모리는 서로 다른 층입니다</h1>
-<table><thead><tr><th>구성</th><th>무엇을 제공하나?</th><th>쉬운 예</th></tr></thead><tbody>
-<tr><td>MCP</td><td>앱이 외부 도구·자료와 연결되는 프로토콜</td><td>검색 서버의 자료 조회 기능</td></tr>
-<tr><td>스킬</td><td>업무 절차와 참고 자료</td><td>문서 비교 시 확인할 단계</td></tr>
-<tr><td>메모리</td><td>다음 세션에서 다시 쓸 기록</td><td>사용자가 정한 출력 선호</td></tr>
-</tbody></table>
-<p class="note">지침을 기록하는 것만으로 도구 권한이 생기지 않고, 저장된 기억도 모델 입력에 포함되어야 판단에 쓰입니다.</p>
-<SeminarSource href="https://modelcontextprotocol.io/specification/2025-11-25/architecture" label="MCP 사양 · Pi Skills · Hermes Memory" page="27 / 32" />
-
-<!--
-MCP는 에이전트나 모델 자체가 아닙니다. 스킬에 실행 코드가 포함된 제품에서는 설명 문서와 실제 권한을 구분해 살펴봐야 합니다. 메모리는 토큰 계산을 재사용하는 KV Cache와 다릅니다.
--->
-
----
-layout: seminar
-title: "작은 실제 과제부터 맡기고 기록을 봅니다"
----
-
-<h1>작은 실제 과제부터 맡기고 기록을 봅니다</h1>
-<blockquote class="quote">“이 저장소의 로그인 테스트가 왜 실패하는지 찾아 주세요.<br>외부 전송이나 배포는 하지 말아 주세요.”</blockquote>
-<div class="columns divided">
-<section><h2>진행 중</h2><p>요청한 도구와 실제 허용 범위<br>테스트 결과와 다음 선택</p></section>
-<section><h2>완료 후</h2><p>변경된 파일과 테스트 범위<br>해결되지 않은 문제</p></section>
-</div>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 실제 과제" page="28 / 32" />
-
-<!--
-작은 범위를 지정하면 모델 요청, 하네스 승인, 도구 결과의 왕복을 추적하기 쉽습니다. 실제 사용 시에는 조직 정책과 적절한 테스트 환경을 따라야 합니다.
--->
-
----
-layout: seminar
-title: "문서·데이터 작업에는 더 단순한 방법도 있습니다"
----
-
-<h1>문서·데이터 작업에는 더 단순한 방법도 있습니다</h1>
-<table class="compact"><thead><tr><th>상황</th><th>먼저 고려할 방식</th><th>확인할 결과</th></tr></thead><tbody>
-<tr><td>문서 한 번 비교</td><td>모델 한 번 호출</td><td>근거 링크·원문과 해석의 일치</td></tr>
-<tr><td>정해진 반복 처리</td><td>스크립트·고정 워크플로</td><td>검사 결과와 재현성</td></tr>
-<tr><td>결과에 따라 다음 단계가 달라짐</td><td>도구를 연결한 에이전트</td><td>도구 사용·예외 대응·변경 내역</td></tr>
-</tbody></table>
-<p class="note">외부 발송·결제·운영 배포는 별도 승인 경계를 둡니다. 기존 방식이 충분하면 유지할 수도 있습니다.</p>
-<SeminarSource href="https://www.anthropic.com/engineering/building-effective-agents" label="Anthropic · Building effective agents" page="29 / 32" />
-
-<!--
-Anthropic 글은 단순한 방식으로 해결되는지 먼저 살펴볼 것을 권합니다. 여기서는 에이전트 도입을 기본값으로 두지 않습니다.
--->
-
----
-layout: seminar
-title: "이 블로그 글은 이렇게 쓰였습니다"
----
-
-<h1>이 블로그 글은 이렇게 쓰였습니다</h1>
-<SeminarDiagram kind="writing" />
-<p class="small">두 경로 모두 변경을 검토하고 커밋한 다음, 배포 결과와 실제 페이지를 확인합니다.</p>
-<SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 원문 · 작성 과정" page="30 / 32" />
-
-<!--
-사용자가 설명한 글 작성 경로를 간단히 나타냈습니다. GitHub 연결에서 대상 저장소와 쓰기 권한을 확인하고, Vercel에서는 저장소·빌드 설정·배포 브랜치를 확인해야 합니다.
--->
-
----
-layout: seminar
-title: "정리: 도구 요청이 작업이 되기까지"
----
-
-<h1>정리: 도구 요청이 작업이 되기까지</h1>
-<p class="lead">목표 → 도구 요청 → 권한 확인 → 실행 결과 → 다음 판단</p>
-<div class="columns divided">
-<section><h2>구조를 읽는 질문</h2><p>누가 다음 요청을 만들었나?<br>누가 실행을 허용했나?<br>누가 파일·명령을 실제로 다뤘나?</p></section>
-<section><h2>결과를 검토하는 질문</h2><p>무엇이 바뀌었나?<br>어떤 테스트 범위가 통과했나?<br>언제 사람의 확인이 필요한가?</p></section>
-</div>
-<p class="note">LLM·하네스·실행 환경을 나누어 보면 제품 이름 뒤의 작동 방식을 이해할 수 있습니다.</p>
-<SeminarSource label="AI 에이전트와 하네스 세미나" page="31 / 32" />
-
-<!--
-결론의 근거는 앞의 호출·실행 왕복과 코드 예제입니다. 반증 조건은 실제 구현에서 요청·승인·실행의 역할이 어떻게 나뉘는지를 확인하는 것입니다. 제품 구조는 바뀔 수 있으므로 개별 제품 설명은 확인 날짜를 함께 봅니다.
--->
-
----
-layout: seminar
-title: "참고 자료"
----
-
-<h1>참고 자료</h1>
-<div class="references">
-<p><a href="https://blog29.vercel.app/blog/ai-agent-harness" target="_blank">블로그 원문</a><small>AI 에이전트와 하네스</small></p>
-<p><a href="https://qwen.readthedocs.io/en/latest/getting_started/concepts.html" target="_blank">Qwen3 Key Concepts</a><small>Hermes-style tool calling</small></p>
-<p><a href="https://qwen.readthedocs.io/en/latest/framework/function_call.html" target="_blank">Qwen Function Calling</a><small>도구 설명·호출·결과 처리</small></p>
-<p><a href="https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/" target="_blank">WEF 2024</a><small>에이전트 구조</small></p>
-<p><a href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" target="_blank">WEF 2025</a><small>소프트웨어 층·평가·거버넌스</small></p>
-<p><a href="https://developers.openai.com/api/docs/guides/function-calling" target="_blank">OpenAI</a><small>Function calling</small></p>
-<p><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">Anthropic</a><small>Tool use</small></p>
-<p><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">Building effective agents</a><small>워크플로와 에이전트</small></p>
-</div>
-<p class="small">제품 개요의 공식 문서 확인일: 2026년 9월 23일</p>
-<SeminarSource label="AI 에이전트와 하네스 세미나" page="32 / 32" />
-
-<!--
-상세 제품별 공식 링크는 블로그 원문과 발표자 노트의 출처를 확인합니다.
+블로그 원문 blob: 9286efa69583e10579a57eea5d8a244753123cb2.
+제품 링크는 25·26장, 스킬·메모리는 28장 노트에 있다.
+기준 원문 내용, 현재 공식 호출 형식, 교육용 단순화를 구분한다. 이 덱의 실행 예제에는 실제 회사 코드·데이터를 사용하지 않았다.
 -->

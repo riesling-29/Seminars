@@ -1,6 +1,1 @@
-import './tokens.css'
-import './base.css'
-import './layouts.css'
-import './components.css'
-import './seminar-additions.css'
-import './seminar.css'
+import './lesson.css'

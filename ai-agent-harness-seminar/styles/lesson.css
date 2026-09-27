@@ -1,0 +1,116 @@
+@font-face {
+  font-family: 'Seminar Sans';
+  src: url('/fonts/seminar-kr.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+:root { color-scheme: light; }
+.slidev-layout.lesson {
+  --paper: #f8f7f2; --ink: #24342e; --muted: #56675f;
+  --green: #176a50; --line: #cbd6cd; --tint: #eaf0e9; --rust: #a5472e;
+  position: relative; box-sizing: border-box; width:100%; height:100%;
+  padding:36px 60px 24px; background:var(--paper); color:var(--ink);
+  font-family:'Seminar Sans','Noto Sans KR',sans-serif; font-size:24px; line-height:1.52;
+  display:flex; flex-direction:column; gap:14px; overflow:hidden;
+}
+.lesson-section { font-size:15px; line-height:22px; font-weight:600; color:var(--green); letter-spacing:.035em; flex:none; }
+.lesson-content { flex:1; min-height:0; position:relative; }
+.lesson h1 { font-size:42px; line-height:1.24; letter-spacing:-.045em; font-weight:750; margin:0 0 20px; color:var(--ink); }
+.lesson h2 { font-size:27px; line-height:1.32; font-weight:720; margin:0 0 12px; letter-spacing:-.025em; color:var(--green); }
+.lesson h3 { font-size:24px; font-weight:700; margin:0 0 8px; }
+.lesson p { opacity:1; margin:0 0 18px; }
+.lesson strong,.lesson b { color:var(--green); font-weight:750; }
+.lesson em { font-style:normal; color:var(--rust); }
+.lesson a { color:var(--green); text-decoration:underline; text-underline-offset:4px; border:0; }
+.lesson .lead { font-size:28px; line-height:1.48; margin-bottom:22px; letter-spacing:-.02em; }
+.lesson .definition { font-size:32px; line-height:1.5; margin:16px 0 28px; max-width:1080px; }
+.lesson .note { font-size:21px; color:var(--muted); line-height:1.5; margin-top:14px; }
+.lesson .takeaway { border-top:2px solid var(--line); padding-top:16px; margin-top:22px; color:var(--green); font-size:25px; font-weight:600; }
+.lesson .small { font-size:21px; line-height:1.5; }
+.lesson .muted { color:var(--muted); }
+.lesson .two { display:grid; grid-template-columns:1fr 1fr; gap:42px; align-items:start; }
+.lesson .two > * { min-width:0; }
+.lesson .two.ratio { grid-template-columns:1.05fr .95fr; }
+.lesson .two.ruled > :nth-child(2) { border-left:1px solid var(--line); padding-left:30px; }
+.lesson .quote { border-left:5px solid var(--green); padding:10px 0 10px 24px; margin:14px 0 24px; font-size:28px; line-height:1.5; }
+.lesson table { width:100%; border-collapse:collapse; font-size:23px; line-height:1.45; margin:14px 0 0; }
+.lesson th { color:var(--green); font-weight:720; text-align:left; padding:0 16px 12px 0; border-bottom:2px solid var(--green); }
+.lesson td { padding:14px 16px 14px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+.lesson td:first-child { font-weight:650; }
+.lesson th:last-child,.lesson td:last-child { padding-right:0; }
+.lesson .tight table,.lesson table.tight { font-size:21px; }
+.lesson table.tight td { padding:8px 16px 8px 0; }
+.lesson table.medium td { padding:11px 16px 11px 0; }
+.lesson ul,.lesson ol { margin:8px 0 20px; padding-left:29px; }
+.lesson li { margin:0 0 16px; padding-left:3px; }
+.lesson code { font: .93em/1.4 ui-monospace,'DejaVu Sans Mono',monospace; color:var(--ink); background:var(--tint); padding:2px 6px; border-radius:3px; }
+.lesson pre { font:21px/1.5 ui-monospace,'DejaVu Sans Mono',monospace; white-space:pre-wrap; overflow-wrap:anywhere; margin:10px 0 18px; background:var(--tint); color:var(--ink); border-left:4px solid var(--green); padding:18px 21px; border-radius:0; tab-size:2; }
+.lesson pre code { background:none; padding:0; font:inherit; }
+.lesson .code-label { font-size:20px; font-weight:700; color:var(--green); margin:0 0 6px; }
+.lesson .code-note { font-size:22px; margin:10px 0 0; line-height:1.45; }
+.lesson .code-small { font-size:19px; line-height:1.45; }
+.lesson .result-fail { color:#91352d; border-color:#b44e40; background:#f6e9e3; }
+.lesson .result-pass { color:#16523f; }
+.lesson .steps { list-style:none; padding:0; margin:0; counter-reset:steps; }
+.lesson .steps li { counter-increment:steps; display:grid; grid-template-columns:40px 180px 1fr; column-gap:20px; align-items:baseline; border-bottom:1px solid var(--line); padding:16px 0; margin:0; }
+.lesson .steps li::before { content:counter(steps,decimal-leading-zero); font:18px/1.5 ui-monospace,monospace; color:var(--green); }
+.lesson .steps span { font-size:23px; }
+.lesson .steps b { font-size:24px; }
+.lesson .mathline { display:grid; grid-template-columns:1fr 55px 1fr 55px 1fr; align-items:center; gap:12px; padding:24px 0; margin:16px 0 22px; border-block:1px solid var(--line); text-align:center; }
+.lesson .mathline strong { font-size:48px; line-height:1.25; display:block; margin:0 0 6px; }
+.lesson .mathline span { font-size:23px; }
+.lesson .mathline .arrow { color:var(--muted); font-size:34px; }
+.lesson .layer-row { display:grid; grid-template-columns:240px 1fr; column-gap:30px; padding:20px 24px; border-bottom:1px solid var(--line); }
+.lesson .layer-row b { font-size:25px; }
+.lesson .layer-row span { display:block; font-size:22px; }
+.lesson .layer-row p { margin:0; font-size:24px; }
+.lesson .layer-stack { border:2px solid var(--green); margin-top:14px; }
+.lesson .layer-stack > :last-child { border-bottom:0; }
+.lesson .refs { display:grid; grid-template-columns:1fr 1fr; gap:18px 42px; }
+.lesson .refs p { font-size:22px; margin:0; }
+.lesson .refs span { display:block; color:var(--muted); font-size:19px; margin-top:4px; }
+.lesson-footer { flex:none; display:flex; gap:20px; justify-content:space-between; align-items:flex-end; font-size:14px; color:var(--muted); line-height:21px; min-height:25px; border-top:1px solid var(--line); padding-top:10px; }
+.lesson-footer a { color:var(--muted); }
+.lesson-page { white-space:nowrap; font-variant-numeric:tabular-nums; }
+.lesson.cover { padding-top:55px; background:#173e32; color:#f6f7ed; }
+.lesson.cover .lesson-section { color:#c0d8c8; font-size:20px; letter-spacing:0; }
+.lesson.cover .lesson-content { display:flex; flex-direction:column; justify-content:center; }
+.lesson.cover h1 { font-size:65px; color:#f6f7ed; line-height:1.22; margin-bottom:30px; letter-spacing:-.05em; }
+.lesson.cover .cover-intro { font-size:30px; color:#d7e4d7; max-width:1000px; line-height:1.55; }
+.lesson.cover .cover-topics { color:#b9d4c1; font-size:23px; margin-top:26px; }
+.lesson.cover .lesson-footer { color:#b9d4c1; border-color:#507462; }
+.lesson.cover .lesson-footer a { color:#b9d4c1; }
+.agent-system { font-size:21px; }
+.system-goal,.system-environment { display:flex; gap:24px; align-items:center; padding:13px 22px; border-block:1px solid var(--line); }
+.system-goal { margin-bottom:12px; }
+.system-boundary { border:2px solid var(--green); padding:12px 22px 0; position:relative; }
+.boundary-name { color:var(--green); font-size:20px; font-weight:750; margin-bottom:12px; }
+.system-loop { display:grid; grid-template-columns:1fr 340px 1fr; gap:12px; align-items:center; }
+.system-model,.system-harness { text-align:center; background:var(--tint); padding:13px 12px; }
+.system-loop b { display:block; font-size:28px; margin-bottom:5px; }
+.system-loop span { display:block; font-size:21px; }
+.system-exchange { display:flex; flex-direction:column; gap:18px; text-align:center; }
+.system-exchange span { font-size:20px; color:var(--muted); }
+.system-tool-line { display:flex; gap:40px; justify-content:flex-end; align-items:center; padding:14px 20px 12px; }
+.system-tool-line b { font-size:22px; }
+.system-tool-line span { font-size:20px; }
+.system-environment { margin-top:12px; background:#eeeee6; }
+.lesson .mini-summary { display:grid; grid-template-columns:160px 1fr; gap:12px 26px; padding:10px 0; }
+.lesson .mini-summary b { font-size:27px; }
+.lesson .mini-summary p { margin:0; font-size:25px; }
+.lesson .writing-stage { display:grid; grid-template-columns:265px 1fr; gap:24px; padding:14px 0; border-bottom:1px solid var(--line); }
+.lesson .writing-stage b { font-size:25px; }
+.lesson .writing-stage p { margin:0; font-size:24px; }
+@media print { .lesson { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }
+
+.system-tool-line small { display:block; font-size:17px; font-weight:500; color:var(--muted); }
+
+/* Override default theme paragraph opacity and fixed rem line-height. */
+.slidev-layout.lesson p { opacity:1; line-height:1.45; }
+.slidev-layout.lesson p.lead { line-height:1.48; }
+.slidev-layout.lesson p.note { line-height:1.5; }
+.slidev-layout.lesson p.cover-intro { line-height:1.55; }
+.lesson-content > :last-child { margin-bottom:0; }
+
+.lesson-content section > :last-child { margin-bottom:0; }
