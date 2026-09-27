@@ -36,9 +36,9 @@ title: "Attention에서 에이전트로"
 
 <h1>Attention에서 에이전트로</h1>
 <div class="columns divided">
-<section><h2>모델 내부에서 하는 일</h2><p><b>Attention</b>은 입력 맥락을 참고해 토큰의 표현을 계산합니다.</p><p><b>KV Cache</b>는 이미 처리한 토큰의 key와 value를 재사용합니다.</p></section>
-<section><h2>작업을 이어 가는 데 필요한 것</h2><p>파일을 읽고, 명령을 실행하고, 그 결과를 다음 입력에 넣어야 합니다.</p><p>이 부분은 <b>모델 바깥의 프로그램</b>이 맡습니다.</p></section>
-</div><p class="note">KV Cache의 계산 재사용과 에이전트의 작업 기억은 역할이 다릅니다.</p>
+<section><h2>모델 내부: 다음 토큰 생성</h2><p><b>Attention</b>은 현재 입력의 어느 토큰 맥락을 참고할지 계산합니다.</p><p><b>KV Cache</b>는 이미 계산한 key/value를 재사용해 생성 중 반복 계산을 줄입니다.</p></section>
+<section><h2>모델 바깥: 작업 실행</h2><p>파일 읽기·명령 실행은 도구가 맡고, 실행 결과는 다음 모델 입력에 포함됩니다.</p><p>이력·도구·권한·종료 조건을 연결하는 것은 주변 프로그램입니다.</p></section>
+</div><p class="statement">Attention과 KV Cache는 출력을 만드는 과정이고, 에이전트 루프는 출력을 실제 작업과 다음 판단에 연결합니다.</p><p class="note">KV Cache는 대화의 영구 기억이나 파일 접근 기능이 아닙니다.</p>
 <SeminarSource href="https://huggingface.co/docs/transformers/main/cache_explanation/" label="Hugging Face · How caching works" page="02 / 28" />
 
 <!--
@@ -54,9 +54,9 @@ title: "모델을 둘러싼 실행 구조"
 ---
 
 <h1>모델을 둘러싼 실행 구조</h1>
-<p>모델은 <b>도구를 쓰겠다는 요청</b>을 출력할 수 있습니다.</p>
+<p class="lead">모델의 출력은 실행 명령 자체가 아니라, 도구를 선택하고 인자를 제안하는 요청입니다.</p>
 <SeminarDiagram kind="overview" />
-<p class="small">하네스는 모델 호출과 도구 연결을 운영하는 코드입니다. 실행 환경에는 실제 파일과 프로세스가 있습니다.</p>
+<div class="columns divided"><section><h2>하네스</h2><p>도구 설명을 전달하고, 호출을 확인해 권한과 작업 상태에 연결합니다.</p></section><section><h2>실행 환경</h2><p>등록된 도구가 파일을 읽거나 프로세스를 시작하고 실제 결과를 돌려줍니다.</p></section></div><p class="note">같은 모델이라도 연결한 도구·권한·실행 장소에 따라 가능한 작업 경로가 달라집니다.</p>
 <SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 · 모델과 주변 프로그램의 왕복" page="03 / 28" />
 
 <!--
@@ -79,7 +79,7 @@ title: "에이전트를 정의하는 관점"
 <tr><td>Nancy Xu</td><td>LLM에 행동 능력을 더한 디지털 동반자·직원</td></tr>
 <tr><td>Darko Matovski</td><td>업무별 자율성과 사람의 감독 사이의 경계</td></tr>
 </tbody></table>
-<p class="note">‘에이전트’의 범위는 자료마다 다릅니다. 맡는 목표와 실제 행동 범위를 함께 봐야 합니다.</p>
+<p class="statement">공통 질문은 “무엇을 목표로, 어떤 환경에서, 어디까지 스스로 행동하는가?”입니다.</p><p class="note">‘에이전트’라는 이름만으로 자율성이나 권한 수준을 알 수 없습니다.</p>
 <SeminarSource href="https://www.weforum.org/stories/2024/07/what-is-an-ai-agent-experts-explain/" label="WEF · What is an AI agent and what will they do?" page="04 / 28" />
 
 <!--
@@ -96,7 +96,7 @@ title: "감지·판단·행동과 환경"
 
 <h1>감지·판단·행동과 환경</h1>
 <SeminarDiagram kind="core" />
-<p class="small">코딩 작업에서는 파일·오류 메시지가 관측 대상이고, 파일 수정·터미널 도구가 행동을 수행합니다. 제어센터에는 모델과 작업을 조정하는 구조가 함께 놓입니다.</p>
+<div class="columns three divided"><section><h2>감지</h2><p>사용자 목표, 저장소 파일, 테스트 출력</p></section><section><h2>판단</h2><p>모델의 다음 단계 + 하네스의 상태·도구·권한 조정</p></section><section><h2>행동</h2><p>파일 검색·수정, 명령 실행, 결과 전달</p></section></div><p class="note">코딩 예시는 구조를 설명하기 위한 대응입니다. 도식은 특정 제품의 내부 구현을 뜻하지 않습니다.</p>
 <SeminarSource href="https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/" label="WEF 2024 · Navigating the AI Frontier, p.7 Figure 1 재구성" page="05 / 28" />
 
 <!--
@@ -158,7 +158,7 @@ title: "호출·실행·결과 전달의 순서"
 
 <h1>호출·실행·결과 전달의 순서</h1>
 <SeminarDiagram kind="sequence" />
-<p class="small">실행 결과를 받은 뒤 모델이 추가 조사, 수정 또는 종료를 선택합니다.</p>
+<ol class="compact"><li>하네스가 도구의 이름·설명·입력 형식을 제공합니다.</li><li>모델이 도구와 인자를 담은 호출을 반환합니다.</li><li>하네스가 형식·권한을 확인하고 도구 구현에 전달합니다.</li><li>실행기가 결과·오류·종료 코드를 돌려줍니다.</li><li>결과를 받은 모델이 다음 호출 또는 최종 답변을 고릅니다.</li></ol><p class="note">왕복 구조는 공통 개념이고, 실제 메시지 필드와 제어 방식은 API·제품마다 다릅니다.</p>
 <SeminarSource href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" label="OpenAI Function calling · Anthropic Tool use" page="08 / 28" />
 
 <!--
@@ -175,9 +175,9 @@ title: "실행 권한과 다음 행동의 선택"
 
 <h1>실행 권한과 다음 행동의 선택</h1>
 <div class="columns divided">
-<section><h2>호출이 허용되지 않으면</h2><p>하네스가 실행을 거절하거나 사람의 승인을 기다릴 수 있습니다.</p><p><b>요청을 출력했다는 사실과 실행 허용 여부는 다릅니다.</b></p></section>
-<section><h2>도구 결과가 돌아오면</h2><p>모델은 오류를 읽고 수정할지, 더 조사할지, 답변을 마칠지 고릅니다.</p><p>이 선택을 반복하도록 구성하면 에이전트 작업이 됩니다.</p></section>
-</div><p class="note">단계가 주로 코드에 미리 정해져 있으면 워크플로, 중간 결과에 따라 모델이 경로를 고르면 에이전트로 구분할 수 있습니다.</p>
+<section><h2>권한은 별도 통제</h2><p>모델이 호출을 요청해도 정책은 이를 거절하거나 승인을 요구할 수 있습니다.</p><p>읽기·쓰기·명령 범위와 승인 지점을 하네스가 적용합니다.</p></section>
+<section><h2>다음 단계는 결과에 좌우</h2><p>테스트 통과 → 검증 후 종료</p><p>테스트 실패 → 오류를 읽고 조사·수정·재실행</p></section>
+</div><p class="statement">미리 고정한 순서로 단계를 실행하면 워크플로, 결과에 따라 모델이 경로를 선택하면 에이전트 방식에 가깝습니다.</p><p class="note">둘은 스펙트럼처럼 섞일 수 있습니다. 에이전트도 승인 규칙과 종료 조건 안에서 작동합니다.</p>
 <SeminarSource href="https://www.anthropic.com/engineering/building-effective-agents" label="Anthropic · Building effective agents" page="09 / 28" />
 
 <!--
@@ -212,7 +212,7 @@ title: "실행 기록: 확인·실패·수정·재검증"
 
 <h1>실행 기록: 확인·실패·수정·재검증</h1>
 <RecordedTrace />
-<p class="small">합성 예제의 실행 기록 재생입니다. 명령과 결과를 발췌하고 각 단계의 의미를 덧붙였습니다.</p>
+<p class="small">합성 예제의 실행 기록입니다. <b>관찰:</b> 테스트가 10,000원과 9,900원의 불일치를 드러냈고, 계산식을 고친 뒤 두 테스트가 통과했습니다.</p><p class="note">한 번의 작은 예시는 작동 원리를 보여줄 뿐, 에이전트의 일반적인 성공률이나 실제 제품 성능을 측정하지 않습니다.</p>
 <SeminarSource href="https://github.com/riesling-29/Seminars/tree/main/ai-agent-harness-seminar/demos/edge-build-agent/example" label="재현 코드와 명령: demos/edge-build-agent/example/README.md" page="11 / 28" />
 
 <!--
@@ -246,7 +246,7 @@ title: "공개 API 예시: OpenAI"
 ---
 
 <h1>공개 API 예시: OpenAI</h1>
-<p>같은 호출과 결과가 API에서는 아래처럼 표현될 수 있습니다.</p>
+<p>모델은 도구 이름과 인자를 담은 <code>function_call</code>을 반환합니다. 애플리케이션이 실행한 다음, 같은 호출 ID를 붙여 결과를 제출합니다.</p>
 <div class="columns"><section><p class="code-label">모델의 호출 · Responses API</p><pre class="code" v-pre>{
   "type": "function_call",
   "call_id": "call_123",
@@ -272,7 +272,7 @@ layout: seminar
 title: "공개 API 예시: Claude와 Hermes"
 ---
 
-<h1>공개 API 예시: Claude와 Hermes</h1>
+<h1>공개 API 예시: Claude와 Hermes</h1><p>Claude Messages API는 호출 ID와 입력 객체를 가진 <code>tool_use</code>, 연결된 <code>tool_result</code> 블록을 사용합니다.</p>
 <div class="columns"><section><p class="code-label">Claude Messages API · 호출</p><pre class="code" v-pre>{
   "type": "tool_use",
   "id": "toolu_123",
@@ -283,7 +283,7 @@ title: "공개 API 예시: Claude와 Hermes"
   "tool_use_id": "toolu_123",
   "content": "All tests passed"
 }</pre></section></div>
-<p class="note">Hermes의 <code>&lt;tool_call&gt;</code>·<code>&lt;tool_response&gt;</code>는 실행 기록의 정규화 표현일 수 있습니다. 모든 제품이 쓰는 단일 통신 형식은 없습니다.</p>
+<p class="note">두 API는 ID로 결과를 원래 호출에 연결합니다. Hermes의 <code>&lt;tool_call&gt;</code>·<code>&lt;tool_response&gt;</code>는 실행 기록의 정규화 표현일 수 있습니다. 모든 제품이 쓰는 단일 통신 형식은 없습니다.</p>
 <SeminarSource href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" label="Anthropic Tool use · Hermes trajectory" page="14 / 28" />
 
 <!--
@@ -305,7 +305,7 @@ title: "에이전트와 하네스를 구분하는 기준"
 <tr><td>실행 환경</td><td>저장소 파일과 터미널이 실제로 작동하는 공간입니다.</td></tr>
 <tr><td>에이전트</td><td>목표를 받아 읽기·수정·테스트를 이어 가는 전체 시스템입니다.</td></tr>
 </tbody></table>
-<p class="note">제품마다 경계가 조금씩 다릅니다. 단어보다 실제로 맡는 역할을 확인하는 편이 도움이 됩니다.</p>
+<p class="statement">분석할 때는 세 가지를 따로 묻습니다: 다음 행동을 누가 선택하나? 실행을 누가 허용하나? 파일·명령을 누가 실제로 처리하나?</p><p class="note">제품마다 경계가 조금씩 다릅니다. ‘에이전트’는 전체 시스템, ‘하네스’는 운영 구조를 가리키는 경우가 많습니다.</p>
 <SeminarSource href="https://developers.openai.com/api/docs/guides/agents-api/architecture" label="블로그 · OpenAI Agents architecture" page="15 / 28" />
 
 <!--
@@ -322,7 +322,7 @@ title: "WEF의 소프트웨어 에이전트 구조"
 
 <h1>WEF의 소프트웨어 에이전트 구조</h1>
 <SeminarDiagram kind="layers" />
-<p class="small">오케스트레이션은 하네스와 역할이 겹칩니다. 두 용어의 범위가 항상 같지는 않습니다.</p>
+<div class="columns three divided"><section><h2>응용</h2><p>사용자·외부 앱과 맞닿는 부분</p></section><section><h2>오케스트레이션</h2><p>계획·메모리·도구·작업 흐름 조정</p></section><section><h2>추론</h2><p>모델이 맥락을 바탕으로 출력 생성</p></section></div><p class="note">이 글에서 하네스는 주로 오케스트레이션과 겹칩니다. 두 용어의 경계는 자료와 구현에 따라 달라집니다.</p>
 <SeminarSource href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" label="WEF 2025 · AI Agents in Action, p.8 Figure 2 재구성" page="16 / 28" />
 
 <!--
@@ -356,7 +356,7 @@ title: "자율성과 실행 권한"
 ---
 
 <h1>자율성과 실행 권한</h1>
-<p><b>다음 단계를 스스로 고르는 정도</b>와 <b>실제로 바꿀 수 있는 범위</b>는 다른 축입니다.</p>
+<p class="statement"><b>자율성</b>은 다음 단계를 스스로 고르는 정도입니다. <b>권한</b>은 실제로 읽거나 바꿀 수 있는 범위입니다.</p>
 <table class="compact"><thead><tr><th>맡긴 일</th><th>스스로 고르는 것</th><th>허용하거나 보류할 것</th></tr></thead><tbody>
 <tr><td>문서 요약</td><td>읽을 문서와 탐색 순서</td><td>읽기만 허용</td></tr>
 <tr><td>버그 수정</td><td>오류에 따른 수정 경로</td><td>특정 저장소 수정·테스트 허용</td></tr>
@@ -376,7 +376,7 @@ layout: seminar
 title: "에이전트를 평가하기 전의 분류"
 ---
 
-<h1>에이전트를 평가하기 전의 분류</h1>
+<h1>에이전트를 평가하기 전의 분류</h1><p>평가 전에 과제·환경·역할을 정리해야 결과를 같은 기준으로 해석할 수 있습니다.</p>
 <div class="columns divided"><section><h2>다섯 가지 특성</h2><p><b>기능</b>　무슨 기능을 수행하나요?<br><b>역할</b>　어떤 책임을 맡나요?<br><b>예측 가능성</b>　행동을 얼마나 예상할 수 있나요?<br><b>자율성</b>　다음 단계를 얼마나 스스로 고르나요?<br><b>권한</b>　어디까지 실행할 수 있나요?</p></section><section><h2>두 가지 맥락</h2><p><b>쓰임새</b><br>어떤 과제에 사용하나요?</p><p><b>운영 환경</b><br>어떤 데이터·시스템과 연결되나요?</p></section></div>
 <p class="note">같은 모델을 쓰더라도 업무와 운영 환경이 달라지면 평가 기준도 달라집니다.</p>
 <SeminarSource href="https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf" label="WEF 2025 · Foundations for Evaluation and Governance" page="19 / 28" />
@@ -393,7 +393,7 @@ layout: seminar
 title: "분류에서 운영 통제까지"
 ---
 
-<h1>분류에서 운영 통제까지</h1>
+<h1>분류에서 운영 통제까지</h1><p>각 단계는 다음 단계의 입력이 됩니다. 분류가 달라지면 시험할 실패 유형과 필요한 통제도 달라집니다.</p>
 <div class="timeline">
 <div><h3>분류</h3><p>어떤 일을 어떤 환경에서 하는지 정리합니다.</p></div>
 <div><h3>평가</h3><p>과제 성공, 도구 실패, 예외 상황에서의 행동을 확인합니다.</p></div>
@@ -415,12 +415,12 @@ title: "코드 저장소에서 쓰는 에이전트"
 ---
 
 <h1>코드 저장소에서 쓰는 에이전트</h1>
-<table><thead><tr><th>제품</th><th>주요 사용 맥락</th></tr></thead><tbody>
-<tr><td>Claude Code</td><td>저장소를 읽고 수정하며 명령을 실행하는 코딩 에이전트</td></tr>
-<tr><td>Codex</td><td>파일 읽기·수정·실행을 수행하며, CLI에서는 로컬 저장소와 도구를 사용</td></tr>
-<tr><td>OpenCode</td><td>모델과 도구 접근 권한, 작업용·계획용 에이전트 구성을 설정</td></tr>
+<table><thead><tr><th>제품</th><th>작업 중에 살필 부분</th></tr></thead><tbody>
+<tr><td>Claude Code</td><td>저장소 맥락을 읽고 파일 수정·명령 실행으로 이어지는 코딩 흐름</td></tr>
+<tr><td>Codex</td><td>파일 읽기·수정·실행을 어떤 환경과 도구 권한으로 수행하는지</td></tr>
+<tr><td>OpenCode</td><td>모델 선택과 작업용·계획용 에이전트별 도구 권한 구성</td></tr>
 </tbody></table>
-<p class="statement">제품을 볼 때도 모델, 도구, 권한, 실행 장소를 나누어 볼 수 있습니다.</p>
+<p class="statement">제품 이름보다 모델, 도구, 권한, 실행 장소를 나눠 보면 실제 작업 범위가 드러납니다.</p>
 <p class="small">블로그가 2026-09-23 확인한 공식 자료 기준입니다. 동일 조건의 성능 비교가 아닙니다.</p>
 <SeminarSource href="https://code.claude.com/docs/en/overview" label="Claude Code · Codex CLI · OpenCode 공식 문서" page="21 / 28" />
 
@@ -437,12 +437,12 @@ title: "확장 가능한 하네스와 메시징 연결"
 ---
 
 <h1>확장 가능한 하네스와 메시징 연결</h1>
-<table class="compact"><thead><tr><th>프로젝트</th><th>주요 사용 맥락</th></tr></thead><tbody>
-<tr><td>Pi</td><td>작은 기본 구성에 확장·스킬을 더하는 터미널 하네스</td></tr>
-<tr><td>Oh My Pi</td><td>Pi에서 갈라진 별도 코딩 에이전트. 추가 개발 도구 통합</td></tr>
-<tr><td>Hermes Agent</td><td>터미널 작업, 세션 간 기억·스킬, 메시징 연결</td></tr>
-<tr><td>OpenClaw</td><td>메시지 앱을 에이전트의 세션·도구·자동화에 연결하는 게이트웨이</td></tr>
-</tbody></table><p class="note">Hermes Agent는 에이전트 프로젝트입니다. Pi와 Oh My Pi도 서로 다른 프로젝트입니다.</p>
+<table class="compact"><thead><tr><th>프로젝트</th><th>구조에서 맡는 부분</th></tr></thead><tbody>
+<tr><td>Pi</td><td>터미널 기반의 작은 코딩 하네스에 확장·스킬을 추가</td></tr>
+<tr><td>Oh My Pi</td><td>Pi와 별도로 개발되는 코딩 에이전트와 도구 통합</td></tr>
+<tr><td>Hermes Agent</td><td>터미널 에이전트에 세션 간 메모리·스킬·메시징 연결</td></tr>
+<tr><td>OpenClaw</td><td>메시지 앱을 에이전트의 세션·도구·자동화에 연결</td></tr>
+</tbody></table><p class="note">이름이 비슷해도 같은 프로젝트라는 뜻은 아닙니다. Hermes Agent와 Hermes 언어 모델도 구분합니다.</p>
 <SeminarSource href="https://hermes-agent.nousresearch.com/docs/" label="Pi · Oh My Pi · Hermes Agent · OpenClaw 공식 문서" page="22 / 28" />
 
 <!--
@@ -457,7 +457,7 @@ layout: seminar
 title: "MCP·스킬·메모리의 역할"
 ---
 
-<h1>MCP·스킬·메모리의 역할</h1>
+<h1>MCP·스킬·메모리의 역할</h1><p class="lead">연결 방법, 업무 지침, 보존할 기록은 서로 다른 문제를 해결합니다.</p>
 <div class="columns three divided">
 <section><h2>MCP</h2><p>앱이 외부 도구·자료에 연결되는 <b>프로토콜</b>입니다.</p><p class="small">예: 에이전트 앱이 자료 검색 도구와 연결</p></section>
 <section><h2>스킬</h2><p>특정 업무에서 참고하는 <b>절차와 자료</b>를 묶습니다.</p><p class="small">지침을 적는 것만으로 새 실행 권한이 생기지는 않습니다.</p></section>
@@ -479,7 +479,7 @@ title: "작은 과제를 처음부터 끝까지 맡기기"
 
 <h1>작은 과제를 처음부터 끝까지 맡기기</h1>
 <blockquote class="quote">“이 저장소의 로그인 테스트가 왜 실패하는지 찾아 주세요.<br>외부 전송이나 배포는 하지 말아 주세요.”</blockquote>
-<div class="columns divided"><section><h2>과정에서 확인할 것</h2><p>어떤 도구를 요청했는지<br>어떤 행동이 허용됐는지<br>결과를 보고 무엇을 선택했는지</p></section><section><h2>완료 후 확인할 것</h2><p>변경된 파일과 코드<br>실행한 테스트의 범위<br>해결되지 않은 문제</p></section></div>
+<div class="columns divided"><section><h2>작업 중</h2><p>요청한 도구와 실제 실행 구분<br>허용된 폴더·명령·승인 확인<br>실패 결과에 따른 다음 선택 추적</p></section><section><h2>완료 시</h2><p>변경 파일과 핵심 diff 검토<br>실행 테스트와 통과 범위 확인<br>미해결 문제와 제한 기록</p></section></div><p class="note">과제는 작게 정하고, 외부 전송·배포는 범위 밖이라고 명시합니다.</p>
 <SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 · 실제 과제에서의 사용" page="24 / 28" />
 
 <!--
@@ -495,6 +495,7 @@ title: "문서·데이터 작업과 더 단순한 대안"
 ---
 
 <h1>문서·데이터 작업과 더 단순한 대안</h1>
+<p>중간 결과를 보고 다음 경로를 바꿔야 하는지부터 따져 봅니다.</p>
 <table class="compact"><thead><tr><th>작업</th><th>가능한 방식</th><th>확인할 결과</th></tr></thead><tbody>
 <tr><td>문서 비교</td><td>자료를 읽고 근거 링크가 있는 비교표 작성</td><td>원문과 인용·해석의 일치</td></tr>
 <tr><td>데이터 분석</td><td>허용 폴더에서 스크립트 실행·오류 수정</td><td>입력, 계산, 재현 가능한 출력</td></tr>
@@ -517,7 +518,7 @@ title: "이 블로그 글은 이렇게 쓰였습니다"
 
 <h1>이 블로그 글은 이렇게 쓰였습니다</h1>
 <SeminarDiagram kind="writing" />
-<p class="small">GitHub 연결에서는 대상 저장소와 쓰기 권한을 확인하고, Vercel에는 그 저장소의 배포 연결을 설정합니다. 커밋 이후에는 빌드 상태와 실제 페이지를 확인합니다.</p>
+<div class="columns divided"><section><h2>로컬 작업</h2><p>로컬 모델과 Hermes로 파일을 다루고 결과를 검토합니다.</p></section><section><h2>저장소 작업</h2><p>GitHub 변경을 확인·커밋하고, 배포 빌드와 실제 페이지를 확인합니다.</p></section></div><p class="small">접속만으로 쓰기 권한이 보장되지는 않습니다. 연결한 저장소와 실행 환경을 확인합니다.</p>
 <SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 작성 흐름 · GitHub 연결 · Vercel Git 배포" page="26 / 28" />
 
 <!--
@@ -533,7 +534,7 @@ title: "정리: 목표·도구·권한·결과"
 ---
 
 <h1>정리: 목표·도구·권한·결과</h1>
-<p class="lead">AI 에이전트는 목표를 받아 도구를 사용하고,<br>그 결과를 다음 판단에 반영하는 시스템입니다.</p>
+<p class="lead">목표 → 도구 요청 → 정책 확인 → 실행 결과 → 다음 판단</p><p>이 반복을 운영하는 전체가 에이전트 시스템이며, LLM은 그 안에서 출력을 생성합니다.</p>
 <div class="columns divided"><section><h2>구조를 읽는 질문</h2><p>누가 다음 요청을 만드나요?<br>누가 실행을 허용하나요?<br>누가 실제 파일과 명령을 다루나요?</p></section><section><h2>사용할 때의 질문</h2><p>어디까지 맡길 수 있나요?<br>무엇으로 결과를 확인하나요?<br>언제 사람이 개입하나요?</p></section></div><p class="note">LLM, 하네스, 실행 환경을 함께 보면 제품 이름 뒤의 작동 방식을 이해할 수 있습니다.</p>
 <SeminarSource href="https://blog29.vercel.app/blog/ai-agent-harness" label="블로그 · AI 에이전트와 하네스: 처음부터 설명하기" page="27 / 28" />
 
