@@ -192,3 +192,14 @@
 - **Consequences:** 도식에서 LLM·하네스·실행 환경을 따로 표시하고, 도구 호출·Qwen 형식·실제 API 왕복·코드 예제를 순서대로 설명한다. 본문 하단 공간을 늘려 출처 푸터와 겹치지 않게 한다. 웹 배포 뒤 실제 렌더링 확인이 필요하다.
 - **Reversal conditions:** 리허설에서 장 수나 문장 밀도가 이해를 방해함, 실제 프로젝터에서 도식이나 본문이 읽히지 않음, Qwen·제품 공식 문서가 변경됨
 - **Review date:** 다음 사용자 검토와 전체 리허설
+
+## D-018
+
+- **Date:** 2026-09-27
+- **Decision:** Slidev의 첫 장 앞에 있던 단독 구분자를 제거하고 표지 본문을 첫 슬라이드에 연결한다.
+- **Status:** Accepted for prototype
+- **Rationale or evidence:** 공개 웹 슬라이드에서 1페이지가 비어 보인다는 사용자 보고. Slidev 공식 문서는 첫 YAML 블록을 덱 설정이자 첫 슬라이드의 frontmatter로 설명하며, 슬라이드 구분자는 실제 슬라이드 사이에 사용한다.
+- **Alternatives considered:** 현재 구조 유지, 커버 레이아웃 콘텐츠만 수정
+- **Consequences:** 첫 페이지부터 표지가 표시되어야 한다. Pages 배포 완료 후 공개 URL에서 확인한다.
+- **Reversal conditions:** 실제 배포 렌더링에서 첫 페이지가 여전히 비어 있거나 레이아웃 문제가 발생함
+- **Review date:** 다음 웹 확인 시
