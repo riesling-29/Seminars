@@ -2,6 +2,7 @@
 theme: default
 title: "AI 에이전트와 하네스: 처음부터 설명하기"
 author: ""
+layout: seminar-cover
 info: "Attention과 KV Cache에서 도구 호출과 에이전트 구조까지"
 colorSchema: light
 favicon: /favicon.svg
@@ -13,11 +14,6 @@ canvasWidth: 980
 drawings:
   persist: false
 mdc: true
----
-
----
-layout: seminar-cover
-title: "AI 에이전트와 하네스: 처음부터 설명하기"
 ---
 
 <p class="eyebrow">Attention과 KV Cache 개념을 배운 분들이라면</p>
