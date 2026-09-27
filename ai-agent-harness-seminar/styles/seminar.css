@@ -38,7 +38,7 @@
 .seminar-page b, .seminar-page strong { color: var(--accent); font-weight: 700; }
 .seminar-page .lead { font-size: 21px; line-height: 1.42; max-width: 825px; margin-bottom: 16px; }
 .seminar-page .small { font-size: 14px; color: var(--muted); line-height: 1.38; }
-.seminar-page .note { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 12px; font-size: 13px; color: var(--accent); }
+.seminar-page .note { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 12px; font-size: 15px; line-height: 1.35; color: var(--accent); }
 .seminar-page .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
 .seminar-page .columns.three { grid-template-columns: repeat(3,1fr); gap: 20px; }
 .seminar-page .columns > * { min-width: 0; }
