@@ -2,19 +2,28 @@
 defineProps<{ kind: 'overview' | 'core' | 'sequence' | 'layers' | 'writing' }>()
 </script>
 <template>
-  <svg v-if="kind === 'overview'" class="diagram" viewBox="0 0 870 285" role="img" aria-label="모델이 도구 요청을 보내고 실행 프로그램이 결과를 되돌려주는 왕복">
+  <svg v-if="kind === 'overview'" class="diagram" viewBox="0 0 870 360" role="img" aria-label="LLM, 하네스, 실행 환경의 역할과 도구 요청 및 결과의 왕복">
     <defs><marker id="ov-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="currentColor" /></marker></defs>
-    <rect x="30" y="80" width="220" height="105" rx="3" class="tint" />
-    <text x="140" y="117" text-anchor="middle" class="title">LLM</text>
-    <text x="140" y="150" text-anchor="middle" class="body">다음 출력을 생성</text>
-    <rect x="530" y="80" width="300" height="105" rx="3" class="box" />
-    <text x="680" y="117" text-anchor="middle" class="title">하네스와 실행 환경</text>
-    <text x="680" y="150" text-anchor="middle" class="body">요청 확인 · 도구 실행</text>
-    <path d="M250 105H530" class="edge" marker-end="url(#ov-arrow)" />
-    <text x="390" y="87" text-anchor="middle" class="body">도구 이름과 입력값</text>
-    <path d="M530 166H250" class="edge" marker-end="url(#ov-arrow)" />
-    <text x="390" y="204" text-anchor="middle" class="body">파일 내용 · 실행 결과</text>
-    <text x="435" y="261" text-anchor="middle" class="title accent">목표에 따라 이 왕복을 이어 가는 전체 시스템 = 에이전트</text>
+    <rect x="28" y="100" width="212" height="112" rx="4" class="tint" />
+    <text x="134" y="138" text-anchor="middle" class="title">LLM</text>
+    <text x="134" y="171" text-anchor="middle" class="body">답변·호출 요청 생성</text>
+    <rect x="329" y="100" width="212" height="112" rx="4" class="box" />
+    <text x="435" y="138" text-anchor="middle" class="title">하네스</text>
+    <text x="435" y="171" text-anchor="middle" class="body">맥락·도구·권한 관리</text>
+    <rect x="630" y="100" width="212" height="112" rx="4" class="box" />
+    <text x="736" y="138" text-anchor="middle" class="title">실행 환경</text>
+    <text x="736" y="171" text-anchor="middle" class="body">파일·명령을 실제 실행</text>
+    <path d="M329 119H240" class="edge" marker-end="url(#ov-arrow)" />
+    <text x="284" y="93" text-anchor="middle" class="label">도구 설명·입력 형식</text>
+    <path d="M240 193H329" class="edge" marker-end="url(#ov-arrow)" />
+    <text x="284" y="229" text-anchor="middle" class="label">호출 요청</text>
+    <path d="M541 119H630" class="edge" marker-end="url(#ov-arrow)" />
+    <text x="585" y="93" text-anchor="middle" class="label">검사 후 실행 전달</text>
+    <path d="M630 193H541" class="edge" marker-end="url(#ov-arrow)" />
+    <text x="585" y="229" text-anchor="middle" class="label">출력·오류</text>
+    <path d="M435 212V292H134V212" class="edge" marker-end="url(#ov-arrow)" />
+    <text x="435" y="326" text-anchor="middle" class="body">하네스가 결과를 다음 모델 입력에 포함합니다.</text>
+    <text x="435" y="354" text-anchor="middle" class="title accent">목표에 따라 이 과정을 이어 가는 전체 시스템 = 에이전트</text>
   </svg>
   <svg v-else-if="kind === 'core'" class="diagram" viewBox="0 0 870 318" role="img" aria-label="에이전트 경계 안의 센서, 제어센터, 이펙터가 바깥 환경을 관측하고 바꾸는 구조">
     <defs><marker id="core-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="currentColor" /></marker></defs>
