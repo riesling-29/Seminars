@@ -214,3 +214,17 @@
 - **Consequences:** 첫 7장에서 개념과 WEF 구조를 완결하고, 8–13장에서는 하나의 주문 계산 사례로 작업을 설명한다. API에는 발신자·수신자·실행자를 표시한다. 글꼴·본문 줄간격·푸터를 전용 레이아웃으로 관리하고 모든 장을 실제 렌더링해 검토한다. 앞서 승인된 main 반영·배포 작업의 수정으로 수행한다.
 - **Reversal conditions:** 슬라이드만 읽었을 때 핵심 개념·호출/실행 구분을 설명하기 어렵거나, 원문 대응·실제 화면·API 형식 검증에서 오류가 확인됨
 - **Review date:** 현재 배포 검증과 다음 사용자 검토. 제품 설명은 원문 2026-09-23 확인 시점, API·템플릿은 2026-09-27 문서 범위로 제한한다.
+
+
+## D-020
+
+- **Date:** 2026-09-29
+- **Decision:** 표지 다음에 LLM 기본 구조·Attention·KV Cache 복습을 한 장 추가해 35장으로 구성한다.
+- **Status:** Accepted
+- **Rationale or evidence:** 사용자가 참석자들에게 물어보니 기존 내용을 잘 기억하지 못한다고 설명하며 한 장 추가를 요청했다. Hugging Face의 How caching works 및 Transformer Architectures를 2026-09-29 확인했다.
+- **Consequences:** 새 2장은 토큰화·임베딩, Transformer 여러 층, 다음 토큰 확률·선택, Attention의 Q/K/V, 이전 층별 K/V 재사용과 새 K/V 추가를 설명한다. 기존 2–34장은 3–35장으로 이동한다. 발표자 노트에 복습 대본을 포함한다. 기존 승인된 main 반영·배포 작업의 연속으로 수행한다.
+- **Scope:** 일반적인 decoder-only Transformer 추론의 교육용 요약. 정규화·잔차·위치 정보 등은 생략하며 새 Attention 계산은 계속 필요함을 명시한다.
+- **Sources:** https://huggingface.co/docs/transformers/main/cache_explanation ; https://huggingface.co/learn/llm-course/en/chapter1/6
+- **Reversal conditions:** 실제 화면에서 내용이 넘치거나, Q/K/V와 저장된 계산의 의미를 오해하게 하는 표현이 확인되면 수정한다.
+- **Review date:** 현재 변경 검증 및 다음 사용자 리허설.
+- **Validation:** Slidev 파서 35장·빈 장 없음, Pages 빌드·git diff --check 통과. 1280×720 브라우저에서 1·2·3·35장 확인 후 새 2장의 중복 하단 문구와 여백을 조정해 재검사: 본문 넘침·푸터 겹침·앱/리소스 오류 0.

@@ -8,7 +8,7 @@
 
 - 한국어 제목: AI 에이전트와 하네스: 처음부터 설명하기
 - 경로: ai-agent-harness-seminar/
-- 상태: 블로그 원문 기반 34장 Slidev 발표자료 (2026-09-27 전면 재작성)
+- 상태: 블로그 원문 기반 35장 Slidev 발표자료 (2026-09-27 전면 재작성, 2026-09-29 복습 추가)
 - 발표자료: https://riesling-29.github.io/Seminars/ai-agent-harness-seminar/
 
 ### Persistent Work Agents Seminar

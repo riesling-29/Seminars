@@ -114,3 +114,26 @@
 .lesson-content > :last-child { margin-bottom:0; }
 
 .lesson-content section > :last-child { margin-bottom:0; }
+
+/* One-slide refresher, scoped to avoid changing the existing deck. */
+.lesson.llm-recap h1 { margin-bottom:10px; }
+.lesson.llm-recap .recap-scope { font-size:20px; color:var(--muted); margin:0 0 12px; }
+.llm-recap .recap-flow { display:grid; grid-template-columns:1fr 25px 1.4fr 25px 1.8fr 25px 1.2fr; gap:8px; align-items:center; }
+.llm-recap .recap-stage { box-sizing:border-box; height:124px; display:flex; flex-direction:column; justify-content:center; padding:12px 10px; background:var(--tint); border:1px solid var(--line); text-align:center; }
+.llm-recap .recap-stage b { display:block; font-size:24px; margin-bottom:8px; line-height:1.25; }
+.llm-recap .recap-stage span { font-size:21px; line-height:1.4; }
+.llm-recap .recap-transformer { border:2px solid var(--green); }
+.llm-recap .recap-arrow { text-align:center; color:var(--green); font-size:26px; }
+.lesson.llm-recap .recap-repeat { font-size:21px; text-align:right; color:var(--muted); margin:10px 0 10px; }
+.llm-recap .recap-details { display:grid; grid-template-columns:1fr 1fr; gap:30px; }
+.llm-recap .recap-details section + section { padding-left:28px; border-left:1px solid var(--line); }
+.lesson.llm-recap .recap-details h2 { font-size:25px; margin-bottom:12px; }
+.lesson.llm-recap .recap-details p { font-size:22px; margin:0 0 12px; }
+.llm-recap .recap-qkv { display:grid; grid-template-columns:28px 1fr; gap:5px 12px; font-size:22px; margin:0 0 14px; }
+.llm-recap .recap-cache { display:grid; grid-template-columns:1.3fr 20px 1fr; gap:7px; align-items:center; margin:14px 0; }
+.llm-recap .recap-cache > div { background:var(--tint); padding:12px 10px; border-top:3px solid var(--green); }
+.llm-recap .recap-cache > div:last-child { background:#f6ede4; border-color:#a96b37; }
+.llm-recap .recap-cache b { display:block; font-size:21px; }
+.llm-recap .recap-cache span { display:block; font-size:18px; margin-top:5px; }
+.llm-recap .recap-plus { text-align:center; }
+.lesson.llm-recap p.recap-cache-note { font-size:20px; color:var(--muted); }

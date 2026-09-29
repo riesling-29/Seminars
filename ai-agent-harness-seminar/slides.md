@@ -31,6 +31,53 @@ mdc: true
 
 ---
 layout: lesson
+class: llm-recap
+section: "복습 · LLM 내부에서 일어나는 일"
+source: "https://huggingface.co/docs/transformers/main/cache_explanation"
+sourceName: "Hugging Face · How caching works / Transformer Architectures"
+---
+
+<h1>LLM 기본 구조와 KV Cache 복습</h1>
+<p class="recap-scope">문장을 이어 생성하는 decoder-only Transformer 기준 · 핵심 흐름을 단순화한 그림</p>
+<div class="recap-flow">
+<div class="recap-stage"><b>입력 문장</b><span>질문·앞선 대화</span></div>
+<span class="recap-arrow">→</span>
+<div class="recap-stage"><b>토큰화 · 임베딩</b><span>처리 단위로 나누고<br>숫자 벡터로 변환</span></div>
+<span class="recap-arrow">→</span>
+<div class="recap-stage recap-transformer"><b>Transformer 여러 층</b><span>Attention: 맥락 반영<br>FFN: 토큰 표현 변환</span></div>
+<span class="recap-arrow">→</span>
+<div class="recap-stage"><b>다음 토큰</b><span>후보 확률 계산<br>→ 토큰 선택</span></div>
+</div>
+<p class="recap-repeat">선택한 토큰을 맥락 뒤에 붙이고, 다음 생성 단계에서 처리합니다. ↶</p>
+<div class="recap-details">
+<section>
+<h2>Attention · 무엇을 얼마나 참고할까?</h2>
+<div class="recap-qkv"><b>Q</b><span>지금 처리하는 토큰의 질의</span><b>K</b><span>각 토큰과 비교할 단서</span><b>V</b><span>각 토큰에서 반영할 정보</span></div>
+<p>Q와 K를 비교해 참고할 비중을 정하고,<br>V를 그 비중대로 섞습니다.</p>
+</section>
+<section>
+<h2>KV Cache · 어떤 계산을 재사용할까?</h2>
+<p>이미 처리한 토큰의 K·V를<br>각 Attention 층에 저장해 재사용합니다.</p>
+<div class="recap-cache"><div><b>이전 토큰 K·V</b><span>다시 계산하지 않고 재사용</span></div><b class="recap-plus">+</b><div><b>새 토큰 K·V</b><span>새로 계산해 추가</span></div></div>
+<p class="recap-cache-note">새 Q와 저장된 K·V를 이용하는<br>Attention 계산은 계속 필요합니다.</p>
+</section>
+</div>
+
+<!--
+2026-09-29 사용자 요청: 청중이 앞서 배운 LLM·KV Cache를 기억하지 못해 표지 다음 복습 1장 추가.
+설명 범위: 일반적인 decoder-only Transformer의 자기회귀 추론. 정규화·잔차 연결·위치 정보·출력 투영 등은 한 장의 핵심 흐름에서 생략했다. FFN은 각 토큰의 표현을 변환한다.
+근거: Hugging Face, How caching works, https://huggingface.co/docs/transformers/main/cache_explanation (2026-09-29 확인).
+근거: Hugging Face, Transformer Architectures, https://huggingface.co/learn/llm-course/en/chapter1/6 (2026-09-29 확인).
+K·V는 원문 텍스트 자체가 아니라 각 층의 토큰 표현에서 계산한 벡터다. Q/K/V의 한국어는 역할을 설명하는 비유다. causal attention은 미래 토큰을 참조하지 않아 이미 처리한 토큰의 K/V를 재사용할 수 있다.
+첫 입력(prefill)은 프롬프트의 토큰들을 처리하고 캐시를 만든다. 이후 일반적인 한 토큰씩 생성하는 단계(decode)에서는 새로 처리하는 토큰의 K/V를 추가한다. 출력으로 선택된 토큰의 K/V는 그 토큰을 다음 단계에서 처리할 때 계산한다. 최대 확률 토큰을 항상 고른다고 설명하지 않는다. 슬라이딩 윈도 등 캐시 정책에 따른 저장 범위 차이는 이 복습의 범위 밖이다.
+
+발표 대본:
+본론 전에 지난 내용을 한 장으로 복습하겠습니다. 문장을 생성하는 LLM은 입력을 토큰이라는 처리 단위로 나누고 숫자 벡터로 바꿉니다. 이 표현이 여러 Transformer 층을 지나면서 Attention으로 맥락을 반영하고, FFN으로 각 토큰의 표현을 변환합니다. 마지막에는 다음 토큰 후보의 확률을 계산해 하나를 선택하고, 그 토큰을 다음 생성 단계에서 처리하며 문장을 이어 갑니다.
+Attention에서는 Q와 K를 비교해 어떤 토큰을 얼마나 참고할지 정하고, V에 담긴 정보를 그 비중대로 섞습니다. 문장을 이어 만들 때 앞부분의 K와 V까지 매번 다시 계산하면 중복이 생깁니다. KV Cache는 이미 처리한 토큰의 K와 V를 각 층에 저장해 다시 사용하고, 새로 처리한 토큰의 K와 V를 추가합니다. 새 토큰이 이전 맥락을 참고하는 Attention 계산은 계속 필요합니다. 오늘은 이 모델 내부의 생성 과정이 도구 실행과 어떻게 연결되는지 이어서 보겠습니다.
+-->
+
+---
+layout: lesson
 section: "1. LLM에서 에이전트까지"
 source: "https://blog29.vercel.app/blog/ai-agent-harness"
 sourceName: "블로그 원문 · Attention에서 에이전트로"
