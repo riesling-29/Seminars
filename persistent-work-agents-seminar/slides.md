@@ -12,7 +12,7 @@ fonts:
   provider: none
 transition: none
 aspectRatio: 16/9
-canvasWidth: 1280
+canvasWidth: 1100
 routerMode: hash
 drawings:
   persist: false
@@ -88,7 +88,7 @@ sources:
 ---
 
 <div class="title-row"><h1>작업의 단위가 “세션”에서 “에이전트”로</h1><Ev kind="fact" note="설계 문서 인용 기반" /></div>
-<div class="vs">
+<div class="vs fill">
 <div class="lane">
 <div class="lane-title">채팅 턴 에이전트</div>
 <div class="step"><i>01</i>사용자가 프롬프트로 세션을 시작</div>
@@ -125,7 +125,7 @@ sources:
 ---
 
 <div class="title-row"><h1>상시 작업 에이전트의 세 기둥</h1><Ev kind="fact" /></div>
-<div class="g3">
+<div class="g3 fill">
 <div class="card pillar" data-p="muse">
 <span class="tag">① Computer</span>
 <div class="big">에이전트 전용 클라우드 컴퓨터</div>
@@ -276,7 +276,7 @@ sources:
 <div class="env on"><b>Cloud Computer</b><span>전용·지속 Ubuntu VM, 24/7. 파일·설치 도구·프로세스 유지. SSH·웹 터미널</span></div>
 <div class="env"><b>Manus Desktop</b><span>“My Computer”. 사용자의 로컬 기기 파일·앱을 직접 제어</span></div>
 </div>
-<div class="g2" data-p="manus">
+<div class="g2 fill" data-p="manus">
 <div class="pc-box pro"><h3>Pros</h3><ul>
 <li>지속 환경을 필요할 때만 쓰는 구조 — 기본은 임시 Sandbox</li>
 <li>지속성이 필요한 작업이면 Cloud Computer를 자동 제안·할당</li>
@@ -308,7 +308,7 @@ sources:
 ---
 
 <div class="product-head" data-p="aeon" style="position:relative"><span class="logo-dot dashed">?</span><h1>OpenAI Aeon / “o” — 출시 전 소문</h1><Ev kind="unavailable" note="공식 제품 페이지 없음" /></div>
-<div class="rumor" style="position:relative">
+<div class="rumor fill">
 <div class="col">
 <h3><Ev kind="hypothesis" note="2차 보도 · 유출" />보도된 내용</h3>
 <ul>
@@ -381,7 +381,7 @@ sources:
 ---
 
 <div class="title-row"><h1>누가 컴퓨터를 공유하는가</h1><Ev kind="fact" note="구조 · 발표자 도식" /></div>
-<div class="iso">
+<div class="iso fill">
 <div data-p="muse">
 <div class="box-outer">
 <span class="box-label">Muse · 1 person = 1 VM</span>
@@ -482,7 +482,7 @@ sources:
 ---
 
 <h1>컴퓨터 모델과 재사용 단위</h1>
-<div class="g2">
+<div class="g2 fill">
 <div class="card" data-p="grok">
 <span class="tag">T4 · Shared vs Dedicated</span>
 <div class="ev-row" style="margin-bottom:10px"><Ev kind="hypothesis" note="트레이드오프 해석" /></div>
@@ -549,7 +549,7 @@ sources:
 <Ev kind="hypothesis" />
 </div>
 </div>
-<div class="g2 push" style="margin-top:22px">
+<div class="g2 push">
 <p class="callout" style="--accent: var(--fact)"><b>관찰</b>: 개인 대상 제품이 “전용 컴퓨터 + 백그라운드 + 승인”을 같은 시기에 전면에 내세웠습니다.</p>
 <p class="callout" style="--accent: var(--hyp)"><b>가설</b>: 다음 경쟁 축은 모델 성능보다 채널(메신저·OS·안경), 결제·자격 증명 연동, 신뢰 구조일 수 있습니다.</p>
 </div>
@@ -565,7 +565,7 @@ section: "Wrap-up"
 ---
 
 <div class="title-row"><h1>도입을 검토할 때 물어볼 질문</h1><Ev kind="hypothesis" note="발표자 제안" /></div>
-<div class="checklist">
+<div class="checklist fill">
 <div><p><b>무엇이 작업을 시작하나?</b><span>사람의 메시지만인가, 일정·이벤트·다른 에이전트도인가</span></p></div>
 <div><p><b>컴퓨터를 누구와 공유하나?</b><span>사람별 전용인가, 계정 내 모든 에이전트가 공유하나</span></p></div>
 <div><p><b>어디서 멈추고 묻나?</b><span>이메일·구매·로그인·결제 단계의 승인 정책과 감사 기록</span></p></div>

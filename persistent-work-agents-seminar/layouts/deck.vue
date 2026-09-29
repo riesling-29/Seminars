@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useSlideContext } from '@slidev/client'
-
-const { $frontmatter } = useSlideContext()
 
 type Source = { name: string, url: string }
 
+const props = defineProps<{
+  frontmatter?: Record<string, any>
+}>()
+
 const sources = computed<Source[]>(() => {
-  const value = $frontmatter.value?.sources
+  const value = props.frontmatter?.sources
   return Array.isArray(value) ? value : []
 })
 </script>

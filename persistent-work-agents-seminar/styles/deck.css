@@ -101,7 +101,9 @@
 .deck .note { font-size: 16px; color: var(--ink-3); line-height: 1.5; }
 .deck .small { font-size: 17px; }
 .deck .muted { color: var(--ink-3); }
-.deck .push { margin-top: auto; }
+.slidev-layout.deck .push { margin-top: auto; }
+.deck .fill { flex: 1 1 auto; min-height: 0; }
+.deck .fill-gap { margin-top: 14px; }
 .deck .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
 .deck .title-row h1 { margin-bottom: 14px; }
 
@@ -176,7 +178,6 @@
 .deck.cover .lead { font-size: 26px; max-width: 980px; }
 .deck .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .deck .chip {
-  --accent: var(--ink-3);
   display: inline-flex; align-items: center; gap: 8px;
   border: 1px solid var(--line-2);
   border-radius: 999px;
@@ -184,7 +185,7 @@
   font-size: 17px;
   color: var(--ink-2);
 }
-.deck .chip::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.deck .chip::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--accent, var(--ink-3)); }
 .deck .chip.dashed { border-style: dashed; }
 
 /* Section opener */
@@ -234,13 +235,14 @@
   color: var(--ink-2);
 }
 .deck .step i { font: 700 13px var(--mono); font-style: normal; color: var(--accent, var(--ink-3)); }
+.deck .vs.fill .step { flex: 1; }
 .deck .step.end { border-style: dashed; color: var(--ink-3); }
 .deck .step.gate { border-color: color-mix(in srgb, var(--hyp) 55%, transparent); }
 .deck .step.gate i { color: var(--hyp); }
 .deck .lane-title { font: 700 13px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, var(--ink-3)); margin-bottom: 4px; }
 
 /* Pillars */
-.deck .pillar { display: flex; flex-direction: column; gap: 10px; }
+.deck .pillar { display: flex; flex-direction: column; gap: 14px; }
 .deck .pillar .big { font-size: 24px; font-weight: 760; letter-spacing: -0.02em; }
 .deck .quote-line {
   border-left: 3px solid var(--accent, var(--ink-3));
@@ -279,6 +281,7 @@
 .deck .fact:last-child { border-bottom: 0; }
 .deck .fact > b { font: 700 13px var(--mono); letter-spacing: 0.06em; color: var(--accent); text-transform: uppercase; }
 .deck .pc { display: flex; flex-direction: column; gap: 12px; }
+.deck .pc .pc-box { flex: 1; }
 .deck .pc-box { border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); padding: 13px 16px; }
 .deck .pc-box h3 { font: 700 13px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
 .deck .pc-box.pro h3 { color: var(--fact); }
@@ -364,7 +367,7 @@
 .deck .tl::before { content: ''; position: absolute; top: -26px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--bg); }
 .deck .tl.dashed::before { background: var(--bg); border: 2px dashed var(--accent); }
 .deck .tl .date { font: 700 14px var(--mono); color: var(--accent); margin-bottom: 4px; }
-.deck .tl b { display: block; font-size: 18px; margin-bottom: 4px; }
+.deck .tl > b { display: block; font-size: 18px; margin-bottom: 4px; }
 .deck .tl p { font-size: 15.5px; color: var(--ink-2); margin-bottom: 6px; }
 
 /* Checklist */
@@ -385,3 +388,21 @@
 .deck .ref a { font: 13px var(--mono); color: var(--ink-3); text-decoration: none; word-break: break-all; }
 
 @media print { .deck { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+
+/* Height-filling variants */
+.deck .iso.fill > div { display: flex; flex-direction: column; }
+.deck .iso.fill .box-outer { flex: 1; justify-content: space-evenly; }
+.deck .iso.fill .box-inner { padding: 10px 8px; }
+.deck .g2.fill > .pc-box, .deck .g2.fill > .card { display: flex; flex-direction: column; }
+.deck .g2.fill > .pc-box ul, .deck .g2.fill > .card ul { display: flex; flex-direction: column; gap: 6px; }
+.deck .checklist.fill { align-content: space-evenly; }
+.deck .rumor.fill { margin-bottom: 14px; }
+.deck .rumor.fill ul { display: flex; flex-direction: column; gap: 6px; }
+.deck .g3.fill .quote-line { font-size: 16.5px; }
+
+.deck .product .fact { font-size: 16px; grid-template-columns: 96px 1fr; padding-bottom: 7px; }
+.deck .product .fact > b { font-size: 11.5px; }
+.deck .product .pc-box { padding: 11px 14px; }
+.deck .product .pc-box li { font-size: 15.5px; margin-bottom: 4px; }
+.deck .product-head { margin-bottom: 10px; }
+.deck .product-head h1 { font-size: 34px; }
