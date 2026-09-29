@@ -11,7 +11,16 @@
 - 상태: 블로그 원문 기반 34장 Slidev 발표자료 (2026-09-27 전면 재작성)
 - 발표자료: https://riesling-29.github.io/Seminars/ai-agent-harness-seminar/
 
+### Persistent Work Agents Seminar
+
+- 한국어 제목: 채팅이 끝나도 일은 계속된다 — 상시 작업 에이전트 비교
+- 경로: persistent-work-agents-seminar/
+- 상태: 공개 자료 기반 18장 Slidev 발표자료 (2026-09-29 작성). Meta Muse, xAI Grok Bot, Manus Cloud Computer 비교, OpenAI Aeon / “o”는 미확인 가설로만 표기
+- 발표자료: https://riesling-29.github.io/Seminars/persistent-work-agents-seminar/
+
 ## 로컬 실행
+
+각 세미나 디렉터리에서 같은 명령을 사용한다. 아래는 ai-agent-harness-seminar 예시이며, 다른 세미나는 cd 경로만 바꾼다.
 
 Windows PowerShell:
 
