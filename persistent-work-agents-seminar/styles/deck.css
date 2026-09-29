@@ -18,7 +18,7 @@
   --muse: #5b9bff;
   --grok: #b99bff;
   --manus: #ffb454;
-  --aeon: #97a3b6;
+  --dots: #e6ebf2;
   --fact: #3ddc97;
   --hyp: #ffcc4d;
   --na: #a3adbd;
@@ -161,7 +161,7 @@
 .deck [data-p='muse'] { --accent: var(--muse); }
 .deck [data-p='grok'] { --accent: var(--grok); }
 .deck [data-p='manus'] { --accent: var(--manus); }
-.deck [data-p='aeon'] { --accent: var(--aeon); }
+.deck [data-p='dots'] { --accent: var(--dots); }
 .deck [data-p='fact'] { --accent: var(--fact); }
 .deck [data-p='hyp'] { --accent: var(--hyp); }
 
@@ -298,11 +298,7 @@
 .deck .env b { display: block; font-size: 17px; }
 .deck .env span { display: block; font-size: 14.5px; color: var(--ink-3); line-height: 1.4; margin-top: 3px; }
 
-/* Rumor slide */
-.deck .rumor { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.deck .rumor .col { border: 1px dashed var(--line-2); border-radius: 12px; padding: 14px 18px; }
-.deck .rumor h3 { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
-.deck .rumor li { font-size: 17px; color: var(--ink-2); }
+/* Stamp */
 .deck .stamp {
   position: absolute;
   right: 0; top: -4px;
@@ -334,8 +330,6 @@
 .deck table.matrix td:first-child { white-space: nowrap; }
 .deck table.matrix td:first-child b { display: flex; align-items: center; gap: 8px; font-size: 17px; color: var(--ink); }
 .deck table.matrix td:first-child b::before { content: ''; width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
-.deck table.matrix tr.rumor-row td { color: var(--ink-3); background: repeating-linear-gradient(135deg, rgba(163, 173, 189, 0.05) 0 8px, transparent 8px 16px); }
-.deck table.matrix tr.rumor-row td:first-child b::before { background: transparent; border: 2px dashed var(--aeon); }
 
 /* Isolation diagram */
 .deck .iso { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -396,8 +390,6 @@
 .deck .g2.fill > .pc-box, .deck .g2.fill > .card { display: flex; flex-direction: column; }
 .deck .g2.fill > .pc-box ul, .deck .g2.fill > .card ul { display: flex; flex-direction: column; gap: 6px; }
 .deck .checklist.fill { align-content: space-evenly; }
-.deck .rumor.fill { margin-bottom: 14px; }
-.deck .rumor.fill ul { display: flex; flex-direction: column; gap: 6px; }
 .deck .g3.fill .quote-line { font-size: 16.5px; }
 
 .deck .product .fact { font-size: 16px; grid-template-columns: 96px 1fr; padding-bottom: 7px; }

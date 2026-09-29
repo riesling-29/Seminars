@@ -15,7 +15,7 @@
 
 - 한국어 제목: 채팅이 끝나도 일은 계속된다 — 상시 작업 에이전트 비교
 - 경로: persistent-work-agents-seminar/
-- 상태: ai-agent-harness-seminar 뒤에 붙는 10장 후속 섹션 (2026-09-29 작성). Meta Muse, xAI Grok Bot, Manus Cloud Computer 비교, OpenAI Aeon / “o”는 미확인 가설로만 표기
+- 상태: ai-agent-harness-seminar 뒤에 붙는 10장 후속 섹션 (2026-09-29 작성). Meta Muse, xAI Grok Bot, Manus Cloud Computer, OpenAI Dots(DevDay 2026 발표) 비교
 - 발표자료: https://riesling-29.github.io/Seminars/persistent-work-agents-seminar/
 
 ## 로컬 실행
