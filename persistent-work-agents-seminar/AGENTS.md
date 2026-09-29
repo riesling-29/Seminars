@@ -6,7 +6,7 @@
 2. docs/EVIDENCE_POLICY.md를 내용 규칙의 기준으로 삼는다. 다른 문서와 충돌하면 임의로 통합하지 말고 충돌을 보고한다.
 3. 슬라이드의 주장에는 FACT, HYPOTHESIS, UNAVAILABLE 라벨(`<Ev kind="..." />`)을 붙여 구분한다.
 4. FACT는 제조사 공식 발표·문서만 근거로 한다. 슬라이드 frontmatter `sources`에 짧은 이름과 URL을 적고, 발췌와 확인 날짜를 docs/SOURCES_2026-09-29.md에 기록한다.
-5. OpenAI Aeon / “o”는 공식 발표 전까지 보도·유출 수준의 가설로만 다룬다. 기능, 가격, 출시 일정을 확정적으로 쓰지 않는다. DevDay는 공개된 일정으로만 언급한다.
+5. OpenAI Dots(DevDay 2026 발표)는 openai.com·help.openai.com·chatgpt.com 원문에 있는 내용만 FACT로 쓴다. 언론 보도는 HYPOTHESIS로 둔다. DevDay 전 Aeon / “o” 보도는 가설로만 다루고 Dots와 같은 제품으로 연결하지 않는다.
 6. 공식 자료에 없는 수치, 순위, 성능 비교, 생산성 효과를 만들지 않는다. Maturity는 출시 상태만 적는다.
 7. 장단점은 제품 문서에 적힌 제약과 발표자의 해석을 구분해 균형 있게 쓴다. 마케팅 문구를 그대로 옮기지 않는다.
 8. 회사 내부 정보, 실제 업무 데이터, 내부 주소, 계정, 토큰, API Key, 비공개 코드와 실제 로그를 포함하지 않는다.

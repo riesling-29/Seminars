@@ -2,7 +2,7 @@
   "name": "persistent-work-agents-seminar",
   "version": "0.1.0",
   "private": true,
-  "description": "Slidev seminar comparing persistent-work (always-on) AI agents: Muse, Grok Bot, Manus and the unconfirmed OpenAI Aeon/o reports",
+  "description": "Slidev seminar comparing persistent-work (always-on) AI agents: Muse, Grok Bot, Manus and OpenAI Dots",
   "type": "module",
   "scripts": {
     "dev": "slidev",

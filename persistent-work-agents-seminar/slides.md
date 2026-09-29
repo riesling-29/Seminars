@@ -5,7 +5,7 @@ author: ""
 layout: deck
 class: cover
 section: "AI 에이전트와 하네스 · 후속 섹션"
-info: "하네스 세미나 뒤에 붙는 짧은 후속 섹션. Meta Muse, xAI Grok Bot, Manus Cloud Computer와 미확인 OpenAI Aeon/o 보도를 공개 자료 기준으로 비교합니다."
+info: "하네스 세미나 뒤에 붙는 짧은 후속 섹션. Meta Muse, xAI Grok Bot, Manus Cloud Computer, OpenAI Dots(DevDay 2026 발표)를 공식 자료 기준으로 비교합니다."
 colorSchema: dark
 favicon: /favicon.svg
 fonts:
@@ -23,7 +23,7 @@ mdc: true
 <p class="lead">하네스 다음 단계: 세션이 끝나도 남는 컴퓨터 위에서 일하는<br>상시 작업(Persistent Work) 에이전트</p>
 <div class="cover-parts">
 <div data-p="muse"><b>01</b>변화 개요</div>
-<div data-p="grok"><b>02</b>Muse · Grok Bot · Manus · Aeon 비교</div>
+<div data-p="grok"><b>02</b>Muse · Grok Bot · Manus · Dots 비교</div>
 <div data-p="manus"><b>03</b>가까운 추세</div>
 </div>
 <div class="ev-row cover-legend"><Ev kind="fact" /><Ev kind="hypothesis" /><Ev kind="unavailable" /><span class="muted small">모든 슬라이드에 근거 수준을 표시합니다</span></div>
@@ -31,9 +31,10 @@ mdc: true
 <!--
 하네스 세미나 본편 뒤에 붙는 약 10장 분량의 후속 섹션이다.
 본편에서 "하네스 = 모델과 도구를 연결하고 작업을 제어하는 운영 코드"를 다뤘다면, 여기서는 그 하네스가 세션 밖에서 계속 돌아가는 제품들을 본다.
-2026-09-29 기준 공개 자료만 사용한다. 성능, 사용자 수, 순위 같은 수치는 다루지 않는다.
+2026-09-29 기준 공개 자료만 사용한다(OpenAI DevDay 2026 발표 반영). 성능, 사용자 수, 순위 같은 수치는 다루지 않는다.
 FACT = 제조사 공식 발표·문서, HYPOTHESIS = 보도·유출 또는 발표자 해석, UNAVAILABLE = 공식 자료 없음.
-OpenAI의 Aeon / "o"는 공식 발표가 없는 보도 수준 정보이며 가설로만 다룬다.
+OpenAI Dots는 DevDay 2026(2026-09-29)에서 공식 발표되어 openai.com·help.openai.com 원문 기준 FACT로 다룬다.
+DevDay 전의 Aeon / "o" 보도와 Dots의 관계는 공식 자료에 없으므로 연결하지 않는다.
 -->
 
 ---
@@ -127,9 +128,13 @@ sources:
     url: "https://x.ai/news/designing-grok-bot"
   - name: "Manus · Cloud Computer"
     url: "https://manus.im/blog/manus-cloud-computer"
+  - name: "OpenAI · Introducing dots"
+    url: "https://openai.com/index/introducing-dots/"
+  - name: "OpenAI Help · Getting started with your dot"
+    url: "https://help.openai.com/en/articles/20001530"
 ---
 
-<div class="title-row"><h1>한눈에 보는 장단점</h1><div class="ev-row"><Ev kind="fact" note="특징·제약" /><Ev kind="hypothesis" note="표시된 항목" /></div></div>
+<div class="title-row"><h1>한눈에 보는 장단점</h1><Ev kind="fact" note="특징·제약" /></div>
 <div class="glance fill">
 <div class="card" data-p="muse">
 <span class="tag">Meta Muse</span>
@@ -149,11 +154,11 @@ sources:
 <ul class="pro"><li>지속 환경을 필요할 때만 사용, 자동 제안·할당</li><li>로컬 기기와 분리, SSH·리소스 대시보드</li></ul>
 <ul class="con"><li>GUI 없음, 명령줄 전용</li><li>결제 중단 시 지속 환경과 작업 파일 삭제</li></ul>
 </div>
-<div class="card dashed" data-p="aeon">
-<span class="tag">OpenAI Aeon / “o”</span>
-<p class="one"><Ev kind="unavailable" note="공식 자료 없음" /></p>
-<p class="muted small">출시 전 보도만 존재합니다. 공식 자료가 나오기 전까지 장단점은 <b>평가하지 않습니다</b>.</p>
-<p class="muted small">→ 7번 슬라이드에서 보도 내용과 모르는 것을 분리합니다.</p>
+<div class="card" data-p="dots">
+<span class="tag">OpenAI Dots</span>
+<p class="one">GPT-6 Astra 기반 always-on 에이전트 + 자체 클라우드 컴퓨터</p>
+<ul class="pro"><li>ChatGPT·Slack·Teams 등 기존 채널에서 메시징</li><li>Custom Rules·Activity View·auto-review로 통제</li></ul>
+<ul class="con"><li>Pro·Business Premium 대상, Pro는 EEA·스위스·영국 제외</li><li>문자(SMS) 채널은 coming soon</li></ul>
 </div>
 </div>
 <p class="note push">+ 장점 / − 단점·한계는 공식 문서에 적힌 특징과 제약에서 골랐습니다. 품질·성능 비교가 아닙니다.</p>
@@ -162,6 +167,7 @@ sources:
 Muse 원문: "Muse runs on its own dedicated computer in the cloud, contained so no one else's agent can reach it." / "A separate Sentinel agent runs on that same machine, kept apart from Muse at the system level." / "Later this year, Meta will introduce Muse Confidential VM". 미국 iOS·Android·muse.ai 출시, 무료(사용량 제한) + 구독.
 Grok Bot 문서: "The screens are separate work surfaces, not separate security boundaries." 설계 글: "practical limits of roughly 50 Bots per account and six per group chat." 과금은 문서 기준 유료 Cursor 개인 플랜·Teams 플랜 포함 또는 SuperGrok 연결이며, 문서에 "The computers Bots work on run in Cursor's cloud"라고 적혀 있다.
 Manus FAQ: "Every task starts in a temporary sandbox." / 결제 중단 시 "its working files are deleted" / 업그레이드 시 VM 재시작 / Ubuntu, command-line only.
+Dots(Introducing dots · Help): GPT-6 Astra, 자체 클라우드 컴퓨터·브라우저, ChatGPT(데스크톱·웹·모바일)·Slack·Teams. Pro는 EEA·스위스·영국 제외 시장, Business Premium은 ChatGPT 지원 전 지역, Enterprise·Edu·Healthcare는 관리자 활성화 베타(기본 off).
 가설로 볼 만한 단점(잦은 승인 요청의 마찰, 세 환경 구분의 학습 부담)은 슬라이드에서 빼고 질문이 나오면 가설로 답한다.
 -->
 
@@ -175,18 +181,20 @@ sources:
     url: "https://docs.x.ai/grok-bot/overview"
   - name: "Manus · Cloud Computer"
     url: "https://manus.im/blog/manus-cloud-computer"
-  - name: "TestingCatalog (보도)"
-    url: "https://www.testingcatalog.com/openai-to-announce-o-always-on-agent-during-devday/"
+  - name: "OpenAI · DevDay 2026 Recap"
+    url: "https://openai.com/index/devday-2026-recap/"
+  - name: "OpenAI · Introducing dots"
+    url: "https://openai.com/index/introducing-dots/"
 ---
 
-<div class="title-row"><h1>한 장 비교</h1><div class="ev-row"><Ev kind="fact" note="Muse · Grok Bot · Manus" /><Ev kind="unavailable" note="Aeon / o" /></div></div>
+<div class="title-row"><h1>한 장 비교</h1><Ev kind="fact" note="네 제품 공식 자료" /></div>
 <table class="matrix">
 <thead><tr><th style="width:13%">제품</th><th style="width:21%">Persistence model</th><th style="width:22%">Computer model</th><th style="width:15%">Multi-agent</th><th style="width:14%">Channels</th><th>Maturity</th></tr></thead>
 <tbody>
 <tr data-p="muse"><td><b>Muse</b></td><td>개인 에이전트 1개, 목표·메모리 유지, 앱 종료 후 백그라운드 지속</td><td>사람별 전용 Secure VM + 분리된 Sentinel</td><td>발표문에 설명 없음</td><td>Muse 앱·웹·WhatsApp</td><td>미국 출시 (2026-09-08), 무료+구독</td></tr>
 <tr data-p="grok"><td><b>Grok Bot</b></td><td>Bot별 메모리·Routine, 일정·이벤트 트리거</td><td>계정 단위 공유 컴퓨터, Bot별 화면(보안 경계 아님)</td><td>병렬 실행, 메시지, 그룹 채팅, 인계</td><td>데스크톱 3 OS·모바일 앱</td><td>공개 문서·팀 도입 가이드 있음</td></tr>
 <tr data-p="manus"><td><b>Manus</b></td><td>기본은 임시 Sandbox, 필요 시 Cloud Computer에서 24/7</td><td>전용 지속 Ubuntu VM (CLI), 로컬용 Desktop 별도</td><td>공식 자료에 협업 구조 설명 없음</td><td>Manus 앱, SSH·웹 터미널</td><td>출시, 유료 플랜 필요</td></tr>
-<tr class="rumor-row" data-p="aeon"><td><b>Aeon / “o”</b></td><td>“always-on”이라는 보도뿐</td><td>알 수 없음</td><td>알 수 없음</td><td>알 수 없음</td><td>미출시 · 미확인</td></tr>
+<tr data-p="dots"><td><b>Dots</b></td><td>always-on, 백그라운드 리서치는 읽기 전용 도구만</td><td>자체 클라우드 컴퓨터·브라우저 (공유·전용 설명 없음)</td><td>Specialist dots 파일럿, 협업 구조 설명 없음</td><td>ChatGPT·Slack·Teams</td><td>발표 (2026-09-29), Pro·Business Premium</td></tr>
 </tbody>
 </table>
 <p class="note push">Maturity 열은 출시 상태만 적습니다. 품질·성능 순위가 아닙니다. “설명 없음”은 기능이 없다는 뜻이 아니라 인용한 공식 자료에서 찾지 못했다는 뜻입니다.</p>
@@ -194,6 +202,7 @@ sources:
 <!--
 Grok Bot 도입 가이드: overview의 "read how teams roll it out" 및 Teams and Enterprise 문서.
 Manus 멀티 에이전트: Cloud Computer 블로그와 도움말에는 여러 에이전트 협업 설명이 없다.
+Dots: Introducing dots·DevDay Recap 기준. Specialist dots는 조직 내 역할·자체 신원·자격 증명을 갖는 엔터프라이즈 파일럿이며, Dot 간 협업 방식이나 컴퓨터 공유 여부는 인용 자료에서 찾지 못했다.
 -->
 
 ---
@@ -248,41 +257,48 @@ Grok Bot: "between users, isolation is strict."
 
 ---
 layout: deck
-section: "02 · 제품 비교 · OpenAI Aeon / “o”"
+section: "02 · 제품 비교 · OpenAI Dots"
 sources:
-  - name: "TestingCatalog (2026-09-26, 2차 보도)"
-    url: "https://www.testingcatalog.com/openai-to-announce-o-always-on-agent-during-devday/"
-  - name: "RuntimeWire (2026-09-28, 2차 보도)"
-    url: "https://runtimewire.com/article/what-openai-might-announce-at-devday-from-an-o-agent-to-new-models"
+  - name: "OpenAI · Introducing dots"
+    url: "https://openai.com/index/introducing-dots/"
+  - name: "OpenAI · DevDay 2026 Recap"
+    url: "https://openai.com/index/devday-2026-recap/"
+  - name: "OpenAI Help · Getting started with your dot"
+    url: "https://help.openai.com/en/articles/20001530"
 ---
 
-<div class="product-head" data-p="aeon"><span class="logo-dot dashed">?</span><h1>OpenAI Aeon / “o” — 출시 전 소문</h1><Ev kind="unavailable" note="공식 제품 페이지 없음" /></div>
-<div class="rumor fill">
-<div class="col">
-<h3><Ev kind="hypothesis" note="2차 보도 · 유출" />보도된 내용</h3>
-<ul>
-<li>ChatGPT 설정에서 “o” 표시 이름과 “-o” 이메일 접미사가 발견되었다는 보도</li>
-<li>Pro 업그레이드 화면에 “always-on assistant”로 잠시 노출되었다는 보도</li>
-<li>“Aeon”은 ChatGPT Workspace의 기존 custom agents 구현을 가리키는 내부 이름이라는 보도</li>
-<li>DevDay(2026-09-29, 샌프란시스코)는 일정만 공개. 발표 내용은 확인되지 않음</li>
-</ul>
+<div class="product-head" data-p="dots"><span class="logo-dot">•</span><h1>OpenAI Dots — DevDay 2026 발표</h1><Ev kind="fact" note="공식 발표 · 2026-09-29" /></div>
+<div class="product" data-p="dots">
+<div class="facts">
+<div class="fact"><b>Model</b><span>GPT-6 Astra 기반 always-on 개인 에이전트</span></div>
+<div class="fact"><b>Computer</b><span>자체 클라우드 컴퓨터·브라우저, 플러그인으로 앱 연결</span></div>
+<div class="fact"><b>Channels</b><span>ChatGPT(데스크톱·웹·모바일) 메시지·음성, Slack·Teams 메시징. 문자는 coming soon</span></div>
+<div class="fact"><b>Approval</b><span>Custom Rules · Activity View · auto-review(계정 영향·정보 공유 행위 점검). 비밀번호 변경 등 민감 작업은 사용자에게 남김</span></div>
+<div class="fact"><b>Access</b><span>Pro: EEA·스위스·영국 제외 시장 · Business Premium: ChatGPT 지원 전 지역 · Enterprise·Edu·Healthcare: 관리자 활성화 베타(기본 off)</span></div>
 </div>
-<div class="col">
-<h3><Ev kind="unavailable" />알 수 없는 것</h3>
-<ul>
-<li>실제 출시 여부, 시기, 제품명</li>
-<li>컴퓨터 모델(전용·공유), 지속 방식, 스케줄링</li>
-<li>권한·승인 구조, 메모리, 이메일 처리 범위</li>
-<li>가격·요금제·지역</li>
-</ul>
+<div class="pc">
+<div class="pc-box pro"><h3>+ 문서에 적힌 특징</h3><ul>
+<li>Slack·Teams처럼 이미 쓰는 업무 채널로 들어옴</li>
+<li>백그라운드 선제 리서치는 연결 앱에 읽기 전용 도구만 사용</li>
+<li>Specialist dots: 조직 내 역할·자체 신원·자격 증명 (엔터프라이즈 파일럿)</li>
+</ul></div>
+<div class="pc-box con"><h3>− 제약 · 확인 못 한 것</h3><ul>
+<li>플랜·지역 제한: Pro는 EEA·스위스·영국 제외</li>
+<li>컴퓨터 공유·전용 구분, Dot 간 협업 방식<Ev kind="unavailable" note="설명 없음" /></li>
+<li>DevDay 전 보도된 Aeon / “o”와의 관계<Ev kind="unavailable" note="공식 언급 없음" /></li>
+</ul></div>
 </div>
 </div>
-<p class="callout push" style="--accent: var(--hyp)"><b>이 슬라이드는 기능 소개가 아닙니다.</b> 공식 자료가 나오기 전까지 특징·장단점을 평가하지 않습니다. 발표 당일 공식 발표가 있으면 원문으로 교체합니다.</p>
+<p class="callout push" style="--accent: var(--hyp)"><Ev kind="hypothesis" note="2차 보도" /> Meta Muse의 경쟁 제품이라는 구도는 언론의 해석입니다. OpenAI 공식 자료에는 제품 간 비교가 없습니다.</p>
 
 <!--
-확인 시점: 2026-09-29 UTC 오전. OpenAI 공식 제품 페이지나 문서는 찾지 못했다.
-TestingCatalog는 "-o" 접미사를 이메일 처리의 근거로 해석했지만, 이는 보도 매체의 해석이다.
-RuntimeWire: "Claims about email access, scheduling and work continuing after a user leaves the chat remain speculation."
+확인: OpenAI DevDay 2026 (2026-09-29) Primary 원문 — Introducing dots, DevDay 2026 Recap, Help「Getting started with your dot」. 발췌는 docs/SOURCES_2026-09-29.md.
+OpenAI 표현: "remarkably capable, always-on agents built to handle everything."
+문자(SMS)는 Help 기준 미국 Pro 한정 제한 베타이며 Business/Enterprise 워크스페이스는 미지원.
+사용량 산입은 Introducing(대화 미산입, Codex·ChatGPT Work 작업은 산입)과 Help(출시 후 한 달간 dots usage 미산입)의 표현이 겹친다. 런치 특례와 상시 정책을 구분해야 하므로 슬라이드에 넣지 않는다. 가격도 쓰지 않는다.
+Microsoft Agent 365 거버넌스 통합은 "추진" 단계로만 언급되어 있다.
+Muse 경쟁 프레이밍 출처(2차): TechCrunch, The Verge, WIRED, The Decoder.
+DevDay 전 Aeon / "o" 보도(TestingCatalog, RuntimeWire)는 슬라이드에서 뺐다. Dots가 그 보도의 제품이라는 공식 확인은 없다.
 -->
 
 ---
@@ -297,6 +313,8 @@ sources:
     url: "https://manus.im/blog/manus-cloud-computer"
   - name: "Meta · Muse"
     url: "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/"
+  - name: "OpenAI · Introducing dots"
+    url: "https://openai.com/index/introducing-dots/"
 ---
 
 <div class="title-row"><h1>가까운 추세 네 가지</h1><Ev kind="hypothesis" note="추세 판단" /></div>
@@ -314,7 +332,7 @@ sources:
 <div>
 <h2>승인·감사가 제품 표면으로</h2>
 <p>사람이 지켜보지 않는 시간이 길수록 “언제 멈추고 묻는가”가 차별점이 될 수 있음.</p>
-<p class="basis"><Ev kind="fact" /> Muse Sentinel·감사 기록 · Grok Bot Takeover·Approvals·Auto Review · Manus 발신자 기반 권한</p>
+<p class="basis"><Ev kind="fact" /> Muse Sentinel·감사 기록 · Grok Bot Takeover·Approvals·Auto Review · Dots auto-review·Activity View · Manus 발신자 기반 권한</p>
 </div>
 </div>
 <div class="trend">
@@ -351,8 +369,8 @@ sources:
     url: "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/"
   - name: "xAI Docs · Grok Bot"
     url: "https://docs.x.ai/grok-bot/overview"
-  - name: "TestingCatalog (2026-09-26, 보도)"
-    url: "https://www.testingcatalog.com/openai-to-announce-o-always-on-agent-during-devday/"
+  - name: "OpenAI · DevDay 2026 Recap (2026-09-29)"
+    url: "https://openai.com/index/devday-2026-recap/"
 ---
 
 <div class="title-row"><h1>T5 · 소비자용 상시 에이전트 경쟁</h1><Ev kind="hypothesis" note="경쟁 구도 해석" /></div>
@@ -375,11 +393,11 @@ sources:
 <p>공개 문서·설계 글 확인. 출시일은 인용 자료에 없음</p>
 <Ev kind="fact" note="문서 존재" />
 </div>
-<div class="tl dashed" style="--accent: var(--aeon)">
-<div class="date">2026-09-29 (일정)</div>
-<b>OpenAI DevDay</b>
-<p>일정만 공개. “o” 발표 여부는 보도 수준</p>
-<Ev kind="hypothesis" />
+<div class="tl" style="--accent: var(--dots)">
+<div class="date">2026-09-29</div>
+<b>OpenAI Dots</b>
+<p>DevDay 2026 발표, Pro·Business Premium 롤아웃 시작</p>
+<Ev kind="fact" />
 </div>
 </div>
 <div class="g2 push">
@@ -390,6 +408,7 @@ sources:
 <!--
 날짜는 각 자료에 적힌 게시일이다. 출시 순서로 시장 선도 여부를 판단하지 않는다.
 Grok Bot 출시일은 인용한 문서에 날짜가 없어 표기하지 않는다.
+Dots는 DevDay 2026 Recap·Introducing dots 기준 2026-09-29 발표. 가용 지역·플랜 세부는 Help「Getting started with your dot」.
 -->
 
 ---
@@ -411,7 +430,7 @@ section: "Wrap-up · References"
 <div class="ref"><div class="ref-head"><Ev kind="fact" />xAI Docs · Grok Bot</div><a href="https://docs.x.ai/grok-bot/overview" target="_blank" rel="noreferrer">docs.x.ai/grok-bot/overview · /computer-and-apps</a></div>
 <div class="ref"><div class="ref-head"><Ev kind="fact" />xAI · Designing Grok Bot</div><a href="https://x.ai/news/designing-grok-bot" target="_blank" rel="noreferrer">x.ai/news/designing-grok-bot</a></div>
 <div class="ref"><div class="ref-head"><Ev kind="fact" />Manus · Cloud Computer</div><a href="https://manus.im/blog/manus-cloud-computer" target="_blank" rel="noreferrer">manus.im/blog/manus-cloud-computer · help.manus.im</a></div>
-<div class="ref"><div class="ref-head"><Ev kind="hypothesis" note="2차 보도" />TestingCatalog · RuntimeWire</div><a href="https://www.testingcatalog.com/openai-to-announce-o-always-on-agent-during-devday/" target="_blank" rel="noreferrer">Aeon / “o” 보도 · 공식 페이지 없음</a></div>
+<div class="ref"><div class="ref-head"><Ev kind="fact" />OpenAI · DevDay 2026 Recap · Introducing dots</div><a href="https://openai.com/index/devday-2026-recap/" target="_blank" rel="noreferrer">openai.com/index/devday-2026-recap/</a> · <a href="https://openai.com/index/introducing-dots/" target="_blank" rel="noreferrer">/introducing-dots/</a></div>
 </div>
 </div>
 <p class="callout push">상시 작업 에이전트가 늘 답은 아닙니다. 한 번 끝나는 질문은 채팅, 정해진 절차는 스크립트·워크플로가 더 단순할 수 있습니다.</p>
@@ -420,4 +439,5 @@ section: "Wrap-up · References"
 본편의 결론(Do Nothing, Chat, Script, Workflow 대안도 판단에 유지)과 같은 방향으로 닫는다.
 체크리스트는 공식 문서에서 각 제품이 다르게 답한 항목을 질문으로 뒤집은 것이다. 효과나 생산성 수치는 제시하지 않는다.
 전체 원문 발췌와 확인 방법은 docs/SOURCES_2026-09-29.md에 있다.
+DevDay 전 Aeon / "o" 보도(TestingCatalog 2026-09-26, RuntimeWire 2026-09-28)는 Dots 공식 발표 이후 참고 목록에서 뺐고, 기록은 SOURCES 문서에 이력으로만 남긴다.
 -->
