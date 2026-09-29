@@ -4,13 +4,20 @@
 
 채팅 턴 단위 에이전트에서 상시 작업(Persistent Work / Always-on) 에이전트로의 변화를 다룬다. Meta Muse, xAI Grok Bot, Manus Cloud Computer를 공식 자료 기준으로 비교하고, 공식 발표가 없는 OpenAI Aeon / “o”는 보도 수준의 가설로만 다룬다.
 
-## 구성 (18장)
+ai-agent-harness-seminar 본편 뒤에 붙는 짧은 후속 섹션이다. 독립된 긴 발표가 아니며 8~12장(현재 10장)을 유지한다.
 
-1. 표지, 목차와 증거 라벨 범례
-2. Part 1 개요: 세션 → 에이전트, 세 기둥(Computer · Background · Approval)
-3. Part 2 제품: Muse, Grok Bot, Manus, Aeon / “o”(미확인), 비교 매트릭스, 격리 모델
-4. Part 3 추세: 런타임·거버넌스, Shared vs Dedicated, Skill·Routine, 소비자 경쟁 타임라인
-5. 도입 질문 체크리스트, 출처
+## 구성 (10장)
+
+1. 표지: 세 파트 안내와 증거 라벨 범례
+2. 01 변화 개요: 세션 → 에이전트
+3. 01 변화 개요: 세 기둥(Computer · Background · Approval)
+4. 02 제품 비교: 네 제품 장단점 한눈에 보기 (Aeon은 평가 보류)
+5. 02 제품 비교: 비교 매트릭스 (persistence, computer, multi-agent, channels, maturity)
+6. 02 제품 비교: 누가 컴퓨터를 공유하는가 (격리 모델)
+7. 02 제품 비교: OpenAI Aeon / “o” — 보도된 내용과 알 수 없는 것 (가설·미확인)
+8. 03 추세: 지속성 기본값, 승인·감사, Shared vs Dedicated, Skill·Routine
+9. 03 추세: 소비자용 상시 에이전트 경쟁 타임라인
+10. 도입 전 질문과 출처
 
 ## 증거 라벨
 

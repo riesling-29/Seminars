@@ -43,8 +43,8 @@ const bannedPatterns = [
 ]
 const rumorPattern = /Aeon|[“"]o[”"]/
 const hypothesisBadge = /<Ev\s+kind="(?:hypothesis|unavailable)"/
-const minSlides = 14
-const maxSlides = 18
+const minSlides = 8
+const maxSlides = 12
 const failures = []
 const markers = []
 
@@ -151,7 +151,7 @@ if (await exists(slidesPath)) {
       failures.push('deck layout이 아닌 슬라이드: ' + number)
     }
 
-    const isReferences = ['Agenda', 'References'].includes(frontmatter.section)
+    const isReferences = /References/.test(frontmatter.section || '')
     const isFactual = /<Ev\s+kind="fact"/.test(visibleContent)
     if (!isStructural && !isReferences && isFactual) {
       const sources = Array.isArray(frontmatter.sources) ? frontmatter.sources : []
