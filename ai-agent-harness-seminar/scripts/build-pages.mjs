@@ -35,7 +35,8 @@ if (!npmCliPath) {
 
 assertSafeStagingPath()
 await access(landingTemplatePath)
-await rm(stagingRoot, { recursive: true, force: true })
+// Other seminars stage into the same _pages/ root, so only this seminar's folder is replaced.
+await rm(seminarOutput, { recursive: true, force: true })
 await mkdir(seminarOutput, { recursive: true })
 
 const relativeOutput = path.relative(projectRoot, seminarOutput).split(path.sep).join('/')
