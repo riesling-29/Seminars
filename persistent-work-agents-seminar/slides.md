@@ -194,7 +194,7 @@ sources:
 <tr data-p="muse"><td><b>Muse</b></td><td>개인 에이전트 1개, 목표·메모리 유지, 앱 종료 후 백그라운드 지속</td><td>사람별 전용 Secure VM + 분리된 Sentinel</td><td>발표문에 설명 없음</td><td>Muse 앱·웹·WhatsApp</td><td>미국 출시 (2026-09-08), 무료+구독</td></tr>
 <tr data-p="grok"><td><b>Grok Bot</b></td><td>Bot별 메모리·Routine, 일정·이벤트 트리거</td><td>계정 단위 공유 컴퓨터, Bot별 화면(보안 경계 아님)</td><td>병렬 실행, 메시지, 그룹 채팅, 인계</td><td>데스크톱 3 OS·모바일 앱</td><td>공개 문서·팀 도입 가이드 있음</td></tr>
 <tr data-p="manus"><td><b>Manus</b></td><td>기본은 임시 Sandbox, 필요 시 Cloud Computer에서 24/7</td><td>전용 지속 Ubuntu VM (CLI), 로컬용 Desktop 별도</td><td>공식 자료에 협업 구조 설명 없음</td><td>Manus 앱, SSH·웹 터미널</td><td>출시, 유료 플랜 필요</td></tr>
-<tr data-p="dots"><td><b>Dots</b></td><td>always-on 에이전트, 백그라운드 선제 리서치는 읽기 전용 도구만</td><td>자체 클라우드 컴퓨터·브라우저, 플러그인으로 앱 연결 (공유·전용 구분은 설명 없음)</td><td>Specialist dots(자체 신원) 엔터프라이즈 파일럿, 협업 구조 설명 없음</td><td>ChatGPT·Slack·Teams, 문자는 coming soon</td><td>DevDay 발표 (2026-09-29), Pro·Business Premium 롤아웃</td></tr>
+<tr data-p="dots"><td><b>Dots</b></td><td>always-on, 백그라운드 리서치는 읽기 전용 도구만</td><td>자체 클라우드 컴퓨터·브라우저 (공유·전용 설명 없음)</td><td>Specialist dots 파일럿, 협업 구조 설명 없음</td><td>ChatGPT·Slack·Teams</td><td>발표 (2026-09-29), Pro·Business Premium</td></tr>
 </tbody>
 </table>
 <p class="note push">Maturity 열은 출시 상태만 적습니다. 품질·성능 순위가 아닙니다. “설명 없음”은 기능이 없다는 뜻이 아니라 인용한 공식 자료에서 찾지 못했다는 뜻입니다.</p>
@@ -430,8 +430,7 @@ section: "Wrap-up · References"
 <div class="ref"><div class="ref-head"><Ev kind="fact" />xAI Docs · Grok Bot</div><a href="https://docs.x.ai/grok-bot/overview" target="_blank" rel="noreferrer">docs.x.ai/grok-bot/overview · /computer-and-apps</a></div>
 <div class="ref"><div class="ref-head"><Ev kind="fact" />xAI · Designing Grok Bot</div><a href="https://x.ai/news/designing-grok-bot" target="_blank" rel="noreferrer">x.ai/news/designing-grok-bot</a></div>
 <div class="ref"><div class="ref-head"><Ev kind="fact" />Manus · Cloud Computer</div><a href="https://manus.im/blog/manus-cloud-computer" target="_blank" rel="noreferrer">manus.im/blog/manus-cloud-computer · help.manus.im</a></div>
-<div class="ref"><div class="ref-head"><Ev kind="fact" />OpenAI · DevDay 2026 Recap</div><a href="https://openai.com/index/devday-2026-recap/" target="_blank" rel="noreferrer">openai.com/index/devday-2026-recap/</a></div>
-<div class="ref"><div class="ref-head"><Ev kind="fact" />OpenAI · Introducing dots</div><a href="https://openai.com/index/introducing-dots/" target="_blank" rel="noreferrer">openai.com/index/introducing-dots/ · help.openai.com/en/articles/20001530</a></div>
+<div class="ref"><div class="ref-head"><Ev kind="fact" />OpenAI · DevDay 2026 Recap · Introducing dots</div><a href="https://openai.com/index/devday-2026-recap/" target="_blank" rel="noreferrer">openai.com/index/devday-2026-recap/</a> · <a href="https://openai.com/index/introducing-dots/" target="_blank" rel="noreferrer">/introducing-dots/</a></div>
 </div>
 </div>
 <p class="callout push">상시 작업 에이전트가 늘 답은 아닙니다. 한 번 끝나는 질문은 채팅, 정해진 절차는 스크립트·워크플로가 더 단순할 수 있습니다.</p>
