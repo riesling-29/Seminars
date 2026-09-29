@@ -17,10 +17,10 @@ function escapeHtmlAttribute(value) {
     .replaceAll('>', '&gt;')
 }
 
-function assertSafeStagingPath() {
+function assertSafeStagingPath(target) {
   const expected = path.join(repositoryRoot, '_pages')
-  if (stagingRoot !== expected || !stagingRoot.startsWith(repositoryRoot + path.sep)) {
-    throw new Error('안전하지 않은 staging 경로입니다: ' + stagingRoot)
+  if (stagingRoot !== expected || !target.startsWith(stagingRoot + path.sep)) {
+    throw new Error('안전하지 않은 staging 경로입니다: ' + target)
   }
 }
 
@@ -33,9 +33,9 @@ if (!npmCliPath) {
   throw new Error('이 스크립트는 npm run build:pages로 실행해야 합니다.')
 }
 
-assertSafeStagingPath()
-await access(landingTemplatePath)
 // Other seminars stage into the same _pages/ root, so only this seminar's folder is replaced.
+assertSafeStagingPath(seminarOutput)
+await access(landingTemplatePath)
 await rm(seminarOutput, { recursive: true, force: true })
 await mkdir(seminarOutput, { recursive: true })
 
@@ -58,9 +58,6 @@ if (buildResult.status !== 0) {
 
 const seminarIndexPath = path.join(seminarOutput, 'index.html')
 const seminarHtml = await readFile(seminarIndexPath, 'utf8')
-// GitHub Pages does not rewrite Slidev history routes such as /6.
-// Keep direct slide links and refreshes inside the presentation working.
-await writeFile(path.join(stagingRoot, '404.html'), seminarHtml)
 const resourceReferences = [
   ...seminarHtml.matchAll(/\b(?:src|href)="([^"]+)"/g),
 ].map((match) => match[1])
@@ -92,15 +89,15 @@ const landingHtml = template.replaceAll(
 if (landingHtml.includes('__REPOSITORY_URL__')) {
   throw new Error('Landing Page repository URL 치환이 완료되지 않았습니다.')
 }
-if (!landingHtml.includes('href="./ai-agent-harness-seminar/"')) {
-  throw new Error('Landing Page의 상대 Seminar 링크가 없습니다.')
+if (!landingHtml.includes('href="./' + seminarSlug + '/"')) {
+  throw new Error('Landing Page의 상대 Seminar 링크가 없습니다: ./' + seminarSlug + '/')
 }
 
 await writeFile(path.join(stagingRoot, 'index.html'), landingHtml, 'utf8')
 await access(path.join(stagingRoot, 'index.html'))
 await access(seminarIndexPath)
 
-console.log('Pages staging 생성: ' + stagingRoot)
+console.log('Pages staging 생성: ' + seminarOutput)
 console.log('검증한 Seminar resource reference: ' + resourceReferences.length + '개')
 console.log('Root URL path: ' + pages.sitePrefix)
 console.log('Seminar URL path: ' + pages.basePath)

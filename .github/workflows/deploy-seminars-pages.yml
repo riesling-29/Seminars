@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "ai-agent-harness-seminar/**"
+      - "persistent-work-agents-seminar/**"
       - ".github/pages/**"
       - ".github/workflows/deploy-seminars-pages.yml"
   workflow_dispatch:
@@ -31,21 +32,47 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: ai-agent-harness-seminar/package-lock.json
+          cache-dependency-path: |
+            ai-agent-harness-seminar/package-lock.json
+            persistent-work-agents-seminar/package-lock.json
 
-      - name: Install seminar dependencies
+      - name: Reset Pages staging directory
+        run: rm -rf _pages
+
+      - name: Install harness seminar dependencies
         working-directory: ai-agent-harness-seminar
         run: npm ci
 
-      - name: Validate seminar project
+      - name: Validate harness seminar project
         working-directory: ai-agent-harness-seminar
         run: npm run validate
 
-      - name: Build Pages staging directory
+      - name: Build harness seminar into Pages staging
         working-directory: ai-agent-harness-seminar
         env:
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/ai-agent-harness-seminar/
         run: npm run build:pages
+
+      - name: Install persistent agents seminar dependencies
+        working-directory: persistent-work-agents-seminar
+        run: npm ci
+
+      - name: Validate persistent agents seminar project
+        working-directory: persistent-work-agents-seminar
+        run: npm run validate
+
+      - name: Build persistent agents seminar into Pages staging
+        working-directory: persistent-work-agents-seminar
+        env:
+          PAGES_BASE_PATH: /${{ github.event.repository.name }}/persistent-work-agents-seminar/
+        run: npm run build:pages
+
+      - name: Check Pages staging output
+        run: |
+          test -f _pages/index.html
+          test -f _pages/404.html
+          test -f _pages/ai-agent-harness-seminar/index.html
+          test -f _pages/persistent-work-agents-seminar/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
