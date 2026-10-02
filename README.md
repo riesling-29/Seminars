@@ -18,9 +18,18 @@
 - 상태: ai-agent-harness-seminar 뒤에 붙는 10장 후속 섹션 (2026-09-29 작성). Meta Muse, xAI Grok Bot, Manus Cloud Computer, OpenAI Dots(DevDay 2026 발표) 비교
 - 발표자료: https://riesling-29.github.io/Seminars/persistent-work-agents-seminar/
 
+### SAIF 2026 Web Seminar
+
+- 한국어 제목: SAIF 2026 읽기: 세계를 이해하고 일을 수행하는 AI
+- 경로: saif-2026-seminar/
+- 형식: 외부 의존성 없는 한국어 웹 세미나. 읽기·발표 모드, 목차, 원영상 타임스탬프, 인쇄 지원
+- 근거: 공개 다시보기의 영어 자동자막과 공식 프로그램·뉴스룸. 한국어 자동자막 공백은 별도 표시
+- 웹 세미나: https://riesling-29.github.io/Seminars/saif-2026-seminar/
+- 로컬 실행과 검증: [프로젝트 README](saif-2026-seminar/README.md)
+
 ## 로컬 실행
 
-각 세미나 디렉터리에서 같은 명령을 사용한다. 아래는 ai-agent-harness-seminar 예시이며, 다른 세미나는 cd 경로만 바꾼다.
+Slidev 세미나는 각 디렉터리에서 같은 명령을 사용한다. SAIF 2026 정적 웹 세미나는 별도 설치 없이 index.html을 연다. 아래는 ai-agent-harness-seminar 예시이며, 다른 세미나는 cd 경로만 바꾼다.
 
 Windows PowerShell:
 
@@ -72,7 +81,7 @@ Root URL은 정적 세미나 목록 페이지로 연결된다. 발표자료 링�
 3. package-lock.json 기반 npm ci
 4. 프로젝트 validation
 5. Repository와 Seminar 경로를 포함한 Slidev build
-6. Root Landing Page와 발표자료를 _pages/에 staging
+6. Root Landing Page와 발표자료를 _pages/에 staging하고, SAIF 정적 웹 세미나를 검증·복사
 7. 공식 Pages Artifact upload
 8. github-pages environment로 deploy
 

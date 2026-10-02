@@ -7,6 +7,7 @@ on:
     paths:
       - "ai-agent-harness-seminar/**"
       - "persistent-work-agents-seminar/**"
+      - "saif-2026-seminar/**"
       - ".github/pages/**"
       - ".github/workflows/deploy-seminars-pages.yml"
   workflow_dispatch:
@@ -67,12 +68,19 @@ jobs:
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/persistent-work-agents-seminar/
         run: npm run build:pages
 
+      - name: Validate and stage SAIF 2026 web seminar
+        run: |
+          node saif-2026-seminar/validate.mjs
+          mkdir -p _pages/saif-2026-seminar
+          cp saif-2026-seminar/index.html _pages/saif-2026-seminar/index.html
+
       - name: Check Pages staging output
         run: |
           test -f _pages/index.html
           test -f _pages/404.html
           test -f _pages/ai-agent-harness-seminar/index.html
           test -f _pages/persistent-work-agents-seminar/index.html
+          test -f _pages/saif-2026-seminar/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
