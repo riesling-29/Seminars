@@ -97,6 +97,11 @@ if (!landingHtml.includes('href="./ai-agent-harness-seminar/"')) {
 }
 
 await writeFile(path.join(stagingRoot, 'index.html'), landingHtml, 'utf8')
+await writeFile(
+  path.join(stagingRoot, 'sitemap.xml'),
+  await readFile(path.join(repositoryRoot, '.github', 'pages', 'sitemap.xml'), 'utf8'),
+  'utf8',
+)
 await access(path.join(stagingRoot, 'index.html'))
 await access(seminarIndexPath)
 
