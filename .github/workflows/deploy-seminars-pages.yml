@@ -81,6 +81,8 @@ jobs:
           test -f _pages/ai-agent-harness-seminar/index.html
           test -f _pages/persistent-work-agents-seminar/index.html
           test -f _pages/saif-2026-seminar/index.html
+          test -f _pages/sitemap.xml
+          node .github/pages/validate-output.mjs
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

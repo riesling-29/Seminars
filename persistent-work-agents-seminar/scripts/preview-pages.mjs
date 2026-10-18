@@ -10,6 +10,7 @@ const contentTypes = new Map([
   ['.ico', 'image/x-icon'],
   ['.js', 'text/javascript; charset=utf-8'],
   ['.json', 'application/json; charset=utf-8'],
+  ['.xml', 'application/xml; charset=utf-8'],
   ['.map', 'application/json; charset=utf-8'],
   ['.png', 'image/png'],
   ['.svg', 'image/svg+xml'],
@@ -82,6 +83,19 @@ const server = createServer(async (request, response) => {
     createReadStream(filePath).pipe(response)
   } catch (error) {
     if (error?.code === 'ENOENT') {
+      // Mirror GitHub Pages' custom 404 document for harness history routes.
+      const pathname = new URL(request.url || '/', 'http://localhost').pathname
+      const harnessRoute = pathname.slice((pages.sitePrefix + 'ai-agent-harness-seminar/').length)
+      if (pathname.startsWith(pages.sitePrefix + 'ai-agent-harness-seminar/')
+        && /^(?:presenter\/)?[0-9]+\/?$/.test(harnessRoute)) {
+        const fallbackPath = path.join(stagingRoot, '404.html')
+        try {
+          await access(fallbackPath)
+          response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' })
+          createReadStream(fallbackPath).pipe(response)
+          return
+        } catch { /* Keep the plain 404 when the harness has not been built. */ }
+      }
       sendText(response, 404, '파일을 찾을 수 없습니다.')
       return
     }

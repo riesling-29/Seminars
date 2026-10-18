@@ -2,6 +2,8 @@
 
 여러 엔지니어링 세미나 프로젝트를 한 Git 저장소에서 관리한다. 각 세미나는 독립된 하위 디렉터리에 소스, 문서, 의존성과 빌드 명령을 둔다.
 
+공통 탐색 입구는 [Blog29](https://blog29.vercel.app/)다. 세미나별 안내 페이지에서 주제·해설 글·발표자료를 연결하며, 이 저장소의 기존 발표 주소는 유지한다. [통합 안내 및 검증](docs/BLOG29_INTEGRATION.md)을 참고한다.
+
 ## 세미나 목록
 
 ### AI Agent and Agent Harness Seminar
@@ -70,7 +72,7 @@ Pages staging은 저장소 루트의 _pages/에 생성되며 Git에 포함하지
     https://<github-owner>.github.io/<repository-name>/
     https://<github-owner>.github.io/<repository-name>/ai-agent-harness-seminar/
 
-Root URL은 정적 세미나 목록 페이지로 연결된다. 발표자료 링크는 ./ai-agent-harness-seminar/ 상대 경로를 사용한다. Owner와 repository name은 Workflow context 또는 Git remote에서 얻으므로 소스에 특정 계정을 고정하지 않는다.
+Root URL은 정적 세미나 목록 페이지로 연결된다. 발표자료 링크는 ./ai-agent-harness-seminar/ 상대 경로를 사용한다. 빌드의 repository name은 Workflow context 또는 Git remote에서 얻는다. 공개 canonical URL과 사이트맵은 현재 운영 주소인 riesling-29.github.io/Seminars/를 기준으로 하므로, 저장소를 이전할 때 함께 바꾼다.
 
 ## GitHub Pages 배포 흐름
 
