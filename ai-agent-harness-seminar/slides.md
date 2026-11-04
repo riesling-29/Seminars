@@ -393,7 +393,7 @@ sourceName: "블로그 원문 · 실제 실행 기록"
 <!--
 1~4는 블로그 실행 기록의 순서다. 표 아래 문장은 작업 결과를 사용자에게 설명하는 후속 단계를 말한다.
 이 기록은 실제 도구 작업의 발췌이며 특정 제품 내부 모델 API 메시지의 전체 복제본이 아니다.
-원문 파일 확인 명령은 rg -n 'def total_with_discount|return|test_discount_before_tax|assertEqual' order.py test_order.py다.
+원문 파일 확인 명령은 rg -n 'def total_with_discount|return|test_discount_before_tax|assertEqual' `order.py` `test_order.py`다.
 -->
 
 ---
