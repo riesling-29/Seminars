@@ -4,6 +4,8 @@
 
 공통 탐색 입구는 [Blog29](https://blog29.vercel.app/)다. 세미나별 안내 페이지에서 주제·해설 글·발표자료를 연결하며, 이 저장소의 기존 발표 주소는 유지한다. [통합 안내 및 검증](docs/BLOG29_INTEGRATION.md)을 참고한다.
 
+블로그 호스트에 접근할 수 없을 때를 위해, 각 세미나 폴더의 blog-article.md에 해설 글 원문을 복사해 두었다.
+
 ## 세미나 목록
 
 ### AI Agent and Agent Harness Seminar
@@ -12,6 +14,7 @@
 - 경로: ai-agent-harness-seminar/
 - 상태: 블로그 원문 기반 35장 Slidev 발표자료 (2026-09-27 전면 재작성, 2026-09-29 복습 추가)
 - 발표자료: https://riesling-29.github.io/Seminars/ai-agent-harness-seminar/
+- 해설 글(블로그 원문 복사): [blog-article.md](ai-agent-harness-seminar/blog-article.md). 블로그 게시일 2026-08-16, 수정일 2026-10-18
 
 ### Persistent Work Agents Seminar
 
@@ -19,6 +22,7 @@
 - 경로: persistent-work-agents-seminar/
 - 상태: ai-agent-harness-seminar 뒤에 붙는 10장 후속 섹션 (2026-09-29 작성). Meta Muse, xAI Grok Bot, Manus Cloud Computer, OpenAI Dots(DevDay 2026 발표) 비교
 - 발표자료: https://riesling-29.github.io/Seminars/persistent-work-agents-seminar/
+- 해설 글(블로그 원문 복사): [blog-article.md](persistent-work-agents-seminar/blog-article.md). 블로그 게시일 2026-09-29
 
 ### SAIF 2026 Web Seminar
 
@@ -27,6 +31,7 @@
 - 형식: 외부 의존성 없는 한국어 웹 세미나. 읽기·발표 모드, 목차, 원영상 타임스탬프, 인쇄 지원
 - 근거: 공개 다시보기의 영어 자동자막과 공식 프로그램·뉴스룸. 한국어 자동자막 공백은 별도 표시
 - 웹 세미나: https://riesling-29.github.io/Seminars/saif-2026-seminar/
+- 해설 글(블로그 원문 복사): [blog-article.md](saif-2026-seminar/blog-article.md). 블로그 게시일 2026-10-02
 - 로컬 실행과 검증: [프로젝트 README](saif-2026-seminar/README.md)
 
 ## 로컬 실행

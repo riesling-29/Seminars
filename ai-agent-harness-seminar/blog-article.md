@@ -1,0 +1,216 @@
+# AI 에이전트와 하네스: 처음부터 설명하기
+
+블로그 게시일: 2026-08-16  
+수정일: 2026-10-18  
+원문: https://blog29.vercel.app/blog/ai-agent-harness  
+발표자료: https://riesling-29.github.io/Seminars/ai-agent-harness-seminar/
+
+> LLM은 판단하고, 하네스는 도구·상태·권한을 연결합니다. 실행 기록과 API 예시로 그 역할을 구분합니다.
+
+LLM은 다음 토큰을 만드는 모델입니다. 코드를 고치고 테스트하는 일은 모델이 요청한 도구를 **하네스가 실행 환경에 연결**하면서 이루어집니다.
+
+## Attention에서 에이전트로
+
+Attention은 출력 생성에 필요한 맥락을 계산하고, KV Cache는 이미 처리한 토큰의 key와 value를 재사용해 반복 계산을 줄입니다. 두 기술 모두 **모델의 출력 생성 과정**에 속합니다. 파일 접근, 대화 이력 보관, 다음 요청에 포함할 자료의 선택은 모델 바깥 프로그램이 맡습니다. [Hugging Face의 KV Cache 설명](https://huggingface.co/docs/transformers/main/cache_explanation/)
+
+그 프로그램이 도구 명세를 전달하면 모델은 도구 이름과 인자를 담은 호출 요청을 출력할 수 있습니다. 하네스가 요청을 실행기에 전달하고 결과를 모델에 돌려주면, 모델은 다음 호출이나 최종 답변을 선택합니다. **목표에 따라 이 과정을 이어 가는 전체 시스템**을 AI 에이전트라고 볼 수 있습니다.
+
+에이전트의 범위에 합의된 단일 정의가 있는 것은 아닙니다. [WEF가 정리한 2024년 전문가 토론](https://www.weforum.org/stories/technological-innovation/what-is-an-ai-agent-experts-explain/)에서도 의사결정 지원, 환경 감지와 행동, 사람의 감독을 어디까지 포함할지에 따라 설명이 달라집니다.
+
+## AI 에이전트의 핵심 구조: 감지·판단·행동
+
+WEF의 2024년 보고서는 에이전트를 환경을 감지하고 목표를 위해 행동하는 시스템으로 설명합니다. 아래 도식의 **녹색 경계 안에 있는 센서·제어센터·이펙터 전체가 에이전트**입니다. 센서는 환경을 관측하고, 제어센터는 모델·계획·메모리·도구 호출을 조정하며, 이펙터는 행동을 환경에 전달합니다.
+
+![AI 에이전트 전체를 감싸는 경계 안에 센서·제어센터·이펙터가 있습니다. 사용자 목표는 제어센터로 전달되고, 센서는 환경을 관측하며, 이펙터는 행동으로 환경을 바꿉니다.](blog-article-assets/agent-core.svg)
+
+*개념 참고: [World Economic Forum, Navigating the AI Frontier (2024)](https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/), p. 7, Figure 1. 도식은 보고서가 설명하는 구성 요소를 바탕으로 이 글의 테마에 맞춰 새로 그렸습니다.*
+
+코딩 에이전트에 대응해 보면 이 구성이 더 구체적으로 보입니다.
+
+| 에이전트 구조 | 코딩 에이전트에서 볼 수 있는 예 |
+| --- | --- |
+| 센서 | 사용자 요청, 저장소 파일, 명령 실행 결과 |
+| 제어센터 | LLM의 다음 행동 판단과 하네스의 맥락·상태·도구 호출 조정 |
+| 이펙터 | 파일 읽기·수정, 터미널, 검색, API 호출 도구 |
+| 환경 | 코드 저장소, 터미널, 연결된 서비스 |
+
+제어센터에는 모델 외에도 계획·메모리·도구를 조정하는 기능이 포함될 수 있습니다. 코딩 에이전트에서는 LLM의 판단과 하네스의 실행 조율이 여기에 대응합니다. 이는 설명을 위한 대응이며, WEF 도식이 특정 코딩 제품의 내부 구현을 나타내는 것은 아닙니다.
+
+이 구조에서 LLM과 하네스가 어떤 관계인지 먼저 비유로 살펴보겠습니다.
+
+## 켄자쿠로 보는 LLM·에이전트·하네스
+
+《주술회전》의 켄자쿠는 자신의 뇌를 다른 사람의 몸으로 옮겨 그 몸을 사용하며, 몸이 가진 능력도 활용하는 인물입니다. 뇌만 있을 때와 몸을 얻었을 때 할 수 있는 일이 달라진다는 설정이 아래 비유의 출발점입니다. [《주술회전》 공식 캐릭터 소개](https://jujutsukaisen.jp/character/)
+
+![《주술회전》의 켄자쿠 캐릭터를 통해 LLM, 하네스, 에이전트의 관계를 설명하는 개념도. 뇌만 있는 상태는 LLM, 몸은 하네스와 실행 환경, 목표에 따라 도구를 사용하는 전체 시스템은 에이전트를 나타냅니다.](blog-article-assets/kenjaku-analogy.svg)
+
+비유에서 **뇌는 LLM**, 도구·권한·상태를 연결하는 **몸은 하네스**, 목표에 따라 행동하는 **전체는 에이전트**에 대응합니다.
+
+실제 시스템에서는 하네스와 명령을 실행하는 작업 환경이 분리될 수 있습니다. 하네스는 모델 호출, 대화 기록, 도구 선택과 결과 전달, 승인, 종료 조건을 관리하는 **운영 코드**입니다. [OpenAI의 에이전트 구조 문서](https://developers.openai.com/api/docs/guides/agents-api/architecture)도 하네스와 실행 환경을 구분합니다.
+
+## LLM이 도구를 요청하고, 실행기가 명령을 수행합니다
+
+하네스는 도구의 이름·설명·입력 형식을 모델에 제공합니다. 모델은 필요한 도구를 골라 구조화된 호출 요청을 반환합니다.
+
+![하네스가 도구 명세를 모델에 제공하고, LLM이 구조화된 도구 호출을 반환합니다. 하네스가 형식과 권한을 확인해 실행기에 전달하고, 실제 결과를 다시 모델에 돌려줍니다.](blog-article-assets/agent-loop.svg)
+
+예를 들어 단순화한 호출은 다음과 같습니다.
+
+```json
+{"name":"run_command","arguments":{"command":"npm test"}}
+```
+
+**run_command**는 도구 이름, **npm test**는 명령 인자입니다. 호출을 반환받은 애플리케이션이 실제 도구를 실행하고 결과를 돌려줍니다. [OpenAI의 function calling 안내](https://developers.openai.com/api/docs/guides/function-calling/)가 이 절차를 설명합니다. [Anthropic의 tool use 안내](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)는 애플리케이션이 실행하는 클라이언트 도구와 제공자 인프라의 서버 도구를 구분합니다.
+
+하네스는 요청 형식과 권한·승인 정책을 확인한 뒤 등록된 도구에 전달합니다. run_command의 구현이 셸 프로세스를 시작하고 표준 출력, 오류 출력, 종료 코드를 수집합니다. **모델의 호출 요청과 실제 실행은 별개**입니다.
+
+실행 결과가 다음 모델 입력에 포함되면 모델은 오류를 분석하거나 후속 호출을 고릅니다. 권한이 부족한 요청은 거절하거나 사람의 승인을 기다리도록 구성할 수 있습니다.
+
+[Anthropic은](https://www.anthropic.com/engineering/building-effective-agents) 코드에 정해진 순서를 따르는 *워크플로*와, 모델이 경로와 도구를 동적으로 선택하는 *에이전트*를 구분합니다. 에이전트의 중단·승인 조건도 설계로 정해야 합니다.
+
+
+### 실제 실행 기록: 실패한 테스트를 고친 과정
+
+아래는 글의 설명을 위해 작은 Python 예제에 **오류를 일부러 넣고**, Codex가 별도 작업 폴더에서 파일 확인, 테스트, 수정, 재검증을 실제로 실행한 기록입니다. 도구 호출과 결과는 실행 기록에서 발췌했으며, 단계 이름만 읽기 쉽게 붙였습니다. 특정 제품의 모델 API 메시지 전체를 보여주는 것은 아닙니다.
+
+과제는 할인과 세금이 함께 있는 주문 금액 계산입니다. 10,000원에서 10%를 할인한 뒤 10% 세금을 적용하면 9,900원이어야 합니다. 처음 함수는 할인 전 가격에 세금을 계산해 10,000원을 돌려주었습니다.
+
+| 순서 | 모델이 요청한 도구 작업 | 도구가 돌려준 결과 |
+| --- | --- | --- |
+| 1. 파일 확인 | `rg -n 'def total_with_discount\|return\|test_discount_before_tax\|assertEqual' order.py test_order.py` | 계산식과 `예상값 9900`인 테스트를 확인했습니다 |
+| 2. 테스트 | `python -m unittest -v` | 할인 테스트 실패: `AssertionError: 10000 != 9900`, 종료 코드 `1` |
+| 3. 파일 수정 | `apply_patch`로 계산식을 교체 | 할인된 가격에 세금을 적용하도록 `order.py`가 변경됐습니다 |
+| 4. 재검증 | `python -m unittest -v` | `Ran 2 tests ... OK`, 종료 코드 `0` |
+
+수정된 부분은 다음 두 줄입니다.
+
+```python
+discounted_price = price * (1 - discount_rate)
+return round(discounted_price * (1 + tax_rate))
+```
+
+모델은 실패 결과를 읽고 수정과 재검증을 요청했습니다. 테스트 실행과 파일 변경은 연결된 도구가 수행했습니다.
+
+### API에서는 호출과 결과를 어떤 형식으로 주고받을까요?
+
+도구 호출에 모든 제공자가 쓰는 단일 형식은 없습니다. 같은 run_command 요청을 공개 API 형식으로 비교하면 다음과 같습니다.
+
+| 단계 | OpenAI Responses API | Claude Messages API |
+| --- | --- | --- |
+| 모델의 도구 호출 | `type: "function_call"`, `call_id`, `name`, JSON 문자열인 `arguments` | `type: "tool_use"`, `id`, `name`, 객체인 `input` |
+| 실행 결과 전달 | `type: "function_call_output"`, 원래 `call_id`, `output` | `type: "tool_result"`, 원래 호출의 `tool_use_id`, `content` |
+
+OpenAI 형식은 다음처럼 표현됩니다.
+
+```json
+{"type":"function_call","call_id":"call_123","name":"run_command","arguments":"{\"command\":\"npm test\"}"}
+{"type":"function_call_output","call_id":"call_123","output":"All tests passed"}
+```
+
+Claude Messages API에서는 호출과 결과가 다음과 같은 콘텐츠 블록으로 오갑니다.
+
+```json
+{"type":"tool_use","id":"toolu_123","name":"run_command","input":{"command":"npm test"}}
+{"type":"tool_result","tool_use_id":"toolu_123","content":"All tests passed"}
+```
+
+두 형식 모두 호출 ID로 요청과 실행 결과를 연결합니다. [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling) · [Claude tool use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
+
+Hermes도 하나의 고정된 외부 형식만 쓰는 것은 아닙니다. 제공자별 형식에 맞춰 호출을 변환하며, 실행 기록(trajectory)에는 도구 호출과 결과를 `<tool_call>` 및 `<tool_response>` 태그로 감싼 정규화 표현을 저장할 수 있습니다.
+
+```text
+<tool_call>{"name":"terminal","arguments":{"command":"npm test"}}</tool_call>
+<tool_response>{"output":"All tests passed","exit_code":0}</tool_response>
+```
+
+이 Hermes 예시는 실행 기록에서 읽기 쉽게 정리한 표현이며, 모든 제공자와 제품이 실제 통신에서 그대로 사용하는 표준 wire format이라는 뜻은 아닙니다. 또한 Claude 예시는 공개 Claude API의 tool-use 형식입니다. Claude Code 내부의 메시지 봉투가 이 예와 바이트 단위로 같다고 공개 문서가 보장하지는 않습니다. [Hermes provider 통합 문서](https://hermes-agent.nousresearch.com/docs/agents/providers/) · [Hermes trajectory 형식](https://hermes-agent.nousresearch.com/docs/agents/trajectory/)
+
+## ‘에이전트’와 ‘하네스’는 어떻게 구분할까요?
+
+에이전트는 **작업을 이어 가는 전체 시스템**, 하네스는 **모델·도구·상태·권한을 연결하는 운영 구조**를 가리킬 때가 많습니다. 하네스의 구체적인 경계는 제품마다 다릅니다.
+
+| 구분 | 핵심 역할 | 버그 수정 예시 |
+| --- | --- | --- |
+| LLM | 주어진 맥락에서 다음 출력과 도구 요청을 만드는 모델 | “테스트를 실행하자”를 선택합니다 |
+| 하네스 | 맥락 구성, 모델 호출, 도구 라우팅, 승인·피드백·종료를 맡는 구조 | 테스트 요청을 검사하고 결과를 되돌려줍니다 |
+| 실행 환경 | 파일과 명령이 실제로 작동하는 공간 | 저장소 파일, 터미널, 샌드박스 |
+| 에이전트 | 목표를 받고 위 요소를 통해 작업을 이어 가는 전체 시스템 | 읽기 → 수정 → 테스트 → 보고 |
+
+WEF의 2025년 보고서는 소프트웨어 에이전트의 내부를 **응용(application)·오케스트레이션(orchestration)·추론(reasoning)** 세 층으로 나누어 보여줍니다. 아래 도식은 보고서의 Figure 2를 이 글의 색과 용어에 맞춰 다시 그린 것입니다. 점선 경계 안이 **에이전트 전체**이고, LLM 같은 모델은 그중 추론 층에 놓입니다.
+
+![WEF 2025 보고서의 에이전트 소프트웨어 구조를 새로 그린 도식. 점선의 에이전트 경계 안에 응용, 오케스트레이션, 추론의 세 층이 있고, 외부 애플리케이션과 다른 에이전트로 연결됩니다.](blog-article-assets/agent-software-layers.svg)
+
+*개념 참고: [World Economic Forum, AI Agents in Action: Foundations for Evaluation and Governance (2025)](https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf), p. 8, Figure 2. 원본의 층과 연결 관계를 바탕으로 새로 그렸습니다.*
+
+가운데 **오케스트레이션**은 계획·메모리·도구·작업 흐름을 조정하므로 이 글에서 설명하는 하네스와 역할이 겹칩니다. 두 용어가 정확히 같은 범위를 뜻하는 것은 아닙니다. 오른쪽의 **MCP**는 외부 도구와 애플리케이션에, **A2A**는 다른 에이전트에 연결되는 경로를 표시합니다. 이처럼 모델, 운영 구조, 사용자와 주고받는 응용 부분이 함께 작동합니다.
+
+**“모델 + 루프 = 에이전트”는 축약입니다.** 실제 설계에서는 도구, 권한, 작업 환경, 종료·승인 조건도 확인해야 합니다. 하네스와 실행 환경을 분리하는 제품도 있으므로 “누가 판단하고, 실행하고, 허용하는가”로 역할을 살펴보는 편이 정확합니다.
+
+같은 모델이라도 저장소 읽기만 허용된 경우와 테스트·수정까지 가능한 경우의 작업 경로는 다릅니다. 다만 **결과의 차이를 하네스 하나의 효과로 단정할 수는 없습니다.** 모델·과제·도구 설명·데이터·권한·사람의 개입을 함께 통제해야 합니다. [Anthropic의 도구 설계 논의](https://www.anthropic.com/engineering/building-effective-agents/)
+
+## 자율성과 권한: 에이전트에 맡기는 범위
+
+도구가 많으면 좋은 에이전트일까요? 항상 그렇지는 않습니다. 모델이 **스스로 다음 단계를 고를 수 있는 정도**와, **외부 세계에 어느 범위까지 손을 뻗을 수 있는지**는 다른 축입니다.
+
+| 상황 | 자율성 | 실행 권한 | 사람의 확인이 필요한 지점 |
+| --- | --- | --- | --- |
+| 파일을 읽고 요약하는 도우미 | 여러 문서를 스스로 찾아볼 수 있습니다 | 읽기만 허용 | 인용과 해석이 맞는지 확인합니다 |
+| 코드를 고치고 테스트하는 도우미 | 오류에 따라 수정 경로를 바꿉니다 | 특정 저장소의 수정·테스트 허용 | 커밋·배포 전에 변경 내용을 검토합니다 |
+| 고객에게 답장을 보내는 도우미 | 초안과 근거를 스스로 구성합니다 | 발송 권한은 보류할 수 있습니다 | 외부 발송 직전 승인 |
+
+아래 상황들은 자율성과 실행 권한을 나누어 보여주는 **설계 예시**이며, 특정 제품의 기본 설정을 뜻하지 않습니다. WEF의 2025년 보고서는 에이전트를 기능, 역할, 예측 가능성, 자율성, 권한이라는 다섯 특성과 쓰임새, 운영 환경이라는 두 맥락 축으로 살펴봅니다. 이 분류를 출발점으로 평가, 위험 평가, 거버넌스를 연결하는 프레임워크를 제안합니다. [WEF 보고서 PDF 원문을 열거나 내려받을 수 있습니다.](https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf)
+
+보고서가 제안하는 네 단계는 서로 다른 질문에 답합니다. **분류**는 에이전트가 무엇을 어떤 환경에서 하는지 정리하고, **평가**는 그 조건에서 성능과 한계를 확인합니다. 평가 항목으로는 과제 성공률과 완료 시간, 도구 호출 성공률, 예외 상황에서의 견고성, 오류 유형, 신뢰 지표 등이 제시됩니다. **위험 평가**는 이런 근거를 사용해 실패나 오용의 가능성과 피해 정도를 분석합니다. 마지막 **거버넌스**는 그 결과에 맞춰 접근 통제, 사람의 감독, 기록·모니터링 같은 보호 조치를 정합니다. 즉, 모델 답변의 정확도만 재는 대신 실제 과제에서 에이전트가 도구를 어떻게 쓰는지까지 평가 범위에 포함합니다.
+
+실무에서는 “테스트를 실행해도 되는가”, “외부로 전송할 수 있는가”, “삭제는 승인 후에만 가능한가” 같은 질문이 기능 소개와 함께 검토돼야 합니다. 같은 터미널 도구도 권한 범위에 따라 실행 가능한 행동이 달라집니다. [OpenAI의 샌드박스 설명](https://developers.openai.com/api/docs/guides/agents/sandboxes/)처럼 하네스의 승인·기록과 실제 실행 공간의 파일·자격증명을 분리할 수도 있습니다.
+
+## 실제로 어떤 에이전트들이 있나
+
+에이전트 제품은 연결하는 작업 환경과 도구에 따라 역할이 달라집니다. 아래 표는 2026년 9월 23일에 확인한 공식 자료를 바탕으로 각 프로젝트의 주요 사용 환경과 기능을 요약합니다. 동일 조건에서 제품 성능을 비교한 결과는 아닙니다.
+
+| 제품 | 주요 사용 맥락 | 공식 자료 |
+| --- | --- | --- |
+| Claude Code | 코드 저장소를 읽고 수정하며 명령을 실행하는 코딩 에이전트. 터미널·IDE·데스크톱·웹에서 제공 | [Claude Code 개요](https://code.claude.com/docs/en/overview) |
+| Codex | 파일을 읽고 고치고 실행하는 OpenAI의 코딩 에이전트. CLI에서는 로컬 저장소와 도구를 사용 | [Codex CLI](https://developers.openai.com/codex/cli) |
+| OpenCode | 모델과 도구 접근 권한을 구성할 수 있는 오픈소스 코딩 에이전트. 작업용·계획용 에이전트를 나누어 설정 가능 | [OpenCode 에이전트](https://opencode.ai/docs/agents/) |
+| Pi 코딩 에이전트 | 작은 기본 구성에서 시작해 확장과 스킬로 원하는 작업 방식을 만드는 터미널 하네스 | [Pi 문서](https://pi.dev/docs/latest) |
+| Oh My Pi(omp) | Pi에서 갈라져 나온 코딩 에이전트. 언어 서버(LSP), 디버거, 추가 도구 등을 통합하는 방향 | [Oh My Pi 저장소](https://github.com/can1357/oh-my-pi) |
+| Hermes Agent | Nous Research의 에이전트 프로젝트. 터미널 작업에 더해 세션 간 기억·스킬과 메시징 연결을 강조 | [Hermes Agent 문서](https://hermes-agent.nousresearch.com/docs/) |
+| OpenClaw | 여러 메시지 앱을 에이전트의 세션·도구·자동화와 연결하는 자체 호스팅 게이트웨이 | [OpenClaw 문서](https://docs.openclaw.ai/) |
+
+**Hermes Agent는 Hermes라는 언어 모델이 아니라 Nous Research의 에이전트 프로젝트입니다.** OpenClaw는 코드 편집기보다 메시지 채널, 세션, 도구, 자동화를 잇는 게이트웨이 역할에 무게가 있습니다. Pi와 Oh My Pi는 계보가 이어지지만 서로 다른 프로젝트입니다.
+
+이 제품들을 쓰다 보면 **MCP**, **스킬**, **메모리**라는 말도 같이 만납니다. MCP는 에이전트나 모델의 이름이 아니라 앱이 외부 도구·자료와 연결되는 [프로토콜](https://modelcontextprotocol.io/specification/2025-11-25/architecture)입니다. 스킬은 특정 업무를 수행할 때 참고할 절차나 자료를 묶어 둔 것이며, 그것만 적는다고 새 실행 권한이 생기는 것은 아닙니다. [Pi의 스킬 문서](https://pi.dev/docs/latest/skills/)와 [확장 문서](https://pi.dev/docs/latest/extensions/)는 읽는 지침과 실제 실행 기능을 추가하는 코드를 구분합니다. 메모리는 세션 사이에 남기는 기록이며, KV Cache와 역할이 다릅니다. [Hermes Agent의 문서](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory/)에서 설명하는 지속 메모리가 이런 층에 가깝습니다.
+
+코딩 에이전트는 파일 수정과 테스트를 이어 가고, 메시징 중심 에이전트는 채널에서 작업을 받아 [예약한 시간에 실행](https://docs.openclaw.ai/automation)할 수도 있습니다. 이때 작업이 시작되는 장소와 일정도 운영 구조의 일부가 됩니다. 사람이 지켜보지 않는 동안 실행된다면 권한 범위와 결과 기록을 구체적으로 정해야 합니다.
+
+## 실제 과제에서는 어떻게 쓰일까
+
+작은 과제를 맡기고 도구 요청, 승인, 실행 결과와 후속 행동을 확인하면 각 구성 요소의 역할을 구분하기 쉽습니다.
+
+예를 들어 “로그인 테스트의 실패 원인을 찾되 외부 전송이나 배포는 하지 말아 주세요”라고 맡깁니다. 관련 파일 확인, 테스트, 수정으로 이어지는 기록에서 요청과 허용 범위를 비교하고, 완료 후에는 변경 내용과 테스트 범위를 검토합니다.
+
+문서 비교나 데이터 분석에도 같은 방식을 쓸 수 있습니다. 외부 발송·결제·운영 배포에는 별도 승인 경계를 두고, 실제 과제의 도구 사용과 장시간 실행 중 행동도 평가해야 합니다. [WEF의 평가 관점](https://www.weforum.org/stories/artificial-intelligence/ai-agents-onboarding-governance/)
+
+반면 질문 한 번으로 답을 얻거나 순서가 항상 같은 작업에는 에이전트 루프가 필요하지 않을 수 있습니다. 모델 한 번 호출이나 고정된 자동화가 더 단순하고 검증하기 쉽습니다. [Anthropic도](https://www.anthropic.com/engineering/building-effective-agents) 복잡한 에이전트는 시간과 비용을 더 쓰므로, 간단한 방식으로 해결할 수 있는지 먼저 살펴보라고 권합니다.
+
+정리하면, AI 에이전트는 모델의 이름만으로 설명되지 않습니다. 맡은 목표, 연결된 도구와 실행 권한, 결과를 다음 판단에 반영하는 구조를 함께 살펴야 합니다.
+
+## 참고 자료
+
+- [WEF — Navigating the AI Frontier: A Primer on the Evolution and Impact of AI Agents (2024)](https://www.weforum.org/publications/navigating-the-ai-frontier-a-primer-on-the-evolution-and-impact-of-ai-agents/)
+- [Anthropic — Tool use with Claude](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
+- [WEF — What is an AI agent and what will they do? Experts explain](https://www.weforum.org/stories/technological-innovation/what-is-an-ai-agent-experts-explain/)
+- [WEF — AI Agents in Action: Foundations for Evaluation and Governance (보고서 안내)](https://www.weforum.org/publications/ai-agents-in-action-foundations-for-evaluation-and-governance/)
+- [WEF — 보고서 PDF 원문 내려받기](https://reports.weforum.org/docs/WEF_AI_Agents_in_Action_Foundations_for_Evaluation_and_Governance_2025.pdf)
+- [WEF — How to build a strong foundation for AI agent evaluation and governance](https://www.weforum.org/stories/artificial-intelligence/ai-agents-onboarding-governance/)
+- [Anthropic — Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+- [OpenAI — Function calling](https://developers.openai.com/api/docs/guides/function-calling)
+- [OpenAI — Agents API architecture](https://developers.openai.com/api/docs/guides/agents-api/architecture)
+- [Hugging Face — How caching works](https://huggingface.co/docs/transformers/main/cache_explanation/)
+
+## 이 블로그 글은 이렇게 쓰였습니다
+
+![작성자가 이 글을 준비하고 공개할 때 사용한 경로. Local LLM과 Hermes로 초안을 정리하고, Codex에서 GitHub 저장소를 수정해 Vercel로 배포하는 절차를 나타냅니다.](blog-article-assets/writing-workflow.svg)
+
+[ChatGPT GitHub 연결 안내](https://help.openai.com/en/articles/11145903-connecting-github-to-chatgpt) · [Codex Cloud 빠른 시작](https://developers.openai.com/codex/cloud) · [Vercel Git 배포 안내](https://vercel.com/docs/git)
